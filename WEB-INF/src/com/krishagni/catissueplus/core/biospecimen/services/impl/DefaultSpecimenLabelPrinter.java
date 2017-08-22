@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,20 +21,25 @@ import com.krishagni.catissueplus.core.biospecimen.ConfigParams;
 import com.krishagni.catissueplus.core.biospecimen.domain.Specimen;
 import com.krishagni.catissueplus.core.biospecimen.events.FileDetail;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
+import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJob;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJobItem;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJobItem.Status;
 import com.krishagni.catissueplus.core.common.domain.LabelTmplToken;
 import com.krishagni.catissueplus.core.common.domain.LabelTmplTokenRegistrar;
 import com.krishagni.catissueplus.core.common.domain.PrintItem;
+import com.krishagni.catissueplus.core.common.domain.PrintRuleConfig;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.events.ConfigSettingDetail;
+import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.service.ConfigChangeListener;
 import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 
+
 public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> implements InitializingBean, ConfigChangeListener {
 	private static final Log logger = LogFactory.getLog(DefaultSpecimenLabelPrinter.class);
-	
+
 	private List<SpecimenLabelPrintRule> rules = new ArrayList<SpecimenLabelPrintRule>();
 	
 	private DaoFactory daoFactory;
@@ -150,6 +156,7 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 				}
 
 				rules.add(rule);
+				createPrintRuleConfig( rule);
 				logger.info(String.format("Adding print rule: [%s]", rule));
 			}
 
@@ -229,5 +236,53 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 		}
 		
 		return null;
+	}
+
+	@PlusTransactional
+	private void createPrintRuleConfig(SpecimenLabelPrintRule rule) {
+		try {
+			PrintRuleConfig printRuleConfig = new PrintRuleConfig();
+
+			rule = createSpecimenLabelPrintRule(rule);
+
+			printRuleConfig.setObjectType("SPECIMEN");
+			printRuleConfig.setRule(rule);
+			printRuleConfig.setUpdatedBy(daoFactory.getUserDao().getSystemUser());
+			printRuleConfig.setUpdatedOn(Calendar.getInstance().getTime());
+			printRuleConfig.setActivityStatus(com.krishagni.catissueplus.core.common.util.Status.ACTIVITY_STATUS_ACTIVE.getStatus());
+
+			daoFactory.getPrintRuleConfigDao().saveOrUpdate(printRuleConfig);
+			deleteSpecimenLabelPrintRuleSettings();
+		} catch (Exception e) {
+			logger.error("Error saving rule: " + e);
+		}
+	}
+
+	private SpecimenLabelPrintRule createSpecimenLabelPrintRule(SpecimenLabelPrintRule rule) {
+		rule.setLabelType(getFieldValue(rule.getLabelType()));
+		rule.setUserLogin(getFieldValue(rule.getUserLogin()));
+		rule.setPrinterName(getFieldValue(rule.getPrinterName()));
+		rule.setCmdFileFmt(getFieldValue(rule.getCmdFileFmt().toString()));
+		rule.setLabelDesign(getFieldValue(rule.getLabelDesign()));
+		rule.setCpShortTitle(getFieldValue(rule.getCpShortTitle()));
+		rule.setVisitSite(getFieldValue(rule.getVisitSite()));
+		rule.setSpecimenClass(getFieldValue(rule.getSpecimenClass()));
+		rule.setSpecimenType(getFieldValue(rule.getSpecimenType()));
+		rule.setLineage(getFieldValue(rule.getLineage()));
+		return rule;
+	}
+
+	private String getFieldValue(String input) {
+		return StringUtils.equals(input, "*") ? null : input;
+	}
+
+	private void deleteSpecimenLabelPrintRuleSettings() {
+		ConfigSettingDetail detail = new ConfigSettingDetail();
+		detail.setModule("biospecimen");
+		detail.setName("specimen_label_print_rules");
+		detail.setValue("");
+		AuthUtil.setCurrentUser(daoFactory.getUserDao().getSystemUser());
+
+		cfgSvc.saveSetting(new RequestEvent<>(detail));
 	}
 }
