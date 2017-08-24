@@ -2,6 +2,7 @@ package com.krishagni.catissueplus.core.common.domain;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -17,14 +18,14 @@ import org.springframework.util.ReflectionUtils;
 import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 
-public class LabelPrintRule {
+public abstract class LabelPrintRule {
 	public enum CmdFileFmt {
 		CSV("csv"),
 		KEY_VALUE("key-value");
 
 		private String fmt;
 
-		private CmdFileFmt(String fmt) {
+		CmdFileFmt(String fmt) {
 			this.fmt = fmt;
 		}
 
@@ -200,22 +201,28 @@ public class LabelPrintRule {
 	}
 
 	public Map<String, String> toDefMap() {
-		Map<String, String> rule = null;
 		try {
-			rule = BeanUtils.describe(this);
+			Map<String, String> rule = new HashMap<>();
+			rule.put("labelType", getLabelType());
+			rule.put("ipAddressMatcher", getIpAddressRange(getIpAddressMatcher()));
+			rule.put("domainName", getDomainName());
+			rule.put("userLogin", getUserLogin());
+			rule.put("printerName", getPrinterName());
+			rule.put("cmdFilesDir", getCmdFilesDir());
+			rule.put("labelDesign", getLabelDesign());
 			rule.put("dataTokens", getTokenNames());
-			rule.put("ipAddressMatcher", getIpAddressRange(ipAddressMatcher));
-			rule.put("cmdFileFmt", cmdFileFmt.fmt);
-			rule.remove("messageSource");
+			rule.put("cmdFileFmt", getCmdFileFmt().fmt);
+			rule.putAll(getDefMap());
+			return rule;
 		} catch (Exception e) {
 			throw new RuntimeException("Error in creating map from print rule ", e);
 		}
-
-		return rule;
 	}
 
+	protected abstract Map<String, String> getDefMap();
+
 	protected boolean isWildCard(String str) {
-		return StringUtils.isNotBlank(str) && str.trim().equals("*");
+		return StringUtils.isBlank(str) || str.trim().equals("*");
 	}
 
 	private String getMessageStr(String name) {
@@ -231,13 +238,9 @@ public class LabelPrintRule {
 			return null;
 		}
 
-		String address = StringUtils.remove(getFieldValue(ipAddressMatcher, "requiredAddress").toString(), "/");
+		String address = getFieldValue(ipAddressMatcher, "requiredAddress").toString();
 		int maskBits = getFieldValue(ipAddressMatcher, "nMaskBits");
-		if (maskBits > 0) {
-			address += "/" + maskBits;
-		}
-
-		return address;
+		return address + maskBits;
 	}
 
 	private <T> T getFieldValue(Object obj, String fieldName) {

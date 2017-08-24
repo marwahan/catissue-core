@@ -106,16 +106,12 @@ public class PrintRuleConfig extends BaseEntity {
 	}
 
 	public void update(PrintRuleConfig rule) {
-		setActivityStatus(rule.getActivityStatus());
-		if (isDisabled()) {
-			return;
-		}
-
 		setObjectType(rule.getObjectType());
 		setInstitute(rule.getInstitute());
 		setUpdatedBy(rule.getUpdatedBy());
 		setUpdatedOn(rule.getUpdatedOn());
 		setRule(rule.getRule());
+		setActivityStatus(rule.getActivityStatus());
 	}
 
 	public void delete() {

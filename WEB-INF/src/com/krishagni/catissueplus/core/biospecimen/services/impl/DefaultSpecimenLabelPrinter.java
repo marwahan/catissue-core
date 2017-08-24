@@ -30,25 +30,26 @@ import com.krishagni.catissueplus.core.common.domain.LabelTmplTokenRegistrar;
 import com.krishagni.catissueplus.core.common.domain.PrintItem;
 import com.krishagni.catissueplus.core.common.domain.PrintRuleConfig;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
-import com.krishagni.catissueplus.core.common.events.ConfigSettingDetail;
-import com.krishagni.catissueplus.core.common.events.RequestEvent;
+import com.krishagni.catissueplus.core.common.service.ChangeLogService;
 import com.krishagni.catissueplus.core.common.service.ConfigChangeListener;
 import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 
 
-public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> implements InitializingBean, ConfigChangeListener {
+public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> implements InitializingBean {
 	private static final Log logger = LogFactory.getLog(DefaultSpecimenLabelPrinter.class);
 
-	private List<SpecimenLabelPrintRule> rules = new ArrayList<SpecimenLabelPrintRule>();
+	private List<SpecimenLabelPrintRule> rules = new ArrayList<>();
 	
 	private DaoFactory daoFactory;
 	
 	private ConfigurationService cfgSvc;
-	
+
 	private LabelTmplTokenRegistrar printLabelTokensRegistrar;
 	
 	private MessageSource messageSource;
+
+	private ChangeLogService changeLogSvc;
 
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
@@ -64,6 +65,10 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 
 	public void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
+	}
+
+	public void setChangeLogSvc(ChangeLogService changeLogSvc) {
+		this.changeLogSvc = changeLogSvc;
 	}
 
 	@Override
@@ -123,24 +128,19 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 	}	
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
-		reloadRules();
-		cfgSvc.registerChangeListener(ConfigParams.MODULE, this);
+	@PlusTransactional
+	public void afterPropertiesSet()
+	throws Exception {
+		boolean dbMigrationDone = changeLogSvc.doesChangeLogExists(PR_MIGRATION_ID, PR_MIGRATION_AUTHOR, PR_MIGRATION_FILE);
+		if (!dbMigrationDone && migrateRulesToDb()) {
+			changeLogSvc.insertChangeLog(PR_MIGRATION_ID, PR_MIGRATION_AUTHOR, PR_MIGRATION_FILE);
+		}
 	}
 	
-	@Override
-	public void onConfigChange(String name, String value) {
-		if (!name.equals(ConfigParams.SPECIMEN_LABEL_PRINT_RULES)) {
-			return;
-		}
-		
-		reloadRules();
-	}		
-		
-	private void reloadRules() {
+	private boolean migrateRulesToDb() {
 		FileDetail fileDetail = cfgSvc.getFileDetail(ConfigParams.MODULE, ConfigParams.SPECIMEN_LABEL_PRINT_RULES);
 		if (fileDetail == null || fileDetail.getFileIn() == null) {
-			return;
+			return true;
 		}
 
 		List<SpecimenLabelPrintRule> rules = new ArrayList<>();
@@ -156,19 +156,20 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 				}
 
 				rules.add(rule);
-				createPrintRuleConfig( rule);
 				logger.info(String.format("Adding print rule: [%s]", rule));
 			}
 
-			this.rules = rules;
+			saveToDb(rules);
+			return true;
 		} catch (Exception e) {
-			logger.error("Error loading rules from file: " + fileDetail.getFilename(), e);
+			logger.error("Error migrating print rules from file: " + fileDetail.getFilename(), e);
+			return false;
 		} finally {
 			IOUtils.closeQuietly(fileDetail.getFileIn());
 			IOUtils.closeQuietly(reader);
 		}
 	}
-	
+
 	//
 	// Format of each rule
 	// 	cp_short_title	visit_site	specimen_class	specimen_type
@@ -176,113 +177,93 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 	//	printer_name	dir_path
 	//
 	private SpecimenLabelPrintRule parseRule(String ruleLine) {
-		try {
-			if (ruleLine.startsWith("#")) {
-				return null;
-			}
-
-			String[] ruleLineFields = ruleLine.split("\\t");
-			if (ruleLineFields == null || ruleLineFields.length < 12 || ruleLineFields.length > 13) {
-				logger.error(String.format("Invalid rule [%s]. Expected variables: 12/13, Actual: [%d]", ruleLine, ruleLineFields.length));
-				return null;
-			}
-
-			int idx = 0;
-			SpecimenLabelPrintRule rule = new SpecimenLabelPrintRule();
-			rule.setCpShortTitle(ruleLineFields[idx++]);
-			rule.setVisitSite(ruleLineFields[idx++]);
-			rule.setSpecimenClass(ruleLineFields[idx++]);
-			rule.setSpecimenType(ruleLineFields[idx++]);
-			rule.setUserLogin(ruleLineFields[idx++]);
-
-			if (!ruleLineFields[idx++].equals("*")) {
-				rule.setIpAddressMatcher(new IpAddressMatcher(ruleLineFields[idx - 1]));
-			}
-			rule.setLabelType(ruleLineFields[idx++]);
-
-			String[] labelTokens = ruleLineFields[idx++].split(",");
-			boolean badTokens = false;
-
-			List<LabelTmplToken> tokens = new ArrayList<LabelTmplToken>();
-			for (String labelToken : labelTokens) {
-				LabelTmplToken token = printLabelTokensRegistrar.getToken(labelToken);
-				if (token == null) {
-					logger.error(String.format("Invalid rule [%s]. Unknown token: [%s]", ruleLine, labelToken));
-					badTokens = true;
-					break;
-				}
-
-				tokens.add(token);
-			}
-
-			if (badTokens) {
-				return null;
-			}
-
-			rule.setDataTokens(tokens);
-			rule.setLabelDesign(ruleLineFields[idx++]);
-			rule.setPrinterName(ruleLineFields[idx++]);
-			rule.setCmdFilesDir(ruleLineFields[idx++]);
-
-			if (!ruleLineFields[idx++].equals("*")) {
-				rule.setCmdFileFmt(ruleLineFields[idx - 1]);
-			}
-
-			rule.setLineage(ruleLineFields.length > 12 ? ruleLineFields[idx++] : "*");
-			rule.setMessageSource(messageSource);
-			return rule;
-		} catch (Exception e) {
-			logger.error("Error parsing rule: " + ruleLine, e);
+		if (ruleLine.startsWith("#")) {
+			return null;
 		}
-		
-		return null;
-	}
 
-	@PlusTransactional
-	private void createPrintRuleConfig(SpecimenLabelPrintRule rule) {
-		try {
-			PrintRuleConfig printRuleConfig = new PrintRuleConfig();
-
-			rule = createSpecimenLabelPrintRule(rule);
-
-			printRuleConfig.setObjectType("SPECIMEN");
-			printRuleConfig.setRule(rule);
-			printRuleConfig.setUpdatedBy(daoFactory.getUserDao().getSystemUser());
-			printRuleConfig.setUpdatedOn(Calendar.getInstance().getTime());
-			printRuleConfig.setActivityStatus(com.krishagni.catissueplus.core.common.util.Status.ACTIVITY_STATUS_ACTIVE.getStatus());
-
-			daoFactory.getPrintRuleConfigDao().saveOrUpdate(printRuleConfig);
-			deleteSpecimenLabelPrintRuleSettings();
-		} catch (Exception e) {
-			logger.error("Error saving rule: " + e);
+		String[] ruleLineFields = ruleLine.split("\\t");
+		if (ruleLineFields.length < 12 || ruleLineFields.length > 13) {
+			logger.error(String.format("Invalid rule [%s]. Expected variables: 12/13, Actual: [%d]", ruleLine, ruleLineFields.length));
+			return null;
 		}
-	}
 
-	private SpecimenLabelPrintRule createSpecimenLabelPrintRule(SpecimenLabelPrintRule rule) {
-		rule.setLabelType(getFieldValue(rule.getLabelType()));
-		rule.setUserLogin(getFieldValue(rule.getUserLogin()));
-		rule.setPrinterName(getFieldValue(rule.getPrinterName()));
-		rule.setCmdFileFmt(getFieldValue(rule.getCmdFileFmt().toString()));
-		rule.setLabelDesign(getFieldValue(rule.getLabelDesign()));
-		rule.setCpShortTitle(getFieldValue(rule.getCpShortTitle()));
-		rule.setVisitSite(getFieldValue(rule.getVisitSite()));
-		rule.setSpecimenClass(getFieldValue(rule.getSpecimenClass()));
-		rule.setSpecimenType(getFieldValue(rule.getSpecimenType()));
-		rule.setLineage(getFieldValue(rule.getLineage()));
+		int idx = 0;
+		SpecimenLabelPrintRule rule = new SpecimenLabelPrintRule();
+		rule.setCpShortTitle(ruleLineFields[idx++]);
+		rule.setVisitSite(ruleLineFields[idx++]);
+		rule.setSpecimenClass(ruleLineFields[idx++]);
+		rule.setSpecimenType(ruleLineFields[idx++]);
+		rule.setUserLogin(ruleLineFields[idx++]);
+
+		if (!ruleLineFields[idx++].equals("*")) {
+			rule.setIpAddressMatcher(new IpAddressMatcher(ruleLineFields[idx - 1]));
+		}
+		rule.setLabelType(ruleLineFields[idx++]);
+
+		List<LabelTmplToken> tokens = new ArrayList<>();
+		for (String labelToken : ruleLineFields[idx++].split(",")) {
+			LabelTmplToken token = printLabelTokensRegistrar.getToken(labelToken);
+			if (token == null) {
+				String errorMsg = String.format("Invalid rule [%s]. Unknown token: [%s]", ruleLine, labelToken);
+				throw new IllegalArgumentException(errorMsg);
+			}
+
+			tokens.add(token);
+		}
+
+		rule.setDataTokens(tokens);
+		rule.setLabelDesign(ruleLineFields[idx++]);
+		rule.setPrinterName(ruleLineFields[idx++]);
+		rule.setCmdFilesDir(ruleLineFields[idx++]);
+
+		if (!ruleLineFields[idx++].equals("*")) {
+			rule.setCmdFileFmt(ruleLineFields[idx - 1]);
+		}
+
+		rule.setLineage(ruleLineFields.length > 12 ? ruleLineFields[idx++] : "*");
+		rule.setMessageSource(messageSource);
 		return rule;
 	}
 
-	private String getFieldValue(String input) {
+	private void saveToDb(List<SpecimenLabelPrintRule> rules) {
+		User systemUser = daoFactory.getUserDao().getSystemUser();
+		for (SpecimenLabelPrintRule rule : rules) {
+			PrintRuleConfig ruleCfg = getPrintRuleConfig(rule, systemUser);
+			daoFactory.getPrintRuleConfigDao().saveOrUpdate(ruleCfg);
+		}
+	}
+
+	private PrintRuleConfig getPrintRuleConfig(SpecimenLabelPrintRule rule, User systemUser) {
+		PrintRuleConfig printRuleConfig = new PrintRuleConfig();
+		printRuleConfig.setObjectType("SPECIMEN");
+		printRuleConfig.setRule(replaceWildcardsWithNull(rule));
+		printRuleConfig.setUpdatedBy(systemUser);
+		printRuleConfig.setUpdatedOn(Calendar.getInstance().getTime());
+		printRuleConfig.setActivityStatus("Active");
+		return printRuleConfig;
+	}
+
+	private SpecimenLabelPrintRule replaceWildcardsWithNull(SpecimenLabelPrintRule rule) {
+		rule.setCpShortTitle(replaceWildcardWithNull(rule.getCpShortTitle()));
+		rule.setVisitSite(replaceWildcardWithNull(rule.getVisitSite()));
+		rule.setLineage(replaceWildcardWithNull(rule.getLineage()));
+		rule.setSpecimenClass(replaceWildcardWithNull(rule.getSpecimenClass()));
+		rule.setSpecimenType(replaceWildcardWithNull(rule.getSpecimenType()));
+		rule.setUserLogin(replaceWildcardWithNull(rule.getUserLogin()));
+		rule.setLabelType(replaceWildcardWithNull(rule.getLabelType()));
+		rule.setLabelDesign(replaceWildcardWithNull(rule.getLabelDesign()));
+		rule.setCmdFileFmt(replaceWildcardWithNull(rule.getCmdFileFmt().toString()));
+		rule.setPrinterName(replaceWildcardWithNull(rule.getPrinterName()));
+		return rule;
+	}
+
+	private String replaceWildcardWithNull(String input) {
 		return StringUtils.equals(input, "*") ? null : input;
 	}
 
-	private void deleteSpecimenLabelPrintRuleSettings() {
-		ConfigSettingDetail detail = new ConfigSettingDetail();
-		detail.setModule("biospecimen");
-		detail.setName("specimen_label_print_rules");
-		detail.setValue("");
-		AuthUtil.setCurrentUser(daoFactory.getUserDao().getSystemUser());
+	private static final String PR_MIGRATION_ID = "Migration of specimen print rules to DB";
 
-		cfgSvc.saveSetting(new RequestEvent<>(detail));
-	}
+	private static final String PR_MIGRATION_AUTHOR = "$system";
+
+	private static final String PR_MIGRATION_FILE = "specimen-print-rules.csv";
 }

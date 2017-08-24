@@ -70,7 +70,7 @@ public class PrintRuleConfigServiceImpl implements PrintRuleConfigService {
 	@PlusTransactional
 	public ResponseEvent<PrintRuleConfigDetail> createPrintRuleConfig(RequestEvent<PrintRuleConfigDetail> req) {
 		try {
-			//AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
 
 			PrintRuleConfig rule = printRuleConfigFactory.createPrintRuleConfig(req.getPayload());
 			daoFactory.getPrintRuleConfigDao().saveOrUpdate(rule);
