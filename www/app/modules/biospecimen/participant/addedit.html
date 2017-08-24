@@ -31,7 +31,7 @@
 </div>
 
 <script type="text/ng-template" id="modules/biospecimen/participant/lookup.html">
-  <form name="lform" class="form-horizontal" os-form-validator="lform" validator="lformValidator" novalidate>
+  <form name="pform" class="form-horizontal" os-form-validator="pform" validator="pformValidator" novalidate>
     <div ng-switch on="fieldsCtx.lookupFields && fieldsCtx.lookupFields.length > 0">
       <div ng-switch-when="true">
         <sde-form-fields base-fields="fieldsCtx.sysDict" fields="fieldsCtx.lookupFields"
@@ -55,6 +55,9 @@
         <button class="btn btn-primary" os-form-submit="lookup()" ng-switch on="partCtx.twoStep">
           <span ng-switch-when="true" translate="participant.buttons.lookup">Lookup</span>
           <span ng-switch-default translate="participant.buttons.register">Register</span>
+        </button>
+        <button class="btn btn-primary" os-form-submit="lookup(true)" ng-if="!partCtx.twoStep && !!partCtx.firstCpEvent">
+          <span translate="participant.buttons.register_n_collect">Register & Collect</span>
         </button>
         <button class="btn os-btn-text" ng-click="back()">
           <span translate="common.buttons.discard">Discard</span>
@@ -123,7 +126,7 @@
 </script>
 
 <script type="text/ng-template" id="modules/biospecimen/participant/choose-match.html">
-  <form name="lform" class="form-horizontal" os-form-validator="lform" validator="lformValidator" novalidate>
+  <form name="pform" class="form-horizontal" os-form-validator="pform" validator="pformValidator" novalidate>
     <div class="alert alert-warning os-participant-matching-msg">
       <span translate="participant.similar_participants">
         Following matching participant(s) found 
@@ -248,6 +251,9 @@
             <button class="btn btn-primary" os-form-submit="register()" ng-switch on="!!cpr.id">
               <span ng-switch-when="true" translate="participant.buttons.update_registration"> Update </span>
               <span ng-switch-default translate="participant.buttons.register"> Register </span>
+            </button>
+            <button class="btn btn-primary" os-form-submit="register(true)" ng-if="!cpr.id && !!partCtx.firstCpEvent">
+              <span translate="participant.buttons.register_n_collect">Register & Collect</span>
             </button>
             <button class="btn os-btn-text" ng-click="previous()">
               <span translate="common.buttons.back">Back</span>

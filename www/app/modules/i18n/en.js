@@ -186,6 +186,9 @@
     "visit_name_fmt": "Visit Name Format",
     "manual_enabled_for": "User Inputs Allowed For",
     "bulk_part_reg_allowed": "Bulk Registrations",
+    "on_visit_completion": "On Visit Completion",
+    "coll_primary_spmns": "Collect Primary Specimens",
+    "coll_all_spmns": "Collect All Specimens",
     "pre_print_spmn_labels": "Pre-print Labels",
     "ppids": "Participant Protocol IDs",
     "visit_names": "Visit Names",
@@ -232,8 +235,9 @@
     "deleting_event": "Deleting Event...",
     "confirm_delete_event": "Collection Protocol Event and its specimen requirements will be deleted. Are you sure you want to proceed?",
 
-    "bulk_import": "Biospecimen Data",
+    "bulk_import": "Import",
     "bulk_import_biospecimen_obj_jobs": "Import Biospecimen Objects Job List",
+    "export": "Export",
 
     "show_site_coding": "Show Site Code Information",
     "hide_site_coding": "Hide Site Code Information",
@@ -392,6 +396,8 @@
     "confirm_anonymize": "Are you sure you want to erase all PHI data of participant?",
     "anonymized_successfully": "Successfully erased participant PHI data",
     "other_cps": "Other Registered Protocols",
+    "ppids": "Participant Protocol IDs",
+    "ppids_csv": "Comma separated list of participant protocol IDs",
 
     "bulk_registration": "Bulk Participant Registration",
     "num_of_participants": "Number of Participants",
@@ -431,6 +437,7 @@
     
     "buttons": {
       "register": "Add Participant",
+      "register_n_collect": "Proceed to Collection",
       "lookup_add_part": "Lookup and Add Participant",
       "update_registration": "Update",
       "register_selected_participant": "Register Selected Participant",
@@ -463,7 +470,8 @@
       "collected_specimens_count": "Count of Collected Specimens",
       "search": "Click to filter Participants",
       "bulk_register": "Click to register participants",
-      "specimen_catalog": "Click to view collection protocol specimens"
+      "specimen_catalog": "Click to view collection protocol specimens",
+      "collect_spmns": "Collect Specimens"
     },
 
     "specimen_kit": {
@@ -479,7 +487,8 @@
     "title": "Visit",
     "list": "Visits",
     "occurred_visits": "Occurred Visits",
-    "collection_status": "Collection Status",
+    "collection_status": "Collection Stats",
+    "storage_utilization": "Utilization Stats",
     "anticipated_visits": "Anticipated Visits",
     "missed_visits": "Missed Visits",
     "missed_by": "Missed By",
@@ -497,6 +506,8 @@
     "reason_for_missed_visit": "Reason for Missed Visit",
     "comments": "Comments",
     "unplanned_visit": "Unplanned Visit",
+    "names": "Visit Names",
+    "names_csv": "Comma separated list of visit names",
 
     "names_print_job_created": "Visit names print job {{jobId}} created successfully",
 
@@ -525,6 +536,7 @@
       "edit_visit": "Edit Visit",
       "collect_planned_specimens": "Collect Planned Specimens",
       "collect_unplanned_specimens": "Collect Unplanned Specimens",
+      "collect_pending_specimens": "Collect Pending Specimens",
       "print_specimen_labels": "Print Specimen Labels",
       "new_visit": "New Visit",
       "missed_visit": "Missed Visit"
@@ -615,6 +627,8 @@
     "aliquot_specs": "Aliquots Specifications",
     "review_locations": "Review Locations",
     "assign_locations": "Choose Locations",
+    "labels": "Specimen Labels",
+    "labels_csv": "Comma separated list of specimen labels",
 
     "reason_for_closing": "Reason for closing",
 
@@ -638,6 +652,12 @@
     "visit_name": "Visit Name",
     "visit_date": "Visit Date",
     "visit_site": "Visit Site",
+    "utilization": {
+      "stored": "Stored",
+      "virtual": "Virtual",
+      "distributed": "Distributed",
+      "no_specimens": "No Specimens"
+    },
 
     "labels_print_job_created": "Specimen labels print job {{jobId}} created successfully",
     "spmn_aliquots": "Specimen Aliquots",
@@ -1014,6 +1034,9 @@
     "delete_users":  "Are you sure you want to delete selected users?",
     "users_deleted": "Users deleted successfully",
     "admin_access_req": "Super administrator rights required to delete admin users: {{adminUsers}}.",
+    "lock_users": "Lock",
+    "user_locked": "User locked successfully",
+    "users_locked": "Users locked successfully",
 
     "user_roles": "User Roles",
     "bulk_import_users": "Import Users",
@@ -1064,7 +1087,8 @@
       "cp_count": "Collection Protocol(s)",
       "last_login": "Last logged date",
       "user_since": "User since (years)",
-      "search": "Click to search Users"
+      "search": "Click to search Users",
+      "lock_users": "Click to lock selected users"
     },
       
     "menu": {
@@ -1127,6 +1151,7 @@
     "auto_name": "Auto",
     "name": "Name",
     "barcode": "Barcode",
+    "name_or_barcode": "Name / Barcode",
     "type": "Type",
     "create_container": "Create Storage Container",
     "parent_container": "Parent Container",
@@ -1703,7 +1728,12 @@
   },
 
   "export": {
-    "job_submitted": "Export job {{id}} submitted. Link to download records file will be sent by email."
+    "title": "Export Records",
+    "initiated": "Export records has been initiated. Records file download should start in few moments...",
+    "downloading_file": "Downloading records file",
+    "file_will_be_emailed": "Export records job {{id}} is taking longer time to finish. Link to download records file will be sent to you by e-mail",
+    "failed": "Export job {{id}} failed with errors. Please contact system administrator for help!",
+    "select_record_type": "Record Type"
   },
 
   "specimen_kit": {
@@ -1771,6 +1801,7 @@
     "specimens_removed_from_user_default_list": "Specimens sucessfully removed from {{owner.firstName}} {{owner.lastName}}'s default cart",
     "specimens_removed_from_normal_list": "Specimens sucessfully removed from cart {{name}}",
     "distribute": "Distribute",
+    "distribute_all": "Distribute All",
     "ship": "Ship",
     "no_specimens_for_deletion": "Please select at least one specimen for deletion",
     "no_specimens_for_distribution": "Please select at least one specimen to create distribution order",
@@ -2278,7 +2309,9 @@
         "server_port": "Email Server Port",
         "server_port_desc": "Email server port.",
         "starttls_enabled": "StartTLS",
-        "starttls_enabled_desc": "Enable if StartTLS is to be used for your email server."
+        "starttls_enabled_desc": "Enable if StartTLS is to be used for your email server.",
+        "admin_phone_no": "Administrator Phone Number",
+        "admin_phone_no_desc": "Phone number of the OpenSpecimen administrator displayed in emails sent from OpenSpecimen. Users can call on this number to receive help, log support tickets etc."
       },
 
       "notifications": {
@@ -2295,8 +2328,6 @@
         "email_specimen_list_shared_desc": "Send an email when a specimen cart is shared with one or more users.",
         "email_users_created": "User Created",
         "email_users_created_desc": "Send an email when a new user is created.",
-        "email_users_forgot_password_link": "Forgot Password Link",
-        "email_users_forgot_password_link_desc": "Send forgot password link email.",
         "email_users_new_user_request": "User Signup Request",
         "email_users_new_user_request_desc": "Send an email to admnistrator when a new user signs up.",
         "email_users_passwd_changed": "User Password Changed",
