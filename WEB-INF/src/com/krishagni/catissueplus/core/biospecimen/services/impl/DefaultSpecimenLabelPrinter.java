@@ -252,7 +252,6 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 		rule.setUserLogin(replaceWildcardWithNull(rule.getUserLogin()));
 		rule.setLabelType(replaceWildcardWithNull(rule.getLabelType()));
 		rule.setLabelDesign(replaceWildcardWithNull(rule.getLabelDesign()));
-		rule.setCmdFileFmt(replaceWildcardWithNull(rule.getCmdFileFmt().toString()));
 		rule.setPrinterName(replaceWildcardWithNull(rule.getPrinterName()));
 		return rule;
 	}

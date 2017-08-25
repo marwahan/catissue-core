@@ -37,14 +37,14 @@ public class ChangeLogServiceImpl implements ChangeLogService {
 			.setParameter("id", id)
 			.setParameter("author", author)
 			.setParameter("filename", filename)
-			.setParameter("dateexecuted", Calendar.getInstance().getTime())
-			.setParameter("orderexecuted", orderNo + 1)
+			.setParameter("executionDate", Calendar.getInstance().getTime())
+			.setParameter("executionOrder", orderNo + 1)
 			.executeUpdate();
 	}
 
 	private static final String GET_CHANGE_LOG_COUNT_SQL =
 		"select " +
-		"  count(*) as cnt" +
+		"  count(*) as cnt " +
 		"from " +
 		"  databasechangelog " +
 		"where " +
