@@ -9,6 +9,7 @@ import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.domain.PrintRuleConfig;
+import com.krishagni.catissueplus.core.common.domain.PrintRuleEvent;
 import com.krishagni.catissueplus.core.common.domain.factory.PrintRuleConfigFactory;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.errors.PrintRuleConfigErrorCode;
@@ -73,7 +74,8 @@ public class PrintRuleConfigServiceImpl implements PrintRuleConfigService {
 			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
 
 			PrintRuleConfig rule = printRuleConfigFactory.createPrintRuleConfig(req.getPayload());
-			daoFactory.getPrintRuleConfigDao().saveOrUpdate(rule);
+			daoFactory.getPrintRuleConfigDao().saveOrUpdate(rule, true);
+			EventPublisher.getInstance().publish(PrintRuleEvent.CREATED, rule);
 			return ResponseEvent.response(PrintRuleConfigDetail.from(rule));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -100,6 +102,7 @@ public class PrintRuleConfigServiceImpl implements PrintRuleConfigService {
 
 			PrintRuleConfig rule = printRuleConfigFactory.createPrintRuleConfig(detail);
 			existing.update(rule);
+			EventPublisher.getInstance().publish(PrintRuleEvent.DELETED, existing);
 			return ResponseEvent.response(PrintRuleConfigDetail.from(existing));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -125,12 +128,17 @@ public class PrintRuleConfigServiceImpl implements PrintRuleConfigService {
 				throw OpenSpecimenException.userError(PrintRuleConfigErrorCode.NOT_FOUND, ruleIds, ruleIds.size());
 			}
 
-			rules.forEach(PrintRuleConfig::delete);
+			rules.forEach(this::deleteRule);
 			return ResponseEvent.response(PrintRuleConfigDetail.from(rules));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
 			return ResponseEvent.serverError(e);
 		}
+	}
+
+	private void deleteRule(PrintRuleConfig rule) {
+		rule.delete();
+		EventPublisher.getInstance().publish(PrintRuleEvent.DELETED, rule);
 	}
 }

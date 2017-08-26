@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.MessageSource;
+import org.springframework.context.ApplicationListener;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,16 +31,17 @@ import com.krishagni.catissueplus.core.common.domain.LabelTmplTokenRegistrar;
 import com.krishagni.catissueplus.core.common.domain.PrintItem;
 import com.krishagni.catissueplus.core.common.domain.PrintRuleConfig;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.events.OpenSpecimenEvent;
+import com.krishagni.catissueplus.core.common.repository.PrintRuleConfigsListCriteria;
 import com.krishagni.catissueplus.core.common.service.ChangeLogService;
-import com.krishagni.catissueplus.core.common.service.ConfigChangeListener;
 import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 
 
-public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> implements InitializingBean {
+public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> implements InitializingBean, ApplicationListener<OpenSpecimenEvent> {
 	private static final Log logger = LogFactory.getLog(DefaultSpecimenLabelPrinter.class);
 
-	private List<SpecimenLabelPrintRule> rules = new ArrayList<>();
+	private List<SpecimenLabelPrintRule> rules = null;
 	
 	private DaoFactory daoFactory;
 	
@@ -47,8 +49,6 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 
 	private LabelTmplTokenRegistrar printLabelTokensRegistrar;
 	
-	private MessageSource messageSource;
-
 	private ChangeLogService changeLogSvc;
 
 	public void setDaoFactory(DaoFactory daoFactory) {
@@ -63,10 +63,6 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 		this.printLabelTokensRegistrar = printLabelTokensRegistrar;
 	}
 
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-
 	public void setChangeLogSvc(ChangeLogService changeLogSvc) {
 		this.changeLogSvc = changeLogSvc;
 	}
@@ -79,6 +75,14 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 	@Override
 	public LabelPrintJob print(List<PrintItem<Specimen>> printItems) {		
 		try {
+			if (rules == null) {
+				synchronized (this) {
+					if (rules == null) {
+						loadRulesFromDb();
+					}
+				}
+			}
+
 			String ipAddr = AuthUtil.getRemoteAddr();
 			User currentUser = AuthUtil.getCurrentUser();
 			
@@ -87,7 +91,7 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 			job.setSubmittedBy(currentUser);
 			job.setItemType(Specimen.getEntityName());
 
-			List<Map<String, Object>> labelDataList = new ArrayList<Map<String,Object>>();
+			List<Map<String, Object>> labelDataList = new ArrayList<>();
 			for (PrintItem<Specimen> printItem : printItems) {				
 				boolean found = false;
 				Specimen specimen = printItem.getObject();
@@ -141,7 +145,12 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 			changeLogSvc.insertChangeLog(PR_MIGRATION_ID, PR_MIGRATION_AUTHOR, PR_MIGRATION_FILE);
 		}
 	}
-	
+
+	@Override
+	public void onApplicationEvent(OpenSpecimenEvent event) {
+		loadRulesFromDb();
+	}
+
 	private boolean migrateRulesToDb() {
 		FileDetail fileDetail = cfgSvc.getFileDetail(ConfigParams.MODULE, ConfigParams.SPECIMEN_LABEL_PRINT_RULES);
 		if (fileDetail == null || fileDetail.getFileIn() == null) {
@@ -226,7 +235,6 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 		}
 
 		rule.setLineage(ruleLineFields.length > 12 ? ruleLineFields[idx++] : "*");
-		rule.setMessageSource(messageSource);
 		return rule;
 	}
 
@@ -263,6 +271,18 @@ public class DefaultSpecimenLabelPrinter extends AbstractLabelPrinter<Specimen> 
 
 	private String replaceWildcardWithNull(String input) {
 		return StringUtils.equals(input, "*") ? null : input;
+	}
+
+	private void loadRulesFromDb() {
+		try {
+			this.rules = daoFactory.getPrintRuleConfigDao()
+				.getPrintRules(new PrintRuleConfigsListCriteria().objectType("SPECIMEN"))
+				.stream().map(pr -> (SpecimenLabelPrintRule)pr.getRule())
+				.collect(Collectors.toList());
+		} catch (Exception e) {
+			logger.error("Error loading specimen label print rules", e);
+			throw new RuntimeException("Error loading specimen label print rules", e);
+		}
 	}
 
 	private static final String PR_MIGRATION_ID = "Migration of specimen print rules to DB";

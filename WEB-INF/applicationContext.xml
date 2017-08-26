@@ -704,11 +704,11 @@
     </property>
   </bean>
 
-  <bean id="defaultSpecimenLabelPrinter" class="com.krishagni.catissueplus.core.biospecimen.services.impl.DefaultSpecimenLabelPrinter">
+  <bean id="defaultSpecimenLabelPrinter" class="com.krishagni.catissueplus.core.biospecimen.services.impl.DefaultSpecimenLabelPrinter"
+       depends-on="labelPrintRuleFactoryRegistrar">
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
     <property name="cfgSvc" ref="cfgSvc"/>
     <property name="printLabelTokensRegistrar" ref="specimenPrintLabelTokensRegistrar"/>
-    <property name="messageSource" ref="messageSource"/>
     <property name="changeLogSvc" ref="changeLogSvc"/>
   </bean>
  

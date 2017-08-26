@@ -66,6 +66,7 @@ public class SpecimenLabelPrintRuleFactoryImpl implements LabelPrintRuleFactory 
 
 	private void setLabelType(Map<String, String> input, SpecimenLabelPrintRule rule, OpenSpecimenException ose) {
 		if (StringUtils.isBlank(input.get("labelType"))) {
+			rule.setLabelType("Std");
 			return;
 		}
 
@@ -74,6 +75,7 @@ public class SpecimenLabelPrintRuleFactoryImpl implements LabelPrintRuleFactory 
 
 	private void setPrinterName(Map<String, String> input,SpecimenLabelPrintRule rule, OpenSpecimenException ose) {
 		if (StringUtils.isBlank(input.get("printerName"))) {
+			rule.setPrinterName("default");
 			return;
 		}
 

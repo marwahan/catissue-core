@@ -17,6 +17,7 @@ import org.springframework.util.ReflectionUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.util.MessageUtil;
 
 public abstract class LabelPrintRule {
 	public enum CmdFileFmt {
@@ -56,8 +57,6 @@ public abstract class LabelPrintRule {
 
 	private List<LabelTmplToken> dataTokens = new ArrayList<LabelTmplToken>();
 	
-	private MessageSource messageSource;
-
 	private CmdFileFmt cmdFileFmt = CmdFileFmt.KEY_VALUE;
 
 	public String getLabelType() {
@@ -124,14 +123,6 @@ public abstract class LabelPrintRule {
 		this.dataTokens = dataTokens;
 	}
 
-	public MessageSource getMessageSource() {
-		return messageSource;
-	}
-
-	public void setMessageSource(MessageSource messageSource) {
-		this.messageSource = messageSource;
-	}
-	
 	public CmdFileFmt getCmdFileFmt() {
 		return cmdFileFmt;
 	}
@@ -226,7 +217,7 @@ public abstract class LabelPrintRule {
 	}
 
 	private String getMessageStr(String name) {
-		return messageSource.getMessage("print_" + name, null, Locale.getDefault());
+		return MessageUtil.getInstance().getMessage("print_" + name, null);
 	}
 
 	private String getTokenNames() {
