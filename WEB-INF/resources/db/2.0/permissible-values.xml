@@ -475,9 +475,9 @@
           public_id = '2003991' or public_id = 'specimen_type'
       </sqlCheck>
     </preConditions>
-    <loadData file="db/2.0/permissible-values/specimen-class.csv" tableName="catissue_permissible_value">
-      <column name="identifier" type="NUMERIC"/>
-    </loadData>
+    <loadUpdateData file="db/2.0/permissible-values/specimen-class.csv" tableName="catissue_permissible_value" primaryKey="identifier">
+      <column name="identifier" type="COMPUTED"/>
+    </loadUpdateData>
   </changeSet>
   
   <changeSet id="Loading permissible values for attribute: specimen class and type" author="vratnaparkhi">
@@ -488,15 +488,19 @@
         select 
           case when (count(*) > 0) then 1 else 0 end 
         from 
-          catissue_permissible_value
+          catissue_permissible_value c
+          inner join catissue_permissible_value p ON(c.parent_identifier = p.identifier)
         where
-          public_id = '2003991'  
+          (p.public_id = '2003991' or p.public_id = 'specimen_type')
+          and c.value = 'RNA, poly-A enriched'
       </sqlCheck>
     </preConditions>
-    <loadData file="db/2.0/permissible-values/specimen-class-and-type.csv" tableName="catissue_permissible_value">
-      <column name="identifier" type="NUMERIC"/>
-      <column name="parent_identifier" type="NUMERIC"/>
-    </loadData>
+    <loadUpdateData file="db/2.0/permissible-values/specimen-class-and-type.csv" tableName="catissue_permissible_value" primaryKey="identifier">
+      <column name="identifier" type="COMPUTED"/>
+      <column name="parent_identifier" type="COMPUTED"/>
+      <column name="PUBLIC_ID" type="NUMERIC"/>
+      <column name="sortorder" type="NUMERIC"/>
+    </loadUpdateData>
   </changeSet>
   
   <changeSet id="Loading permissible values for attribute: scg collection status" author="vratnaparkhi">
