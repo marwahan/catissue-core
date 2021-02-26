@@ -45,10 +45,12 @@ public class CollectionEventDetail extends SpecimenEventDetail {
 		}
 
 		CollectionEventDetail ce = new CollectionEventDetail();
+		ce.setId(cre.getCollEventId());
 		ce.setContainer(cre.getCollContainer());
 		ce.setProcedure(cre.getCollProcedure());
 		ce.setTime(cre.getCollTime());
 		ce.setUser(UserSummary.from(cre.getCollector()));
+		ce.setComments(cre.getCollComments());
 		return ce;
 	}
 }

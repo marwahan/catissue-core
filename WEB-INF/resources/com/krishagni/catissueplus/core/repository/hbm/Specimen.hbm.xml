@@ -93,7 +93,10 @@
 
     <many-to-one name="specimenRequirement" column="REQ_SPECIMEN_ID"/>
 
-    <many-to-one name="collRecvDetails" column="IDENTIFIER" not-found="ignore" update="false" insert="false"/>
+    <set name="collRecvDetailsList" table="OS_SPMN_COLL_RECV_DETAILS_VIEW" inverse="true" mutable="false" batch-size="100">
+      <key column="SPECIMEN_ID"/>
+      <one-to-many class="com.krishagni.catissueplus.core.biospecimen.domain.SpecimenCollectionReceiveDetail"/>
+    </set>
 
     <set name="specimenListItems" table="CATISSUE_SPEC_TAG_ITEMS" lazy="true">
       <key column="OBJ_ID"/>

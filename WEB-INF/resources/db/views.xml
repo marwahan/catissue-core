@@ -79,9 +79,10 @@
     <createView viewName="OS_SPMN_COLL_RECV_DETAILS_VIEW" replaceIfExists="true">
       select
         h.descendent_id as specimen_id,
-        ccont.value as coll_container, cproc.value as coll_procedure,
-        col.user_id as collector_id, col.event_timestamp as coll_time,
-        rqual.value as recv_quality, rcv.user_id as receiver_id, rcv.event_timestamp as recv_time
+        col.identifier as coll_event_id, ccont.value as coll_container, cproc.value as coll_procedure,
+        col.user_id as collector_id, col.event_timestamp as coll_time, col.comments as coll_comments,
+        rcv.identifier as recv_event_id, rqual.value as recv_quality,
+        rcv.user_id as receiver_id, rcv.event_timestamp as recv_time, rcv.comments as recv_comments
       from
         catissue_specimen_hierarchy h
         inner join catissue_coll_event_param col on col.specimen_id = h.ancestor_id

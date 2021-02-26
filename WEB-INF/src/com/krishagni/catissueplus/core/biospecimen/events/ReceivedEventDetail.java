@@ -34,9 +34,11 @@ public class ReceivedEventDetail extends SpecimenEventDetail {
 		}
 
 		ReceivedEventDetail re = new ReceivedEventDetail();
+		re.setId(cre.getRecvEventId());
 		re.setReceivedQuality(cre.getRecvQuality());
 		re.setTime(cre.getRecvTime());
 		re.setUser(UserSummary.from(cre.getReceiver()));
+		re.setComments(cre.getRecvComments());
 		return re;
 	}
 }

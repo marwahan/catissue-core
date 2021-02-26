@@ -156,7 +156,7 @@ public class Specimen extends BaseExtensionEntity {
 	//
 	// Available for all specimens in hierarchy based on values set for primary specimens
 	//
-	private SpecimenCollectionReceiveDetail collRecvDetails;
+	private Set<SpecimenCollectionReceiveDetail> collRecvDetailsList;
 	
 	private List<SpecimenTransferEvent> transferEvents;
 	
@@ -609,11 +609,16 @@ public class Specimen extends BaseExtensionEntity {
 
 	@NotAudited
 	public SpecimenCollectionReceiveDetail getCollRecvDetails() {
-		return collRecvDetails;
+		return collRecvDetailsList != null && !collRecvDetailsList.isEmpty() ? collRecvDetailsList.iterator().next() : null;
 	}
 
-	public void setCollRecvDetails(SpecimenCollectionReceiveDetail collRecvDetails) {
-		this.collRecvDetails = collRecvDetails;
+	@NotAudited
+	public Set<SpecimenCollectionReceiveDetail> getCollRecvDetailsList() {
+		return collRecvDetailsList;
+	}
+
+	public void setCollRecvDetailsList(Set<SpecimenCollectionReceiveDetail> collRecvDetailsList) {
+		this.collRecvDetailsList = collRecvDetailsList;
 	}
 
 	@NotAudited
@@ -1668,7 +1673,7 @@ public class Specimen extends BaseExtensionEntity {
 	}
 
 	public static List<Specimen> sortByIds(Collection<Specimen> specimens, final List<Long> ids) {
-		List<Specimen> result = new ArrayList<Specimen>(specimens);
+		List<Specimen> result = new ArrayList<>(specimens);
 		Collections.sort(result, new Comparator<Specimen>() {
 			@Override
 			public int compare(Specimen s1, Specimen s2) {
