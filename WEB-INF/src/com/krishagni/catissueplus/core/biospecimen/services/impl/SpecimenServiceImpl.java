@@ -173,6 +173,8 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 			if (crit.includeExtensions()) {
 				createExtensions(crit.cpId(), specimens);
 				result = specimens.stream().map(s -> SpecimenDetail.from(s, false, true, true)).collect(Collectors.toList());
+			} else if (crit.minimalInfo()) {
+				result = specimens.stream().map(s -> toMinimalInfo(s)).collect(Collectors.toList());
 			} else {
 				result = SpecimenInfo.from(specimens);
 			}
@@ -188,6 +190,12 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 	@Override
 	@PlusTransactional
 	public ResponseEvent<List<? extends SpecimenInfo>> getSpecimensById(List<Long> ids, boolean includeExtensions) {
+		return getSpecimensById(ids, includeExtensions, false);
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<List<? extends SpecimenInfo>> getSpecimensById(List<Long> ids, boolean includeExtensions, boolean minimalInfo) {
 		try {
 			List<Specimen> specimens = getSpecimensById(ids);
 			specimens = Specimen.sortByIds(specimens, ids);
@@ -196,6 +204,8 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 			if (includeExtensions) {
 				createExtensions(null, specimens);
 				result = specimens.stream().map(s -> SpecimenDetail.from(s, false, true, true)).collect(Collectors.toList());
+			} else if (minimalInfo) {
+				result = specimens.stream().map(s -> toMinimalInfo(s)).collect(Collectors.toList());
 			} else {
 				result = SpecimenInfo.from(specimens);
 			}
@@ -1211,6 +1221,17 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 		for (Map.Entry<Long, List<Specimen>> cpSpmns : cpSpmnsMap.entrySet()) {
 			DeObject.createExtensions(true, Specimen.EXTN, cpSpmns.getKey(), cpSpmns.getValue());
 		}
+	}
+
+	private SpecimenInfo toMinimalInfo(Specimen spmn) {
+		SpecimenInfo info = new SpecimenInfo();
+		info.setId(spmn.getId());
+		info.setLabel(spmn.getLabel());
+		info.setBarcode(spmn.getBarcode());
+		info.setInitialQty(spmn.getInitialQuantity());
+		info.setAvailableQty(spmn.getAvailableQuantity());
+		info.setActivityStatus(spmn.getActivityStatus());
+		return info;
 	}
 
 	private Function<ExportJob, List<? extends Object>> getSpecimensGenerator() {

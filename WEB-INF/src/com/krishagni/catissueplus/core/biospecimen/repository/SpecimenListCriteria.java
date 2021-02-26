@@ -52,6 +52,8 @@ public class SpecimenListCriteria extends AbstractListCriteria<SpecimenListCrite
 
 	private Long reservedForDp;
 
+	private boolean minimalInfo;
+
 	@Override
 	public SpecimenListCriteria self() {		
 		return this;
@@ -278,6 +280,16 @@ public class SpecimenListCriteria extends AbstractListCriteria<SpecimenListCrite
 	@JsonProperty("reservedForDp")
 	public SpecimenListCriteria reservedForDp(Long reservedForDp) {
 		this.reservedForDp = reservedForDp;
+		return self();
+	}
+
+	public boolean minimalInfo() {
+		return minimalInfo;
+	}
+
+	@JsonProperty("minimalInfo")
+	public SpecimenListCriteria minimalInfo(boolean minimalInfo) {
+		this.minimalInfo = minimalInfo;
 		return self();
 	}
 }

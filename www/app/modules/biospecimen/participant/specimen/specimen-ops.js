@@ -161,18 +161,28 @@ angular.module('os.biospecimen.specimen')
         function(details) {
           if (details.distribute) {
             if (specimens) {
-              var r = specimens.find(function(spmn) { return !spmn.hasOwnProperty('label'); });
-              if (r) { // at least one specimen without label property
-                var spmnIds = specimens.map(function(spmn) {return spmn.id});
-                Specimen.getByIds(spmnIds).then(
-                  function(result) {
-                    distributeSpmns(scope, details, result);
-                  }
-                );
+              SettingUtil.getSetting('administrative', 'max_order_spmns_ui_limit').then(
+                function(setting) {
+                  var limit = (setting.value && +setting.value) || 100;
+                  var r = specimens.find(function(spmn) { return !spmn.hasOwnProperty('label'); });
+                  if (r) { // at least one specimen without label property
+                    var spmnIds = specimens.map(function(spmn) {return spmn.id});
+                    Specimen.getByIds(spmnIds, false, spmnIds.length > limit).then(
+                      function(result) {
+                        distributeSpmns(scope, details, result);
+                      }
+                    );
 
-                return;
-              }
+                    return;
+                  }
+
+                  distributeSpmns(scope, details, specimens);
+                }
+              );
+
+              return;
             }
+
             distributeSpmns(scope, details, specimens);
           } else {
             reserveSpmns(scope, details, specimens);

@@ -108,7 +108,10 @@ public class SpecimensController {
 			boolean exactMatch,
 
 			@RequestParam(value = "includeExtensions", required = false, defaultValue = "false")
-			boolean includeExtensions) {
+			boolean includeExtensions,
+
+			@RequestParam(value = "minimalInfo", required = false, defaultValue = "false")
+			boolean minimalInfo) {
 				
 		if (cprId != null) { // TODO: Move this to CPR controller
 			VisitSpecimensQueryCriteria crit = new VisitSpecimensQueryCriteria();
@@ -120,7 +123,7 @@ public class SpecimensController {
 			resp.throwErrorIfUnsuccessful();
 			return resp.getPayload();
 		} else if (CollectionUtils.isNotEmpty(ids)) {
-			ResponseEvent<List<? extends SpecimenInfo>> resp = specimenSvc.getSpecimensById(ids, includeExtensions);
+			ResponseEvent<List<? extends SpecimenInfo>> resp = specimenSvc.getSpecimensById(ids, includeExtensions, minimalInfo);
 			resp.throwErrorIfUnsuccessful();
 			return resp.getPayload();
 		} else if (CollectionUtils.isNotEmpty(labels) || CollectionUtils.isNotEmpty(barcodes)) {
