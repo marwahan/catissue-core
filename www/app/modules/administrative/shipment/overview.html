@@ -90,6 +90,11 @@
           <strong class="key key-sm" translate="shipments.receiver">Receiver</strong>
           <span class="value value-md">{{shipment.receiver | osUserDisplayName}}</span>
         </li>
+
+        <li class="item">
+          <strong class="key key-sm" translate="shipments.notify_users">Notify Users</strong>
+          <span class="value value-md">{{shipment.notifyUsers | osUserDisplayName | osNoValue}}</span>
+        </li>
       </ul>
     </div>
 
