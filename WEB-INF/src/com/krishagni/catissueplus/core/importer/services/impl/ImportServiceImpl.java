@@ -341,15 +341,19 @@ public class ImportServiceImpl implements ImportService, ApplicationListener<Con
 		}
 
 		Executors.newSingleThreadExecutor().submit(() -> {
-			try {
-				while ((System.currentTimeMillis() - lastRefreshTime) < 60 * 1000) {
-					Thread.sleep(10 * 1000);
-				}
+			while (true) {
+				try {
+					while ((System.currentTimeMillis() - lastRefreshTime) < 60 * 1000) {
+						Thread.sleep(10 * 1000);
+					}
 
-				logger.info("Starting bulk import jobs scheduler");
-				runImportJobScheduler();
-			} catch (Exception e) {
-				logger.fatal("Bulk import jobs scheduler thread got killed", e);
+					logger.info("Starting bulk import jobs scheduler");
+					runImportJobScheduler();
+				} catch (Throwable t) {
+					logger.fatal("Bulk import jobs thread stopped. Restarting the thread after 60 seconds.", t);
+				} finally {
+					lastRefreshTime = System.currentTimeMillis();
+				}
 			}
 		});
 	}
