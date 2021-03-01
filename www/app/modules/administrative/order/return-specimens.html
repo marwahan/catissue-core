@@ -100,14 +100,13 @@
                   <os-spmn-measure name="qty" md-input specimen="item.specimen" quantity="item.quantity"
                     ensure-range="[
                       {tgt: item.distQty, cmp: 'le', errorKey: 'retQtyGtDistQty'},
-                      {tgt: 0, cmp: 'gt', errorKey: 'distQtyLeZero'}
+                      {tgt: 0, cmp: 'gt', errorKey: 'retQtyLeZero'}
                     ]"
                     required ng-switch-when="true">
                   </os-spmn-measure>
                   <os-spmn-measure name="qty" md-input specimen="item.specimen" quantity="item.quantity"
                     ensure-range="[
-                      {tgt: item.distQty, cmp: 'le', errorKey: 'retQtyGtDistQty'},
-                      {tgt: 0, cmp: 'gt', errorKey: 'distQtyLeZero'}
+                      {tgt: item.distQty, cmp: 'le', errorKey: 'retQtyGtDistQty'}
                     ]"
                     ng-switch-default>
                   </os-spmn-measure>

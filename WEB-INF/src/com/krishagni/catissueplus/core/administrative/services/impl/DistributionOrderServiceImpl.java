@@ -1461,7 +1461,7 @@ public class DistributionOrderServiceImpl implements DistributionOrderService, O
 		}
 
 
-		if (NumUtil.lessThanEqualsZero(returnQty) || NumUtil.lessThan(item.getQuantity(), returnQty)) {
+		if (NumUtil.lessThanZero(returnQty) || NumUtil.lessThan(item.getQuantity(), returnQty)) {
 			raiseError(DistributionOrderErrorCode.INVALID_RETURN_QUANTITY, item.getSpecimen().getLabel(), returnQty);
 		}
 
