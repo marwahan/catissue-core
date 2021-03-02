@@ -432,8 +432,12 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           }
 
           $scope.visit = visit;
-          $scope.autoPosAllocate = !!$scope.cp.containerSelectionStrategy;
-        
+          $scope.autoAlloc = {
+            enabled: !!$scope.cp.containerSelectionStrategy,
+            manual: false,
+            rerun: false
+          }
+
           $scope.collDetail = {
             collector: undefined,
             collectionDate: new Date(),
@@ -678,7 +682,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
                 return;
               }
 
-              if (specimen.expanded) {
+              if (specimen.expanded || ($scope.autoAlloc.enabled && !$scope.autoAlloc.manual)) {
                 return;
               }
 
@@ -886,29 +890,48 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           if (!ignoreQtyWarning && !areAliquotsQtyOk($scope.specimens)) {
             return;
           }
+
+          function saveSpecimens0() {
+            var specimensToSave = getSpecimensToSave($scope.cp, $scope.specimens, []);
+            var savedSpmnReqIds = getSpmnReqIds(specimensToSave);
+            if (cp.specimenCentric || (!!$scope.visit.id && $scope.visit.status == 'Complete')) {
+              Specimen.save(specimensToSave).then(
+                function(savedSpecimens) {
+                  $scope.specimens.length = 0;
+                  displayCustomFieldGroups(savedSpmnReqIds, savedSpecimens);
+                }
+              );
+            } else {
+              var visitToSave = angular.copy($scope.visit);
+              visitToSave.status = 'Complete';
   
-          var specimensToSave = getSpecimensToSave($scope.cp, $scope.specimens, []);
-          var savedSpmnReqIds = getSpmnReqIds(specimensToSave);
-          if (cp.specimenCentric || (!!$scope.visit.id && $scope.visit.status == 'Complete')) {
-            Specimen.save(specimensToSave).then(
-              function(savedSpecimens) {
-                $scope.specimens.length = 0;
-                displayCustomFieldGroups(savedSpmnReqIds, savedSpecimens);
+              var payload = {visit: visitToSave, specimens: specimensToSave};
+              Visit.collectVisitAndSpecimens(payload).then(
+                function(result) {
+                  angular.extend(visit, result.data.visit);
+  
+                  $scope.specimens.length = 0;
+                  displayCustomFieldGroups(savedSpmnReqIds, result.data.specimens);
+                }
+              );
+            }
+          }
+
+          if ($scope.autoAlloc.enabled && $scope.autoAlloc.rerun) {
+            Util.showConfirm({
+              title: 'specimens.rerun_auto_allocation_q',
+              confirmMsg: 'specimens.rerun_auto_allocation',
+              okBtn: 'specimens.buttons.rerun_auto_alloc',
+              cancelBtn: 'specimens.buttons.proceed_collection',
+              ok: function() {
+                reallocatePositions();
+              },
+              cancel: function() {
+                saveSpecimens0();
               }
-            );
+            });
           } else {
-            var visitToSave = angular.copy($scope.visit);
-            visitToSave.status = 'Complete';
-  
-            var payload = {visit: visitToSave, specimens: specimensToSave};
-            Visit.collectVisitAndSpecimens(payload).then(
-              function(result) {
-                angular.extend(visit, result.data.visit);
-  
-                $scope.specimens.length = 0;
-                displayCustomFieldGroups(savedSpmnReqIds, result.data.specimens);
-              }
-            );
+            saveSpecimens0();
           }
         };
   
@@ -939,7 +962,9 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           if (!specimen) {
             return;
           }
-  
+
+
+          $scope.autoAlloc.rerun = true;
           angular.forEach(specimen.specimensPool, 
             function(poolSpmn) {
               poolSpmn.status = specimen.status;
@@ -1153,8 +1178,14 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
               spmn[prop] = inputs[$index];
               spmn.selected = true;
               spmn.removed = false;
+            } else {
+              spmn[prop] = null;
+              spmn.selected = false;
+              spmn.removed = true;
             }
           });
+
+          return newSpmnsCnt;
         }
   
         $scope.assignBarcodes = function(aliquot, barcodes) {
@@ -1165,7 +1196,8 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           $event.target.blur();
           getScannedLabels(specimen, 'aliquotBarcodes', 'specimens.aliquot_barcodes', 'specimens.scan_aliquot_barcodes').then(
             function() {
-              assignInputs(specimen, specimen.aliquotBarcodes, 'barcode');
+              var result = assignInputs(specimen, specimen.aliquotBarcodes, 'barcode');
+              $scope.autoAlloc.rerun = $scope.autoAlloc.rerun || (result != 0);
             }
           );
         }
@@ -1178,7 +1210,9 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           $event.target.blur();
           getScannedLabels(specimen, 'aliquotLabels', 'specimens.aliquot_labels', 'specimens.scan_aliquot_labels').then(
             function() {
-              assignInputs(specimen, specimen.aliquotLabels, 'label');
+              var result = assignInputs(specimen, specimen.aliquotLabels, 'label');
+              $scope.autoAlloc.rerun = $scope.autoAlloc.rerun || (result != 0);
+              alert($scope.autoAlloc.rerun);
             }
           );
         }
@@ -1206,9 +1240,11 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
   
           if (specimen.newAliquotsCnt < grpLen) {
             removeAliquotsFromGrp(specimen, grpLen - specimen.newAliquotsCnt);
-          } else {
+            $scope.autoAlloc.rerun = true;
+          } else if (specimen.newAliquotsCnt > grpLen) {
             ignoreQtyWarning = false;
             addAliquotsToGrp(specimen, specimen.newAliquotsCnt - grpLen);
+            $scope.autoAlloc.rerun = true;
           }     
   
           Util.hidePopovers();
@@ -1218,7 +1254,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           Util.hidePopovers();
         }
   
-        $scope.reallocatePositions = function() {
+        var reallocatePositions = $scope.reallocatePositions = function() {
           var specimens = [];
           var reservationId = undefined;
           for (var i = 0; i < $scope.specimens.length; ++i) {
@@ -1231,7 +1267,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
               continue;
             }
   
-            if (spmn.status == 'Collected') {
+            if (spmn.status == 'Collected' && spmn.selected) {
               spmn.status = '';
               specimens.push(spmn);
             } else {
@@ -1239,8 +1275,13 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
             }
           }
   
+          var msg = Alerts.info('specimens.running_auto_allocation', {}, false);
           function reassignSelectedStatus() {
+            Alerts.remove(msg);
             angular.forEach(specimens, function(spmn) { spmn.status = 'Collected'; });
+            $scope.autoAlloc.rerun = false;
+            $scope.autoAlloc.manual = false;
+            Alerts.success('specimens.finished_auto_allocation');
           }
   
           CollectSpecimensSvc.allocatePositions(visit, specimens, reservationId)
@@ -1255,7 +1296,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
         $scope.selectPositionsManually = function(action) {
           $q.when(CollectSpecimensSvc.cancelReservation($scope.specimens)).then(
             function() {
-              $scope.autoPosAllocate = false;
+              $scope.autoAlloc.manual = true;
               angular.forEach($scope.specimens,
                 function(spmn) {
                   var loc = spmn.storageLocation;

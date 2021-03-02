@@ -899,6 +899,11 @@
     "hide_pending":"Hide Pending",
     "show_pending": "Show Pending",
 
+    "rerun_auto_allocation_q": "Rerun container auto allocation?",
+    "rerun_auto_allocation": "Specimens were either added or removed or their status changed. Do you want to rerun the container auto allocation?",
+    "running_auto_allocation": "Container auto allocation in progress. Please wait for a moment...",
+    "finished_auto_allocation": "Container auto allocation completed!",
+
     "col_event": {
       "title": "Collection Details",
       "user_time": "User and Time",
@@ -941,7 +946,9 @@
       "add_specimen": "Add Specimen",
       "distribute": "Distribute",
       "copy_last_aliquots": "Copy Last (including Aliquots)",
-      "print_current": "No, only current specimen"
+      "print_current": "No, only current specimen",
+      "rerun_auto_alloc": "Yes, rerun",
+      "proceed_collection": "No, proceed with the submission"
     },
 
     "tooltip": {

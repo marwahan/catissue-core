@@ -23,17 +23,17 @@
                   <span class="fa fa-caret-down"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                  <li ng-if="autoPosAllocate">
+                  <li ng-if="autoAlloc.enabled">
                     <a ng-click="reallocatePositions()">
                       <span translate="specimens.reallocate">Reallocate</span>
                     </a>
                   </li>
-                  <li ng-if="autoPosAllocate">
+                  <li ng-if="autoAlloc.enabled && !autoAlloc.manual">
                     <a ng-click="selectPositionsManually(0)">
                       <span translate="specimens.manual_selection">Manual selection</span>
                     </a>
                   </li>
-                  <li ng-if="!autoPosAllocate">
+                  <li ng-if="!autoAlloc.enabled || autoAlloc.manual">
                     <a ng-click="applyFirstLocationToAll()">
                       <span translate="common.copy_first_to_all">Copy first to all</span>
                     </a>
@@ -183,7 +183,8 @@
           <div os-field-error field="sform.qty"></div>
         </td>
         <td class="col os-col-25" ng-if="storeSpmnsAllowed"
-          ng-style="!autoPosAllocate && {'overflow': 'visible'}" ng-switch on="autoPosAllocate">
+          ng-style="(!autoAlloc.enabled || autoAlloc.manual) && {'overflow': 'visible'}"
+          ng-switch on="autoAlloc.enabled && !autoAlloc.manual">
           <span ng-switch-when="true">
             <os-disp-storage-position position="specimen.storageLocation"></os-disp-storage-position>
           </span>
