@@ -1016,16 +1016,6 @@
     </property>
   </bean>
 
-  <bean id="importQueryForms" class="com.krishagni.catissueplus.core.init.ImportQueryForms">
-    <property name="txnMgr" ref="transactionManager"/>
-    <property name="userDao" ref="userDao"/>
-    <property name="daoFactory" ref="deDaoFactory"/>
-    <property name="deInitializer" ref="deInitializer"/>
-    <property name="templateService" ref="templateService"/>
-    <property name="querySvc" ref="querySvc"/>
-    <property name="cfgSvc" ref="cfgSvc"/>
-  </bean>
-
   <bean id="importSpeForms" class="com.krishagni.catissueplus.core.init.ImportSpecimenEventForms">
     <property name="txnMgr" ref="transactionManager"/>
     <property name="userDao" ref="userDao"/>
