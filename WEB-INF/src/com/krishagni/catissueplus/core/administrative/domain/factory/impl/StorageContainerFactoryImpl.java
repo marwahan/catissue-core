@@ -185,6 +185,10 @@ public class StorageContainerFactoryImpl implements StorageContainerFactory {
 	}
 	
 	private void setBarcode(StorageContainerDetail detail, StorageContainer container, OpenSpecimenException ose) {
+		if (StringUtils.isBlank(detail.getBarcode())) {
+			return;
+		}
+
 		container.setBarcode(detail.getBarcode());
 	}
 	
