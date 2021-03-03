@@ -77,15 +77,23 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
 		}
 
 		searchTerm = searchTerm.toLowerCase();
+		String[] pairs = searchTerm.split(":", 2);
+		searchTerm = pairs[pairs.length - 1];
+
+		String entity = null;
+		if (pairs.length > 1) {
+			entity = pairs[0];
+		}
+
 		if (AuthUtil.isAdmin()) {
-			List<SearchEntityKeyword> entities = daoFactory.getSearchEntityKeywordDao().getMatches(searchTerm, maxResults);
+			List<SearchEntityKeyword> matches = daoFactory.getSearchEntityKeywordDao().getMatches(entity, searchTerm, maxResults);
 			Set<String> seenEntities = new HashSet<>();
 
 			List<SearchResult> results = new ArrayList<>();
-			for (SearchEntityKeyword entity : entities) {
-				String entityKey = entity.getEntity() + "-" + entity.getEntityId();
+			for (SearchEntityKeyword match : matches) {
+				String entityKey = match.getEntity() + "-" + match.getEntityId();
 				if (seenEntities.add(entityKey)) {
-					results.add(SearchResult.from(entity));
+					results.add(SearchResult.from(match));
 				}
 			}
 
@@ -94,15 +102,15 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
 			return results;
 		}
 
-		List<String> entities = daoFactory.getSearchEntityKeywordDao().getMatchingEntities(searchTerm);
+		List<String> matchingEntities = daoFactory.getSearchEntityKeywordDao().getMatchingEntities(entity, searchTerm);
 		Map<String, Integer> rankMap = new HashMap<>();
 		List<SearchResult> results = new ArrayList<>();
 
 		int rank = 0;
-		for (String entity : entities) {
-			rankMap.put(entity, ++rank);
+		for (String matchedEntity : matchingEntities) {
+			rankMap.put(matchedEntity, ++rank);
 
-			SearchResultProcessor proc = resultProcessors.get(entity);
+			SearchResultProcessor proc = resultProcessors.get(matchedEntity);
 			if (proc == null) {
 				continue;
 			}

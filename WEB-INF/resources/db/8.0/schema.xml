@@ -12,4 +12,10 @@
       </column>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vpawar" id="Add short names to the keyword search entities">
+    <addColumn tableName="OS_SEARCH_ENTITY_RANKS">
+      <column name="SHORT_NAME" type="${text.type}(32)"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>
