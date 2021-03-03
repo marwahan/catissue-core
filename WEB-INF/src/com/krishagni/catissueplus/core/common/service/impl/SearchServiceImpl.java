@@ -78,11 +78,11 @@ public class SearchServiceImpl implements SearchService, InitializingBean {
 
 		searchTerm = searchTerm.toLowerCase();
 		String[] pairs = searchTerm.split(":", 2);
-		searchTerm = pairs[pairs.length - 1];
+		searchTerm = pairs[pairs.length - 1].trim();
 
 		String entity = null;
 		if (pairs.length > 1) {
-			entity = pairs[0];
+			entity = pairs[0].trim();
 		}
 
 		if (AuthUtil.isAdmin()) {
