@@ -422,9 +422,9 @@
         <name>customFields</name>
         <udn>customFields</udn>
         <caption>#getMessage("participant_field_extensions")</caption>
-        <table>OS_PARTICIPANT_CUST_FIELDS</table>
-        <foreignKey>PARTICIPANT_ID</foreignKey>
-        <parentKey>PARTICIPANT_ID</parentKey>
+        <table>OS_CPR_CUST_FIELDS</table>
+        <foreignKey>CPR_ID</foreignKey>
+        <parentKey>CPR_ID</parentKey>
         <pathLink>true</pathLink>
         <extnFkCol>RECORD_ID</extnFkCol>
       </subForm>

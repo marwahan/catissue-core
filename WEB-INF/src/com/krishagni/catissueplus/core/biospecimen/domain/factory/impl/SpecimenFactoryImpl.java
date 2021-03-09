@@ -178,7 +178,7 @@ public class SpecimenFactoryImpl implements SpecimenFactory {
 	}
 
 	private void setBarcode(SpecimenDetail detail, Specimen specimen, OpenSpecimenException ose) {
-		if(StringUtils.isBlank(detail.getBarcode())) {
+		if (StringUtils.isBlank(detail.getBarcode())) {
 			return;
 		}
 

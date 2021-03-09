@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <changeSet author="vpawar" id="Registration custom fields record IDs">
+    <sql>
+      insert into
+        os_cpr_cust_fields (cpr_id, form_id, record_id)
+      select
+        cpr.identifier as cpr_id, fc.container_id as form_id, re.record_id
+      from
+        catissue_form_record_entry re
+        inner join catissue_form_context fc on fc.identifier = re.form_ctxt_id
+        inner join catissue_participant p on p.identifier = re.object_id
+        inner join catissue_coll_prot_reg cpr
+          on (cpr.participant_id = p.identifier and (cpr.collection_protocol_id = fc.cp_id or fc.cp_id = -1))
+      where
+        fc.entity_type = 'ParticipantExtension' and
+        fc.deleted_on is null and
+        re.activity_status = 'ACTIVE'
+    </sql>
+  </changeSet>
+</databaseChangeLog>
