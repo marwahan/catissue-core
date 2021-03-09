@@ -64,7 +64,7 @@ angular.module('os.administrative.form.entities', ['os.common'])
 
     list.addItem({
       name: 'User',
-      caption: '', key: 'entities.user',
+      caption: '', key: 'entities.user_forms',
       allCps: true, multipleRecs: true
     });
 

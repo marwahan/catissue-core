@@ -2143,7 +2143,7 @@
     "dp_req_extension": "DP Requirement Custom Fields",
     "order_extension": "Order Custom Fields",
     "container_extension": "Container Custom Fields",
-    "user": "User Forms"
+    "user_forms": "User Forms"
   },
 
   "bulk_imports": {
