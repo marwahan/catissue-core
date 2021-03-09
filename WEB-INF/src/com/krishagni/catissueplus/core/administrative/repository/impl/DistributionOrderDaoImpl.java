@@ -145,6 +145,16 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 	}
 
 	@Override
+	public DistributionOrderItem getOrderItem(Long orderId, String spmnLabel) {
+		return (DistributionOrderItem) getCurrentSession().createCriteria(DistributionOrderItem.class, "item")
+			.createAlias("item.order", "order")
+			.createAlias("item.specimen", "spmn")
+			.add(Restrictions.eq("order.id", orderId))
+			.add(Restrictions.eq("spmn.label", spmnLabel).ignoreCase())
+			.uniqueResult();
+	}
+
+	@Override
 	public void saveOrUpdateOrderItem(DistributionOrderItem item) {
 		getCurrentSession().saveOrUpdate(item);
 	}

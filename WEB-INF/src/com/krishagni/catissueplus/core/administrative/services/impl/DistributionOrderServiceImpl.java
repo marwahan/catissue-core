@@ -1428,7 +1428,7 @@ public class DistributionOrderServiceImpl implements DistributionOrderService, O
 			ordersMap.put(order.getName(), order);
 		}
 
-		DistributionOrderItem item = order.getItemBySpecimen(label);
+		DistributionOrderItem item = daoFactory.getDistributionOrderDao().getOrderItem(order.getId(), label);
 		if (item == null) {
 			throw OpenSpecimenException.userError(DistributionOrderErrorCode.SPMN_NOT_FOUND, label, orderName);
 		}
@@ -1456,12 +1456,14 @@ public class DistributionOrderServiceImpl implements DistributionOrderService, O
 	}
 
 	private void setItemReturnedQty(DistributionOrderItem item, BigDecimal returnQty) {
-		if (returnQty == null && item.getQuantity() != null) {
+		BigDecimal distQty = item.getQuantity();
+		if (returnQty == null && distQty != null) {
 			throw OpenSpecimenException.userError(DistributionOrderErrorCode.RETURN_QTY_REQ, item.getSpecimen().getLabel());
 		}
 
-
-		if (NumUtil.lessThanZero(returnQty) || NumUtil.lessThan(item.getQuantity(), returnQty)) {
+		if (NumUtil.lessThanZero(returnQty) || // returnQty < 0
+			NumUtil.lessThan(distQty, returnQty) || // distQty < returnQty
+			(NumUtil.greaterThanZero(distQty) && NumUtil.isZero(returnQty))) { // distQty > 0 && returnQty == 0
 			raiseError(DistributionOrderErrorCode.INVALID_RETURN_QUANTITY, item.getSpecimen().getLabel(), returnQty);
 		}
 
