@@ -1389,8 +1389,12 @@ public class CollectionProtocolServiceImpl implements CollectionProtocolService,
 		}
 
 		Set<Site> cpSites = cp.getRepositories();
-		if (cpSites.stream().anyMatch(cpSite -> !cpSite.getInstitute().equals(AuthUtil.getCurrentUserInstitute()))) {
-			throw OpenSpecimenException.userError(CpErrorCode.CREATOR_DOES_NOT_BELONG_CP_REPOS);
+		String inaccessibleSites = cpSites.stream()
+			.filter(cpSite -> !cpSite.getInstitute().equals(AuthUtil.getCurrentUserInstitute()))
+			.map(Site::getName)
+			.collect(Collectors.joining(","));
+		if (!inaccessibleSites.isEmpty()) {
+			throw OpenSpecimenException.userError(CpErrorCode.CREATOR_DOES_NOT_BELONG_CP_REPOS, inaccessibleSites);
 		}
 	}
 	
