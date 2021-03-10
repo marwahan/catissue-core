@@ -340,5 +340,17 @@
         usr.identifier = :userId and
         cp.activity_status != 'Disabled'
     </sql-query>
+
+    <sql-query name="getContainersWithCpRestrictions">
+      <return-scalar column="container_name" type="string"/>
+
+      select
+        c.name as container_name
+      from
+        os_storage_containers c
+        inner join os_stor_container_cps ccps
+      where
+        c.site_id in (:siteIds) and ccps.cp_id = :cpId
+    </sql-query>
   </class>
 </hibernate-mapping>

@@ -63,6 +63,8 @@ public enum CpErrorCode implements ErrorCode {
 
 	USED_SITES,
 
+	USED_CONT_RESTRICTION,
+
 	SOP_DOC_NOT_FOUND,
 
 	SOP_DOC_MOVED_OR_DELETED,

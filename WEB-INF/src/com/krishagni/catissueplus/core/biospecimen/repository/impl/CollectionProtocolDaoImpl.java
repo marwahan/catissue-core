@@ -356,7 +356,16 @@ public class CollectionProtocolDaoImpl extends AbstractDao<CollectionProtocol> i
 				.list();
 		return CollectionUtils.isNotEmpty(result);
 	}
-		
+
+	@Override
+	public List<String> getDependentContainers(Long cpId, Collection<Long> siteIds) {
+		return getCurrentSession().getNamedQuery(GET_DEPENDENT_CONTAINERS)
+			.setParameter("cpId", cpId)
+			.setParameterList("siteIds", siteIds)
+			.setMaxResults(10)
+			.list();
+	}
+
 	@Override
 	public Class<CollectionProtocol> getType() {
 		return CollectionProtocol.class;
@@ -521,7 +530,9 @@ public class CollectionProtocolDaoImpl extends AbstractDao<CollectionProtocol> i
 	private static final String GET_CONSENT_TIER_BY_STATEMENT = FQN + ".getConsentTierByStatement";
 	
 	private static final String GET_CONSENT_RESP_COUNT = FQN + ".getConsentResponsesCount";
-		
+
+	private static final String GET_DEPENDENT_CONTAINERS = FQN + ".getContainersWithCpRestrictions";
+
 	private static final String CPE_FQN = CollectionProtocolEvent.class.getName();
 	
 	private static final String GET_CPE_BY_IDS = CPE_FQN + ".getCpeByIds";

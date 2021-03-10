@@ -81,4 +81,6 @@ public interface CollectionProtocolDao extends Dao<CollectionProtocol> {
 	public int getConsentRespsCount(Long consentId);
 
 	public boolean anyBarcodingEnabledCpExists();
+
+	public List<String> getDependentContainers(Long cpId, Collection<Long> siteIds);
 }

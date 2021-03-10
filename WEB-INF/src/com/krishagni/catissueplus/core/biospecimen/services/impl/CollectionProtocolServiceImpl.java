@@ -1459,6 +1459,11 @@ public class CollectionProtocolServiceImpl implements CollectionProtocolService,
 			String siteLabels = counts.keySet().stream().collect(Collectors.joining(", "));
 			throw OpenSpecimenException.userError(CpErrorCode.USED_SITES, siteLabels, counts.size());
 		}
+
+		List<String> containers = daoFactory.getCollectionProtocolDao().getDependentContainers(cp.getId(), siteIds);
+		if (!containers.isEmpty()) {
+			throw OpenSpecimenException.userError(CpErrorCode.USED_CONT_RESTRICTION, StringUtils.join(containers, ","), containers.size());
+		}
 	}
 
 	private void fixSopDocumentName(CollectionProtocol cp) {
