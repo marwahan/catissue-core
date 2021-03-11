@@ -1070,6 +1070,26 @@ angular.module('os.biospecimen.participant',
         parent: 'signed-in'
       });
   })
+  .filter('mrnText', function() {
+    return function(pmi) {
+      if (!pmi) {
+        return '';
+      }
+
+      if (pmi instanceof Array) {
+        var result = [];
+        angular.forEach(pmi, function(mrn) {
+          result.push(mrn.siteName + (mrn.mrn ? ' (' + mrn.mrn + ')' : ''));
+        });
+
+        return result.join(', ');
+      } else if (typeof pmi == 'object') {
+        return pmi.siteName + (pmi.mrn ? ' (' + pmi.mrn + ')' : '');
+      }
+
+      return '';
+    }
+  })
   .run(function(QuickSearchSvc) {
     var opts = {caption: 'entities.participant', state: 'participant-detail.overview'};
     QuickSearchSvc.register('collection_protocol_registration', opts);

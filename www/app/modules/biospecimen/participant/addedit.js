@@ -144,6 +144,7 @@ angular.module('os.biospecimen.participant.addedit', ['os.biospecimen.models', '
       ).map(
         function(field) {
           var result = angular.copy(field);
+          result.displayFormat = result.formatType;
           result.formatType = result.type;
           result.type = 'span'
           return result;
