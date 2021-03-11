@@ -238,6 +238,7 @@ public abstract class LabelPrintRule {
 			rule.put("labelType", getLabelType());
 			rule.put("ipAddressMatcher", getIpAddressRange(getIpAddressMatcher()));
 			rule.put("users", getUsersList(ufn));
+			rule.put("$$users", getUsersInDisplayNameFmt());
 			rule.put("printerName", getPrinterName());
 			rule.put("cmdFilesDir", getCmdFilesDir());
 			rule.put("labelDesign", getLabelDesign());
@@ -302,5 +303,9 @@ public abstract class LabelPrintRule {
 	private String getUsersList(boolean ufn) {
 		Function<User, String> mapper = ufn ? (u) -> u.getLoginName() : (u) -> u.getId().toString();
 		return Utility.nullSafeStream(getUsers()).map(mapper).collect(Collectors.joining(","));
+	}
+
+	private String getUsersInDisplayNameFmt() {
+		return Utility.nullSafeStream(getUsers()).map(User::formattedName).collect(Collectors.joining(", "));
 	}
 }
