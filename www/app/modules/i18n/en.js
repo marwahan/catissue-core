@@ -2030,6 +2030,13 @@
     "excl_rollup": "Exclude Rollup For",
     "select_excl_rollup": "Select fields that should be excluded from rollup",
 
+    "restrict_spmns_by": "Restrict By",
+    "restrict_by_participant": "Participant",
+    "restrict_by_parent_specimen": "Parent Specimen",
+    "min_qty": "Min. Quantity",
+    "max_qty": "Max. Quantity",
+    "specimenqty_rpt_no_qty": "No quantity restrictions. Specify either min. or max. or both quantities!",
+
     "expr_toolbar": {
       "and": "AND",
       "or":  "OR",
@@ -2072,7 +2079,8 @@
     "reporting": {
       "none": "None",
       "crosstab": "Pivot Table",
-      "columnsummary": "Column Summary"
+      "columnsummary": "Column Summary",
+      "specimenqty": "Specimen Quantity Restriction"
     },
 
     "tooltip": {

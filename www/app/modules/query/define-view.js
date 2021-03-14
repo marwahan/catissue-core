@@ -28,7 +28,8 @@ angular.module('os.query.defineview', ['os.query.models'])
           $scope.reportingOpts = [
             {type: 'none',          label: $translate.instant('queries.reporting.none')},
             {type: 'crosstab',      label: $translate.instant('queries.reporting.crosstab')},
-            {type: 'columnsummary', label: $translate.instant('queries.reporting.columnsummary')}
+            {type: 'columnsummary', label: $translate.instant('queries.reporting.columnsummary')},
+            {type: 'specimenqty',   label: $translate.instant('queries.reporting.specimenqty')}
           ];
         }
       );
@@ -86,6 +87,17 @@ angular.module('os.query.defineview', ['os.query.models'])
           Alerts.error('queries.no_total_or_avg_fields');
           return;
         }
+      } else if ($scope.reporting.type == 'specimenqty') {
+        if (!rptParams.restrictBy) {
+          Alerts.error('queries.specimenqty_rpt_no_restrict_by');
+          return;
+        }
+
+        if ((rptParams.minQty == undefined || rptParams.minQty == null || rptParams.minQty.trim() == '') &&
+            (rptParams.maxQty == undefined || rptParams.maxQty == null || rptParams.maxQty.trim() == '')) {
+          Alerts.error('queries.specimenqty_rpt_no_qty');
+          return;
+        }
       }
 
       sanitizeSelectedFields($scope.selectedFields);
@@ -136,6 +148,8 @@ angular.module('os.query.defineview', ['os.query.models'])
       } else if (type == 'columnsummary') {
         $scope.reporting = {type: 'columnsummary', params: {sum: [], avg: []}};
         $scope.prepareColumnSummaryReportOpts();
+      } else if (type == 'specimenqty') {
+        $scope.reporting = {type: 'specimenqty', params: {restrictBy: 'participant'}};
       } else {
         $scope.reporting = {type: '', params: {}};
       } 

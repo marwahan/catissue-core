@@ -361,6 +361,14 @@ angular.module('os.query.util', ['os.query.models', 'os.query.save'])
         return '';
       }
 
+      if (reporting.type == 'specimenqty') {
+        return 'specimenqty("' +
+          reporting.params.restrictBy + '", "' +
+          (reporting.params.minQty || -1) + '", "' +
+          (reporting.params.maxQty || - 1) + '"' +
+        ')';
+      }
+
       var rptFields = getReportFields(selectedFields, true);
       if (reporting.type == 'columnsummary') {
         return getColumnSummaryRptExpr(rptFields, reporting);

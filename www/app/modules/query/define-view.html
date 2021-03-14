@@ -288,6 +288,42 @@
           </div>
         </div>
       </div>
+
+      <div ng-if="reporting.type == 'specimenqty'">
+        <div class="form-group">
+          <label class="control-label os-col-20">
+            <span translate="queries.restrict_spmns_by">Restrict By</span>
+          </label>
+          <div class="os-col-80">
+            <label class="radio-inline">
+              <input type="radio" name="restrictBy" ng-model="reporting.params.restrictBy" ng-value="'participant'">
+              <span translate="queries.restrict_by_participant">Participant</span>
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="restrictBy" ng-model="reporting.params.restrictBy" ng-value="'parent_specimen'">
+              <span translate="queries.restrict_by_parent_specimen">Parent Specimen</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label os-col-20">
+            <span translate="queries.min_qty">Min. Quantity</span>
+          </label>
+          <div class="os-col-20">
+            <input class="form-control" type="text" ng-model="reporting.params.minQty">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label os-col-20">
+            <span translate="queries.max_qty">Max. Quantity</span>
+          </label>
+          <div class="os-col-20">
+            <input class="form-control" type="text" ng-model="reporting.params.maxQty">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </script>

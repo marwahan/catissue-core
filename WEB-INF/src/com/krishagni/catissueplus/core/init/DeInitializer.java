@@ -18,12 +18,14 @@ import com.krishagni.catissueplus.core.de.ui.PvControlFactory;
 import com.krishagni.catissueplus.core.de.ui.SiteControlFactory;
 import com.krishagni.catissueplus.core.de.ui.StorageContainerControlFactory;
 import com.krishagni.catissueplus.core.de.ui.UserControlFactory;
+import com.krishagni.catissueplus.core.query.SpecimenQtyProcFactory;
 
 import edu.common.dynamicextensions.domain.nui.factory.ControlManager;
 import edu.common.dynamicextensions.napi.FormDataFilter;
 import edu.common.dynamicextensions.napi.FormDataManager;
 import edu.common.dynamicextensions.nutility.DeConfiguration;
 import edu.common.dynamicextensions.query.PathConfig;
+import edu.common.dynamicextensions.query.ResultPostProcManager;
 
 public class DeInitializer implements InitializingBean {
 	private static final String QUERY_PATH_CFG = "/com/krishagni/catissueplus/core/de/query/paths.xml";
@@ -116,6 +118,7 @@ public class DeInitializer implements InitializingBean {
 		});
 
 		setFormFilters();
+		ResultPostProcManager.getInstance().addFactory("specimenqty", new SpecimenQtyProcFactory());
 	}
 
 	private void setFormFilters() {
