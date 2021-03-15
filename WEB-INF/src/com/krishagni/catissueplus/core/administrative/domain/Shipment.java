@@ -430,7 +430,7 @@ public class Shipment extends BaseEntity {
 	}
 
 	private void updateNotifyUsers(Shipment other) {
-		if (getStatus() != Status.PENDING && getStatus() != Status.SHIPPED) {
+		if (!isPending()) {
 			return;
 		}
 
