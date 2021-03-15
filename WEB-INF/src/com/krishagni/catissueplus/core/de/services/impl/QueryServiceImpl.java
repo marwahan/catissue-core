@@ -1471,24 +1471,31 @@ public class QueryServiceImpl implements QueryService {
 			restriction = getRestriction(AuthUtil.getCurrentUser(), op.getCpId(), op.getCpGroupId());
 		}
 
-		query.compile(rootForm, aql, restriction);
-		QueryResponse queryResp = query.getData();
-		QueryResultData queryResult = queryResp.getResultData();
-		queryResult.setScreener(screener);
+		QueryResultData queryResult = null;
+		try {
+			query.compile(rootForm, aql, restriction);
+			QueryResponse queryResp = query.getData();
+			queryResult = queryResp.getResultData();
+			queryResult.setScreener(screener);
 
-		Collection<Object> values = new TreeSet<>();
-		for (Object[] row : queryResult.getRows()) {
-			if (row[0] != null && !row[0].toString().isEmpty()) {
-				values.add(row[0]);
+			Collection<Object> values = new TreeSet<>();
+			for (Object[] row : queryResult.getRows()) {
+				if (row[0] != null && !row[0].toString().isEmpty()) {
+					values.add(row[0]);
+				}
+			}
+
+			String[] columnLabels = queryResp.getResultData().getColumnLabels()[0].split("#");
+			FacetDetail result = new FacetDetail();
+			result.setExpr(facet);
+			result.setCaption(columnLabels[columnLabels.length - 1]);
+			result.setValues(values);
+			return result;
+		} finally {
+			if (queryResult != null) {
+				queryResult.close();
 			}
 		}
-
-		String[] columnLabels = queryResp.getResultData().getColumnLabels()[0].split("#");
-		FacetDetail result = new FacetDetail();
-		result.setExpr(facet);
-		result.setCaption(columnLabels[columnLabels.length - 1]);
-		result.setValues(values);
-		return result;
 	}
 
 	private void refreshConfig() {
@@ -1611,6 +1618,7 @@ public class QueryServiceImpl implements QueryService {
 		public Boolean call() {
 			SecurityContextHolder.getContext().setAuthentication(auth);
 
+			QueryResultData data = null;
 			try {
 				QueryResponse resp;
 				if (procFn == null) {
@@ -1618,7 +1626,7 @@ public class QueryServiceImpl implements QueryService {
 					resp = exporter.export(fout, query, getResultScreener(query));
 				} else {
 					resp = query.getData();
-					QueryResultData data = resp.getResultData();
+					data = resp.getResultData();
 					data.setScreener(getResultScreener(query));
 					procFn.accept(data, fout);
 				}
@@ -1630,6 +1638,9 @@ public class QueryServiceImpl implements QueryService {
 				throw OpenSpecimenException.serverError(e);
 			} finally {
 				IOUtils.closeQuietly(fout);
+				if (data != null) {
+					data.close();
+				}
 			}
 
 			return true;
