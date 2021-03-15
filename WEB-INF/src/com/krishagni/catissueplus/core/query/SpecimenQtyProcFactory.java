@@ -331,7 +331,7 @@ public class SpecimenQtyProcFactory implements ResultPostProcFactory {
 
 		if (restrictBy.equals("participant")) {
 			boolean hasParticipantId = queryExpr.getSelectList().getElements().stream()
-				.anyMatch(expr -> "Participant.id".equals(expr.getAql()));
+				.anyMatch(expr -> "Participant.id".equals(expr.getAql()) && !"$cprId".equals(expr.getLabel()));
 			if (!hasParticipantId) {
 				throw OpenSpecimenException.userError(
 					SavedQueryErrorCode.MALFORMED,
