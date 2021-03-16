@@ -259,7 +259,6 @@
     "show_adv_settings": "Show advanced settings",
     "hide_adv_settings": "Hide advanced settings",
     "misc_settings": "Miscellaneous Settings",
-    "visit_print_settings": "Visit Print Settings",
     "spmn_print_settings": "Specimen Print Settings",
     "when_to_print": "When to Print",
     "copies": "Copies",
@@ -385,13 +384,12 @@
     "container": {
       "title": "Container",
       "auto_alloc": "Auto Allocation",
-      "store_aliquots_same_box": "Store aliquots in same box"
-    },
-
-    "visit_name_print_modes": {
-      "PRE_PRINT": "Pre-print",
-      "ON_COMPLETION": "On Completion",
-      "NONE": "None"
+      "store_aliquots_same_box": "Store aliquots in the same box",
+      "auto_alloc_hints": {
+        "least-empty": "The container with the least number of vacant positions that can store the specimens in question is chosen first. This helps users to back fill positions freed up by specimens that are given away.",
+        "recently-used": "The container that was recently used to store specimens of the same type and CP, is chosen first.",
+        "aliquots-in-same-box": "All aliquots being created at once under a parent are stored in the same box."
+      }
     },
 
     "spmn_label_pre_print_modes": {
