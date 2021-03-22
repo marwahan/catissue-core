@@ -33,6 +33,8 @@ import edu.common.dynamicextensions.query.QueryResultData;
 public interface QueryService {	
 	ResponseEvent<SavedQueriesList> getSavedQueries(RequestEvent<ListSavedQueriesCriteria> req);
 
+	ResponseEvent<Long> getSavedQueriesCount(RequestEvent<ListSavedQueriesCriteria> req);
+
 	ResponseEvent<SavedQueryDetail> getSavedQuery(RequestEvent<Long> req);
 
 	ResponseEvent<SavedQueryDetail> saveQuery(RequestEvent<SavedQueryDetail> req);
@@ -70,6 +72,8 @@ public interface QueryService {
 	ResponseEvent<Long> deleteFolder(RequestEvent<Long> req);
 
 	ResponseEvent<SavedQueriesList> getFolderQueries(RequestEvent<ListFolderQueriesCriteria> req);
+
+	ResponseEvent<Long> getFolderQueriesCount(RequestEvent<ListFolderQueriesCriteria> req);
 
 	ResponseEvent<List<SavedQuerySummary>> updateFolderQueries(RequestEvent<UpdateFolderQueriesOp> req);
 

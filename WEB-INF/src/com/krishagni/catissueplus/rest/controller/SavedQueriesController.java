@@ -78,6 +78,23 @@ public class SavedQueriesController {
 		return response(querySvc.getSavedQueries(request(crit)));
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/count")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public Map<String, Long> getSavedQueriesCount(
+		@RequestParam(value = "cpId", required = false)
+		Long cpId,
+
+		@RequestParam(value = "searchString", required = false, defaultValue = "")
+		String searchString) {
+
+		ListSavedQueriesCriteria crit = new ListSavedQueriesCriteria()
+			.cpId(cpId)
+			.query(searchString);
+		Long count = response(querySvc.getSavedQueriesCount(request(crit)));
+		return Collections.singletonMap("count", count);
+	}
+
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody

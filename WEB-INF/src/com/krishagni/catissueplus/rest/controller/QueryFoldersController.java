@@ -2,6 +2,7 @@ package com.krishagni.catissueplus.rest.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -113,7 +114,24 @@ public class QueryFoldersController {
 		
 		return response(querySvc.getFolderQueries(getRequest(crit)));
 	}
-	
+
+	@RequestMapping(method = RequestMethod.GET, value="/{folderId}/saved-queries-count")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public Map<String, Object> getFolderQueriesCount(
+		@PathVariable("folderId")
+		Long folderId,
+
+		@RequestParam(value = "searchString", required = false, defaultValue = "")
+		String searchString) {
+
+		ListFolderQueriesCriteria crit = new ListFolderQueriesCriteria()
+			.folderId(folderId)
+			.query(searchString);
+		Long count = response(querySvc.getFolderQueriesCount(getRequest(crit)));
+		return Collections.singletonMap("count", count);
+	}
+
 	@RequestMapping(method = RequestMethod.PUT, value="/{folderId}/saved-queries")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody

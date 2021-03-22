@@ -271,6 +271,23 @@ public class QueryServiceImpl implements QueryService {
 
 	@Override
 	@PlusTransactional
+	public ResponseEvent<Long> getSavedQueriesCount(RequestEvent<ListSavedQueriesCriteria> req) {
+		try {
+			ensureReadRights();
+
+			ListSavedQueriesCriteria crit = req.getPayload();
+			crit.userId(AuthUtil.getCurrentUser().getId());
+			Long count = daoFactory.getSavedQueryDao().getQueriesCount(crit.ids(null).notInIds(null));
+			return ResponseEvent.response(count);
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+
+	@Override
+	@PlusTransactional
 	public ResponseEvent<SavedQueryDetail> getSavedQuery(RequestEvent<Long> req) {
 		try {
 			ensureReadRights();
@@ -712,7 +729,31 @@ public class QueryServiceImpl implements QueryService {
 			return ResponseEvent.serverError(e);
 		}
 	}
-	
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<Long> getFolderQueriesCount(RequestEvent<ListFolderQueriesCriteria> req) {
+		try {
+			ensureReadRights();
+
+			ListFolderQueriesCriteria crit = req.getPayload();
+			QueryFolder folder = daoFactory.getQueryFolderDao().getQueryFolder(crit.folderId());
+			if (folder == null) {
+				return ResponseEvent.userError(SavedQueryErrorCode.FOLDER_NOT_FOUND);
+			}
+
+			User user = AuthUtil.getCurrentUser();
+			if (!user.isAdmin() && !folder.canUserAccess(user.getId())) {
+				return ResponseEvent.userError(SavedQueryErrorCode.OP_NOT_ALLOWED);
+			}
+
+			Long count = daoFactory.getSavedQueryDao().getQueriesCountByFolderId(crit.folderId(), crit.query());
+			return ResponseEvent.response(count);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+
 	@Override
 	@PlusTransactional
 	public ResponseEvent<List<SavedQuerySummary>> updateFolderQueries(RequestEvent<UpdateFolderQueriesOp> req) {
