@@ -57,5 +57,9 @@ angular.module('os.administrative.shipment.list', ['os.administrative.models'])
       $scope.filterOpts.recvSite = undefined;
     }
 
+    $scope.pageSizeChanged = function() {
+      $scope.filterOpts.maxResults = $scope.pagerOpts.recordsPerPage + 1;
+    }
+
     init();
   });
