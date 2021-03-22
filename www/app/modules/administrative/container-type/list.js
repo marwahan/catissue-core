@@ -89,6 +89,10 @@ angular.module('os.administrative.containertype.list', ['os.administrative.model
       $state.go('container-type-detail.overview', {containerTypeId: containerType.id});
     };
 
+    $scope.pageSizeChanged = function() {
+      ctx.filterOpts.maxResults = pagerOpts.recordsPerPage + 1;
+    }
+
     init();
   });
 
