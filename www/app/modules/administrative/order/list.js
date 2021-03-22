@@ -66,5 +66,9 @@ angular.module('os.administrative.order.list', ['os.administrative.models'])
       $state.go('order-detail.overview', {orderId: order.id});
     }
 
+    $scope.pageSizeChanged = function() {
+      $scope.filterOpts.maxResults = $scope.pagerOpts.recordsPerPage + 1;
+    }
+
     init();
   });

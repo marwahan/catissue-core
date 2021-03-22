@@ -59,6 +59,5 @@ angular.module('os.biospecimen.specimenlist')
       ctx.filterOpts.maxResults = $scope.pagerOpts.recordsPerPage + 1;
     }
 
-
     init();
   });

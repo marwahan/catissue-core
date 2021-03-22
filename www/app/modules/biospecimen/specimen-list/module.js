@@ -14,7 +14,7 @@ angular.module('os.biospecimen.specimenlist',
         controller: 'SpecimenListsCtrl',
         resolve: {
           pagerOpts: function(ListPagerOpts) {
-            return new ListPagerOpts({recordsPerPage: 100});
+            return new ListPagerOpts({recordsPerPage: 50});
           },
           lists: function($stateParams, pagerOpts, SpecimenList, Util) {
             var defOpts = {includeStats: true, orderByStarred: true, maxResults: pagerOpts.recordsPerPage + 1};
