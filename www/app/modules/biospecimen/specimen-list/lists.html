@@ -97,23 +97,26 @@
 </div>
 
 <script type="text/ng-template" id="modules/biospecimen/specimen-list/search.html">
-  <div class="os-search">
-    <div class="os-head">
-      <h3 class="os-title" translate="specimen_list.filter_lists">
-        Filters
-      </h3>
-    </div>
-
-    <div class="os-body">
-      <div class="form-group">
-        <input os-md-input type="text" ng-model="ctx.filterOpts.name" class="form-control"
-          placeholder="{{'specimen_list.name' | translate}}">
-        <span translate="specimen_list.search_def_list_tip">
-          Use $$ to search users' default lists
-        </span>
+  <div>
+    <div class="os-search">
+      <div class="os-head">
+        <h3 class="os-title">
+          <span translate="specimen_list.filter_lists">Filters</span>
+        </h3>
       </div>
 
-      <os-clear-filters opts="ctx.filterOpts"></os-clear-filters>
+      <div class="os-body">
+        <div class="form-group">
+          <input os-md-input type="text" ng-model="ctx.filterOpts.name" class="form-control"
+            placeholder="{{'specimen_list.name' | translate}}">
+          <span translate="specimen_list.search_def_list_tip">
+            Use $$ to search users' default lists
+          </span>
+        </div>
+
+        <os-clear-filters opts="ctx.filterOpts"></os-clear-filters>
+      </div>
     </div>
+    <os-list-page-size opts="pagerOpts" on-change="pageSizeChanged()"></os-list-page-size>
   </div>
 </script>

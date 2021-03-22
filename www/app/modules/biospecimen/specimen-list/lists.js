@@ -55,5 +55,10 @@ angular.module('os.biospecimen.specimenlist')
       );
     }
 
+    $scope.pageSizeChanged = function() {
+      ctx.filterOpts.maxResults = $scope.pagerOpts.recordsPerPage + 1;
+    }
+
+
     init();
   });
