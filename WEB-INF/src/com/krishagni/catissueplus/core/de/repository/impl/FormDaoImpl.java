@@ -111,7 +111,8 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 
 	@Override
 	public Long getFormsCount(FormListCriteria crit) {
-		Number count = (Number) getListFormIdsQuery(crit).getExecutableCriteria(getCurrentSession())
+		Number count = (Number) getCurrentSession().createCriteria(Form.class, "f")
+			.add(Subqueries.propertyIn("f.id", getListFormIdsQuery(crit)))
 			.setProjection(Projections.rowCount())
 			.uniqueResult();
 		return count.longValue();

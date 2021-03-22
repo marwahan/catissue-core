@@ -63,7 +63,8 @@ public class SpecimenDaoImpl extends AbstractDao<Specimen> implements SpecimenDa
 	}
 
 	public Integer getSpecimensCount(SpecimenListCriteria crit) {
-		Number count = (Number) getSpecimenIdsQuery(crit).getExecutableCriteria(getCurrentSession())
+		Number count = (Number) getCurrentSession().createCriteria(Specimen.class, "s")
+			.add(Subqueries.propertyIn("s.id", getSpecimenIdsQuery(crit)))
 			.setProjection(Projections.rowCount())
 			.uniqueResult();
 		return count.intValue();
