@@ -3,7 +3,10 @@
     <div class="os-card">
       <div class="title" ng-if="!ctx[widget.name].searchMode">
         <div class="clearfix">
-          <h5 translate="{{widget.title}}"></h5>
+          <h5>
+            <span style="margin-right: 10px;" ng-show="!!widget.icon" ng-class="widget.icon"></span>
+            <span translate="{{widget.title}}"></span>
+          </h5>
           <span class="btns">
             <a class="btn btn-xs default" ng-click="openSearch(widget)">
               <span class="fa fa-search"></span>

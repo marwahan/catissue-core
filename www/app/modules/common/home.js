@@ -511,6 +511,7 @@ angular.module('openspecimen')
         {
           showIf: {resource: 'CollectionProtocol', operations: ['Read']},
           name: 'collection-protocols',
+          icon: 'fa fa-calendar',
           detailedList: 'cp-list',
           title: 'menu.collection_protocols',
           description: 'menu.cp_desc',
@@ -520,6 +521,7 @@ angular.module('openspecimen')
         {
           showIf: {resources: ['Specimen', 'PrimarySpecimen'], operations: ['Read']},
           name: 'specimen-lists',
+          icon: 'fa fa-shopping-cart',
           detailedList: 'specimen-lists',
           title: 'menu.specimen_lists',
           description: 'menu.specimen_lists_desc',
@@ -529,6 +531,7 @@ angular.module('openspecimen')
         {
           showIf: {resource: 'StorageContainer', operations: ['Read']},
           name: 'container-list',
+          icon: 'fa fa-dropbox',
           detailedList: 'container-list',
           title: 'menu.containers',
           description: 'menu.containers_desc',
@@ -538,6 +541,7 @@ angular.module('openspecimen')
         {
           showIf: {resource: 'Query', operations: ['Read']},
           name: 'query-list',
+          icon: 'fa fa-dashboard',
           detailedList: 'query-list',
           title: 'menu.queries',
           description: 'menu.queries_desc',
@@ -547,6 +551,7 @@ angular.module('openspecimen')
         {
           showIf: {resource: 'DistributionProtocol', operations: ['Read']},
           name: 'dp-list',
+          icon: 'fa fa-truck',
           detailedList: 'dp-list',
           title: 'menu.distribution_protocols',
           description: 'menu.dp_desc',
@@ -556,6 +561,7 @@ angular.module('openspecimen')
         {
           showIf: {resource: 'Order', operations: ['Read']},
           name: 'order-list',
+          icon: 'fa fa-share',
           detailedList: 'order-list',
           title: 'menu.distribution_orders',
           description: 'menu.distribution_orders_desc',
@@ -565,6 +571,7 @@ angular.module('openspecimen')
         {
           showIf: {resource: 'ShippingAndTracking', operations: ['Read']},
           name: 'shipment-list',
+          icon: 'fa fa-paper-plane-o',
           detailedList: 'shipment-list',
           title: 'menu.shipping_and_tracking',
           description: 'menu.shipping_and_tracking_desc',
