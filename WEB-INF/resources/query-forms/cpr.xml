@@ -422,7 +422,7 @@
         <name>customFields</name>
         <udn>customFields</udn>
         <caption>#getMessage("participant_field_extensions")</caption>
-        <table>OS_CPR_CUST_FIELDS</table>
+        <table>OS_CPR_CUST_FIELDS_VIEW</table>
         <foreignKey>CPR_ID</foreignKey>
         <parentKey>CPR_ID</parentKey>
         <pathLink>true</pathLink>

@@ -264,4 +264,20 @@
         inner join os_participant_extn_recs p on p.participant_id = cpr.participant_id
     </createView>
   </changeSet>
+
+  <changeSet author="vpawar" id="CPR custom fields rec IDs view" runOnChange="true">
+    <createView viewName="OS_CPR_CUST_FIELDS_VIEW" replaceIfExists="true">
+      select
+        cpr.identifier as cpr_id, pc.form_id, pc.record_id
+      from
+        os_participant_cust_fields pc
+        inner join catissue_coll_prot_reg cpr on cpr.participant_id = pc.participant_id
+        inner join catissue_form_context fc
+          on fc.identifier = pc.form_ctxt_id and fc.entity_type = 'ParticipantExtension' and
+            fc.container_id = pc.form_id and (fc.cp_id = cpr.collection_protocol_id or fc.cp_id = -1)
+      where
+        fc.deleted_on is null and
+        cpr.activity_status != 'Disabled'
+    </createView>
+  </changeSet>
 </databaseChangeLog>

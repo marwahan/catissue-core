@@ -5,18 +5,16 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <changeSet author="vpawar" id="Registration custom fields record IDs">
+  <changeSet author="vpawar" id="Participant custom fields record IDs">
     <sql>
       insert into
-        os_cpr_cust_fields (cpr_id, form_id, record_id)
+        os_participant_cust_fields (participant_id, form_ctxt_id, form_id, record_id)
       select
-        cpr.identifier as cpr_id, fc.container_id as form_id, re.record_id
+        p.identifier as participant_id, fc.identifier as form_ctxt_id, fc.container_id as form_id, re.record_id
       from
         catissue_form_record_entry re
         inner join catissue_form_context fc on fc.identifier = re.form_ctxt_id
         inner join catissue_participant p on p.identifier = re.object_id
-        inner join catissue_coll_prot_reg cpr
-          on (cpr.participant_id = p.identifier and (cpr.collection_protocol_id = fc.cp_id or fc.cp_id = -1))
       where
         fc.entity_type = 'ParticipantExtension' and
         fc.deleted_on is null and
