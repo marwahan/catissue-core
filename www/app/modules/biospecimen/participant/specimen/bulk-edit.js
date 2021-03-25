@@ -1,6 +1,6 @@
 angular.module('os.biospecimen.specimen')
   .controller('BulkEditSpecimensCtrl', function(
-      $scope, $timeout, $parse, hasSde, cpDict,
+      $scope, $timeout, $parse, hasSde, cpDict, customFields,
       Specimen, SpecimensHolder, PvManager, Util) {
 
       var EXCLUSION_LIST = [
@@ -17,7 +17,7 @@ angular.module('os.biospecimen.specimen')
         $scope.specimen = new Specimen();
 
         var spmnFields = [];
-        angular.forEach(cpDict.fields,
+        angular.forEach(cpDict.fields.concat(customFields),
           function(field) {
             if (field.name.indexOf('specimen') != 0 ||         // not specimen field
                 field.name.indexOf('specimen.events') == 0 ||  // event field

@@ -290,10 +290,19 @@ angular.module('os.biospecimen.extensions.util', [])
       } else if (deField.type == 'siteField') {
         sdeField.type = 'dropdown';
         sdeField.listSource = {
-          selectProp: 'id',
+          selectProp: 'name',
           displayProp: 'name',
+          queryParams : {
+            search: 'name'
+          },
           apiUrl: 'sites'
         };
+      } else if (deField.type == 'pvField') {
+        sdeField.type = 'pvs';
+        sdeField.attr = deField.attribute;
+        sdeField.showOnlyLeafValues = deField.leafNode;
+      } else if (deField.type == 'fileUpload') {
+        sdeField.type = 'file';
       } else if (deField.type == 'subForm') {
         sdeField.type = 'collection';
         sfPrefix = sfPrefix ? sfPrefix + '.' + deField.name : deField.name;

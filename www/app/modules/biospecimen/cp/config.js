@@ -1,6 +1,8 @@
 
 angular.module('openspecimen')
-  .factory('CpConfigSvc', function(CollectionProtocol, $q) {
+  .factory('CpConfigSvc', function(
+    $q, CollectionProtocol, CollectionProtocolRegistration, Visit, Specimen, Form, ExtensionsUtil) {
+
     var cpWorkflowsMap = {};
 
     var cpWorkflowsQ = {};
@@ -8,6 +10,8 @@ angular.module('openspecimen')
     var listCfgsMap = {};
 
     var summarySt = undefined;
+
+    var cpCustomFields = {};
     
     function getRegParticipantTmpl(cpId, cprId) {
       return getTmpl(cpId, cprId, 'registerParticipant', 'modules/biospecimen/participant/addedit.html');
@@ -172,6 +176,75 @@ angular.module('openspecimen')
       );
     }
 
+    function getFormFields(extnCtxtQ, prefix) {
+      return extnCtxtQ.then(
+        function(ctxt) {
+          if (!ctxt) {
+            return [];
+          }
+
+          return Form.getDefinition(ctxt.formId).then(
+            function(formDef) {
+              return ExtensionsUtil.toSdeFields(prefix, ctxt.formId, formDef);
+            }
+          );
+        }
+      );
+    }
+
+    function hasCustomFields(fields) {
+      return fields.some(
+        function(field) {
+          return field.name && field.name.indexOf('extensionDetail.attrsMap') >= 0;
+        }
+      );
+    }
+
+    function getCustomFields(cpId) {
+      var d = $q.defer();
+      var customFields = cpCustomFields[cpId];
+      if (customFields) {
+        d.resolve(customFields);
+        return d.promise;
+      }
+
+      var cprQ = getFormFields(
+        CollectionProtocolRegistration.getExtensionCtxt({cpId: cpId}),
+        'cpr.participant.extensionDetail.attrsMap'
+      );
+
+      var visitQ = getFormFields(
+        Visit.getExtensionCtxt({cpId: cpId}),
+        'visit.extensionDetail.attrsMap'
+      );
+
+      var spmnQ = getFormFields(
+        Specimen.getExtensionCtxt({cpId: cpId}),
+        'specimen.extensionDetail.attrsMap'
+      );
+
+      $q.all([cprQ, visitQ, spmnQ]).then(
+        function(fields) {
+          cpCustomFields[cpId] = {
+            cpr: fields[0] || [],
+            visit: fields[1] || [],
+            specimen: fields[2] || []
+          };
+          d.resolve(cpCustomFields[cpId]);
+        }
+      );
+
+      return d.promise;
+    }
+
+    function getEntityCustomFields(cpId, entity) {
+      return getCustomFields(cpId).then(
+        function(customFields) {
+          return customFields[entity] || {};
+        }
+      );
+    }
+
     return {
       getRegParticipantTmpl: function(cpId, cprId) {
         if (cprId != -1) { //edit case
@@ -222,7 +295,19 @@ angular.module('openspecimen')
 
             return getWorkflowData(-1, 'dictionary').then(
               function(sysDict) {
-                return sysDict.fields || defValue || [];
+                var fields = sysDict.fields || defValue || [];
+                if (fields.length == 0 || hasCustomFields(fields) || cpId == -1 || !cpId) {
+                  return fields;
+                }
+
+                return getCustomFields(cpId).then(
+                  function(customFields) {
+                    fields = fields.concat(customFields.cpr)
+                      .concat(customFields.visit)
+                      .concat(customFields.specimen);
+                    return fields;
+                  }
+                );
               }
             );
           }
@@ -342,6 +427,18 @@ angular.module('openspecimen')
 
       getValue: getValue,
 
-      setWorkflows: setWorkflows
+      setWorkflows: setWorkflows,
+
+      getCprCustomFields: function(cpId) {
+        return getEntityCustomFields(cpId, 'cpr');
+      },
+
+      getVisitCustomFields: function(cpId) {
+        return getEntityCustomFields(cpId, 'visit');
+      },
+
+      getSpecimenCustomFields: function(cpId) {
+        return getEntityCustomFields(cpId, 'specimen');
+      }
     }
   });

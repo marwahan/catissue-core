@@ -1,6 +1,6 @@
 angular.module('os.biospecimen.participant')
   .controller('BulkEditParticipantsCtrl', function(
-      $scope, $timeout, $parse, hasSde, cpDict, cp,
+      $scope, $timeout, $parse, hasSde, cpDict, cp, customFields,
       CollectionProtocolRegistration, ParticipantsHolder, Util) {
 
       var EXCLUSION_LIST = [
@@ -20,7 +20,7 @@ angular.module('os.biospecimen.participant')
 
       function init() {
         var cprFields = [];
-        angular.forEach(cpDict.fields,
+        angular.forEach(cpDict.fields.concat(customFields),
           function(field) {
             if (field.name.indexOf('cpr') != 0 ||              // not participant field
                 EXCLUSION_LIST.indexOf(field.name) != -1) {    // excluded field

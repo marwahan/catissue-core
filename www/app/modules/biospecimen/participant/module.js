@@ -505,29 +505,12 @@ angular.module('os.biospecimen.participant',
             return CpConfigSvc.getBulkUpdateDictionary(cp.id);
           },
 
-          customFields: function(cp, cpDict, CollectionProtocolRegistration, Form, ExtensionsUtil) {
+          customFields: function(cp, cpDict, CpConfigSvc) {
             if (cpDict.cpId != -1 || cpDict.fields.length == 0) {
               return [];
             }
 
-            return CollectionProtocolRegistration.getExtensionCtxt({cpId: cp.id}).then(
-              function(ctxt) {
-                if (!ctxt) {
-                  return [];
-                }
-
-                return Form.getDefinition(ctxt.formId).then(
-                  function(formDef) {
-                    var sdeFields = ExtensionsUtil.toSdeFields(
-                      'cpr.participant.extensionDetail.attrsMap',
-                      ctxt.formId,
-                      formDef);
-                    cpDict.fields = cpDict.fields.concat(sdeFields);
-                    return sdeFields;
-                  }
-                );
-              }
-            );
+            return CpConfigSvc.getCprCustomFields(cp.id);
           }
         },
         parent: 'cp-view'
