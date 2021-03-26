@@ -573,8 +573,9 @@
       "clear": "Clear response"
      },
 
-    "similar_participants": "Following matching participant(s) found",
-    "no_matching_participant": "No matching participant found",
+    "similar_participants": "Following matching participant(s) were found:",
+    "no_matching_participant": "No matching participant found.",
+    "no_match_add_participant": "No matching participant found. Proceed to add new participant.",
     "review_match_n_save": "Following matching participant found. Please review the details and save.",
 
     "already_reg": "Already Registered?",
@@ -611,7 +612,8 @@
       "import": "Import",
       "anonymize": "Anonymize",
       "prepare_kit": "Prepare Specimen Kit",
-      "reg_participants": "Register Participants"
+      "reg_participants": "Register Participants",
+      "skip": "Skip"
     },
 
     "menu": {

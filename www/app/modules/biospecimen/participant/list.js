@@ -63,4 +63,32 @@ angular.module('os.biospecimen.participant.list', ['os.biospecimen.models'])
     }
 
     init();
+  })
+
+  .directive('osShowIfMultipleOptionsPresent', function($timeout) {
+    function isElementDisplayed(item) {
+      return !(item.style.display == 'none' || item.style.visibility == 'hidden' || parseFloat(item.style.opacity) <= 0 || item.classList.contains('ng-hide'));
+    }
+
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        scope.$watch(
+          function() {
+            return element.find("ul.dropdown-menu > li:not(.divider)").
+              filter(function() {
+                return isElementDisplayed(this);
+              }).length;
+          }, function(val) {
+            if (val <= 1) {
+              element.find('.dropdown-toggle').hide();
+              element.find('.single-option').show();
+            } else {
+              element.find('.dropdown-toggle').show();
+              element.find('.single-option').hide();
+            }
+          }
+        );
+      }
+    }
   });

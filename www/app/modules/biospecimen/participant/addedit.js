@@ -42,7 +42,8 @@ angular.module('os.biospecimen.participant.addedit', ['os.biospecimen.models', '
           allowBulkUpload: false,
           rowSelect: 'single',
           onRowSelect: onMatchSelect
-        }
+        },
+        allowSkip: !!addPatientOnLookupFail
       }
 
       $scope.disableFieldOpts = {}
@@ -341,7 +342,19 @@ angular.module('os.biospecimen.participant.addedit', ['os.biospecimen.models', '
         }
       } else if (isAutoSelect(matches)) {
         $scope.partCtx.matchAutoSelected = true;
-        useSelectedMatch(matches[0]);
+
+        var match = matches[0];
+        if ($scope.partCtx.twoStep) {
+          var participant = match.participant;
+          for (var i = 0; i < (participant.registeredCps || []).length; ++i) {
+            if (participant.registeredCps[i].cpId == cp.id) {
+              $state.go('participant-detail.overview', {cpId: cp.id, cprId: participant.registeredCps[i].cprId});
+              return;
+            }
+          }
+        }
+
+        useSelectedMatch(match);
       } else {
         $scope.partCtx.step = 'chooseMatch';
         $scope.partCtx.selectedMatch = null;
@@ -516,11 +529,17 @@ angular.module('os.biospecimen.participant.addedit', ['os.biospecimen.models', '
 
     $scope.lookup = function(event, gotoConsents) {
       cacheInputParticipant();
+      $scope.partCtx.skipped = false;
       $scope.cpr.participant.getMatchingParticipants().then(
         function(matches) {
           handleParticipantMatches(matches, event, gotoConsents)
         }
       );
+    }
+
+    $scope.skip = function() {
+      $scope.partCtx.skipped = true;
+      handleParticipantMatches([]);
     }
 
     $scope.useSelectedMatch = function() {

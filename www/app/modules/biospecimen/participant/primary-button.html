@@ -1,5 +1,11 @@
 <div ng-if="!cp.specimenCentric && listViewCtx.showPrimaryBtnDd"
-  dropdown class="os-inline-btn" os-show-if-menu-items-present>
+  dropdown class="os-inline-btn" os-show-if-multiple-options-present>
+
+  <button class="default single-option" ng-if="cp.activityStatus != 'Closed'" show-if-allowed="partRegOpts"
+    ui-sref="participant-addedit({cprId: -1, cpId: cp.id})">
+    <span class="fa fa-plus"></span>
+    <span translate="participant.buttons.register">Register</span>
+  </button>
 
   <button class="default dropdown-toggle" title="{{'participant.tooltip.register' | translate}}">
     <span class="fa fa-plus"></span>

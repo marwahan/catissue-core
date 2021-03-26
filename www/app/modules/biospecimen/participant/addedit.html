@@ -67,6 +67,9 @@
           <span ng-switch-when="true" translate="participant.buttons.lookup">Lookup</span>
           <span ng-switch-default translate="participant.buttons.register">Register</span>
         </button>
+        <button class="btn os-btn-secondary" ng-click="skip()" ng-if="partCtx.twoStep && partCtx.allowSkip">
+          <span translate="participant.buttons.skip">Skip</span>
+        </button>
         <span show-if-allowed="consentUpdateOpts">
           <button class="btn btn-primary" os-form-submit="lookup(null, true)"
             ng-if="!partCtx.twoStep && partCtx.documentsCount > 0">
@@ -162,10 +165,12 @@
 
 <script type="text/ng-template" id="modules/biospecimen/participant/choose-match.html">
   <form name="pform" class="form-horizontal" os-form-validator="pform" validator="pformValidator" novalidate>
-    <div class="alert alert-warning os-participant-matching-msg">
-      <span translate="participant.similar_participants">
-        Following matching participant(s) found 
-      </span>
+    <div class="os-alert-container inline">
+      <div class="alert alert-info os-participant-matching-msg">
+        <span translate="participant.similar_participants">
+          Following matching participant(s) found
+        </span>
+      </div>
     </div>
 
     <div ng-switch on="partCtx.matchingTabOpts.table.length > 0">
@@ -247,22 +252,26 @@
 <script type="text/ng-template" id="modules/biospecimen/participant/save-update.html">
   <form name="pform" class="form-horizontal" os-form-validator="pform" validator="pformValidator" novalidate>
     <div>
-      <div class="form-group" ng-if="!partCtx.edit && partCtx.twoStep && (!partCtx.matches || partCtx.matches.length == 0)">
+      <div class="form-group" ng-if="!partCtx.edit && partCtx.twoStep && !partCtx.skipped && partCtx.matches.length == 0">
         <div class="col-xs-offset-3 col-xs-6">
-          <div class="alert alert-warning os-participant-matching-msg">
-            <span translate="participant.no_matching_participant">
-              No matching participant found
-            </span>
+          <div class="os-alert-container inline">
+            <div class="alert alert-info os-participant-matching-msg">
+              <span translate="participant.no_match_add_participant">
+                No matching participant found
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="form-group" ng-if="!partCtx.twoStep && partCtx.matchAutoSelected">
+      <div class="form-group" ng-if="partCtx.matchAutoSelected">
         <div class="col-xs-offset-3 col-xs-6">
-          <div class="alert alert-warning os-participant-matching-msg">
-            <span translate="participant.review_match_n_save">
-              Following matching participant found. Please review the details and save.
-            </span>
+          <div class="os-alert-container inline">
+            <div class="alert alert-info os-participant-matching-msg">
+              <span translate="participant.review_match_n_save">
+                Following matching participant found. Please review the details and save.
+              </span>
+            </div>
           </div>
         </div>
       </div>
