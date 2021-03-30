@@ -39,4 +39,12 @@
     <property name="userDao" ref="userDao"/>
     <property name="cfgService" ref="cfgSvc"/>
   </bean>
+
+  <bean class="com.krishagni.catissueplus.core.init.ImportUserForms">
+    <property name="txnMgr" ref="transactionManager"/>
+    <property name="daoFactory" ref="deDaoFactory"/>
+    <property name="userDao" ref="userDao"/>
+    <property name="templateService" ref="templateService"/>
+    <property name="deInitializer" ref="deInitializer"/>
+  </bean>
 </beans>
