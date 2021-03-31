@@ -19,4 +19,39 @@
     <sql>update os_search_entity_ranks set short_name = 'cart' where entity = 'specimen_list'</sql>
     <sql>update os_search_entity_ranks set short_name = 'institute' where entity = 'institute'</sql>
   </changeSet>
+
+  <changeSet author="vpawar" id="On demand task to delete forms" dbms="mysql">
+    <sql>
+      select identifier into @userId from catissue_user where login_name = '$system';
+
+      insert into os_scheduled_jobs
+        (identifier, name, created_by, start_date, end_date, scheduled_minute, activity_status,
+         repeat_schedule, type, task_impl_fqn,
+         rt_args_provided, rt_args_help_text)
+      values
+        (default, 'Delete forms', @userId, now(), null, 1, 'Active',
+         'ONDEMAND', 'INTERNAL', 'com.krishagni.catissueplus.core.de.services.impl.DeleteFormsTask',
+         1, 'Comma separated list of form names to be deleted');
+    </sql>
+  </changeSet>
+
+  <changeSet author="vpawar" id="On demand task to delete forms" dbms="oracle">
+    <sql endDelimiter="//">
+      declare
+        userId number;
+      begin
+        select identifier into userId from catissue_user where login_name like '$system';
+
+        insert into os_scheduled_jobs
+          (identifier, name, created_by, start_date, end_date, scheduled_minute, activity_status,
+           repeat_schedule, type, command, task_impl_fqn,
+           rt_args_provided, rt_args_help_text)
+        values
+          (os_scheduled_jobs_seq.nextval, 'Delete forms', userId, sysdate, null, 1, 'Active',
+           'ONDEMAND', 'INTERNAL', null, 'com.krishagni.catissueplus.core.de.services.impl.DeleteFormsTask',
+           1, 'Comma separated list of form names to be deleted');
+      end;
+      //
+    </sql>
+  </changeSet>
 </databaseChangeLog>
