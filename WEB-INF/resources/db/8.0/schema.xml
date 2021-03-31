@@ -488,7 +488,7 @@
             insert into
               os_participant_cust_fields(participant_id, form_ctxt_id, form_id, record_id)
             select
-              re.object_id, :new_identifier, :new.container_id, re.record_id
+              re.object_id, :new.identifier, :new.container_id, re.record_id
             from
               catissue_form_record_entry re
             where
