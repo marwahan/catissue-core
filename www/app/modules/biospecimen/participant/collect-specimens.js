@@ -1212,7 +1212,6 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
             function() {
               var result = assignInputs(specimen, specimen.aliquotLabels, 'label');
               $scope.autoAlloc.rerun = $scope.autoAlloc.rerun || (result != 0);
-              alert($scope.autoAlloc.rerun);
             }
           );
         }
