@@ -60,6 +60,9 @@ public class PermissibleValueController {
 		@RequestParam(value = "includeOnlyRootValue", required = false, defaultValue="false")
 		boolean includeOnlyRootValue,
 
+		@RequestParam(value = "includeProps", required = false, defaultValue="false")
+		boolean includeProps,
+
 		@RequestParam(value = "activityStatus", required = false)
 		String activityStatus,
 
@@ -78,6 +81,7 @@ public class PermissibleValueController {
 			.parentAttribute(parentAttribute)
 			.includeOnlyLeafValue(includeOnlyLeafValue)
 			.includeOnlyRootValue(includeOnlyRootValue)
+			.includeProps(includeProps)
 			.activityStatus(activityStatus)
 			.startAt(startAt)
 			.maxResults(maxResults);
@@ -113,6 +117,9 @@ public class PermissibleValueController {
 		@RequestParam(value = "includeOnlyRootValue", required = false, defaultValue="false")
 		boolean includeOnlyRootValue,
 
+		@RequestParam(value = "includeProps", required = false, defaultValue="false")
+		boolean includeProps,
+
 		@RequestParam(value = "activityStatus", required = false)
 		String activityStatus,
 
@@ -131,6 +138,7 @@ public class PermissibleValueController {
 			parentValue,
 			includeOnlyLeafValue,
 			includeOnlyRootValue,
+			includeProps,
 			activityStatus,
 			startAt,
 			maxResults);

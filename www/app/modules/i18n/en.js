@@ -1626,6 +1626,9 @@
       "will_be_emailed": "Empty positions report generation is taking more time. Link to download the report will be sent to you by email."
     },
 
+    "view_color_coding": "View Color Coding",
+    "color_coding": "Color Coding",
+
     "utilisation_exp": "Utilisation",
     "utilisation_rpt": {
       "initiated": "Generating utilisation report...",

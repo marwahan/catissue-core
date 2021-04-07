@@ -22,6 +22,8 @@ public class ListPvCriteria extends AbstractListCriteria<ListPvCriteria> {
 
 	private boolean includeOnlyRootValue;
 
+	private boolean includeProps;
+
 	private String activityStatus;
 	
 	public String attribute() {
@@ -84,6 +86,15 @@ public class ListPvCriteria extends AbstractListCriteria<ListPvCriteria> {
 
 	public ListPvCriteria includeOnlyRootValue(boolean includeOnlyRootValue) {
 		this.includeOnlyRootValue = includeOnlyRootValue;
+		return self();
+	}
+
+	public boolean includeProps() {
+		return includeProps;
+	}
+
+	public ListPvCriteria includeProps(boolean includeProps) {
+		this.includeProps = includeProps;
 		return self();
 	}
 
