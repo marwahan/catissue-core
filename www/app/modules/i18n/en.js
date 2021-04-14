@@ -1298,6 +1298,7 @@
     "confirm_password": "Confirm Password",
     "sign_in_title": "Sign in to continue to OpenSpecimen",
     "sign_in_failed": "The username or password you entered is incorrect",
+    "otp_required": "One time password (OTP) to sign in has been emailed to you.",
     "sign_in": "Sign In",
     "logout":"Log Out",
     "forgot_password": "Forgot password?",

@@ -80,12 +80,12 @@ angular.module('openspecimen')
     }
   })
   .controller('LoginCtrl', function(
-    $scope, $rootScope, $state, $stateParams, $q, $http, $location, $injector, $window,
+    $scope, $rootScope, $state, $stateParams, $q, $http, $location, $injector, $window, $translate,
     Alerts, AuthDomain, AuthService) {
 
     function init() {
       $scope.errors     = [];
-      $scope.loginData  = {};
+      $scope.loginData  = {'$$otpReq': false};
       $scope.samlDomain = '';
       $scope.showSignIn = true;
       
@@ -190,7 +190,17 @@ angular.module('openspecimen')
       AuthService.authenticate($scope.loginData).then(
         onLogin,
         function(resp) {
-          $scope.errors = (resp.data || []);
+          var errors = $scope.errors = (resp.data || []);
+          for (var i = 0; i < errors.length; ++i) {
+            var code = errors[i].code;
+            if (code == 'USER_OTP_REQUIRED') {
+              $scope.loginData.$$otpReq = true;
+              errors[i].code = null;
+              errors[i].message = $translate.instant('user.otp_required');
+              break;
+            }
+          }
+
           Alerts.clear();
         }
       );
