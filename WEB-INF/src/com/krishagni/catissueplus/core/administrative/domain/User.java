@@ -19,6 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import com.krishagni.catissueplus.core.administrative.domain.factory.UserErrorCode;
 import com.krishagni.catissueplus.core.auth.domain.AuthDomain;
@@ -83,6 +84,10 @@ public class User extends BaseEntity implements UserDetails {
 	private String timeZone;
 
 	private Boolean dnd;
+
+	private boolean apiUser;
+
+	private String ipRange;
 
 	private Set<Password> passwords = new HashSet<>();
 
@@ -259,6 +264,22 @@ public class User extends BaseEntity implements UserDetails {
 		this.dnd = dnd;
 	}
 
+	public boolean isApiUser() {
+		return apiUser;
+	}
+
+	public void setApiUser(Boolean apiUser) {
+		this.apiUser = apiUser;
+	}
+
+	public String getIpRange() {
+		return ipRange;
+	}
+
+	public void setIpRange(String ipRange) {
+		this.ipRange = ipRange;
+	}
+
 	@NotAudited
 	public Set<Password> getPasswords() {
 		return passwords;
@@ -341,6 +362,8 @@ public class User extends BaseEntity implements UserDetails {
 			setAuthDomain(user.getAuthDomain());
 			setLoginName(user.getLoginName());
 			setManageForms(user.canManageForms());
+			setApiUser(user.isApiUser());
+			setIpRange(user.getIpRange());
 		}
 	}
 
@@ -441,6 +464,10 @@ public class User extends BaseEntity implements UserDetails {
 
 	public boolean isDisabled() {
 		return Status.ACTIVITY_STATUS_DISABLED.getStatus().equals(getActivityStatus());
+	}
+
+	public boolean isAllowedAccessFrom(String ipAddress) {
+		return !isApiUser() || new IpAddressMatcher(getIpRange()).matches(ipAddress);
 	}
 
 	private boolean isValidPasswordPattern(String password) {

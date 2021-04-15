@@ -54,6 +54,10 @@
 
     <property name="dnd" column="DND"/>
 
+    <property name="apiUser" column="API_USER"/>
+
+    <property name="ipRange" column="IP_RANGE"/>
+
     <property name="timeZone" column="TIME_ZONE"/>
 
     <set name="roles" inverse="true" cascade="none">

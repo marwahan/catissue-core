@@ -73,6 +73,10 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 				throw OpenSpecimenException.userError(AuthErrorCode.INVALID_CREDENTIALS);
 			}
 
+			if (!user.isAllowedAccessFrom(loginDetail.getIpAddress())) {
+				throw OpenSpecimenException.userError(AuthErrorCode.NA_IP_ADDRESS, loginDetail.getIpAddress());
+			}
+
 			if (!user.isAdmin() && isSystemLockedDown()) {
 				throw OpenSpecimenException.userError(AuthErrorCode.SYSTEM_LOCKDOWN);
 			}
@@ -133,6 +137,10 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 			}
 
 			User user = authToken.getUser();
+			if (!user.isAllowedAccessFrom(tokenDetail.getIpAddress())) {
+				throw OpenSpecimenException.userError(AuthErrorCode.NA_IP_ADDRESS, tokenDetail.getIpAddress());
+			}
+
 			long timeSinceLastApiCall = auditService.getTimeSinceLastApiCall(user.getId(), token);
 			int tokenInactiveInterval = AuthConfig.getInstance().getTokenInactiveIntervalInMinutes();
 			if (!user.isAdmin() && isSystemLockedDown()) {

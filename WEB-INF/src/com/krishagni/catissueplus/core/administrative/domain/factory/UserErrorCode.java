@@ -61,7 +61,11 @@ public enum UserErrorCode implements ErrorCode {
 
 	INACTIVE,
 
-	ONE_OR_MORE_NOT_FOUND;
+	ONE_OR_MORE_NOT_FOUND,
+
+	INVALID_IP,
+
+	IP_REQ;
 	
 	public String code() {
 		return "USER_" + this.name();

@@ -155,6 +155,33 @@
         </div>
       </div>
 
+      <div class="form-group" show-if-admin>
+        <label class="col-xs-3 control-label">
+          <span translate="user.api_user_q">API User?</span>
+        </label>
+        <div class="col-xs-6">
+          <label class="radio-inline">
+            <input type="radio" name="apiUser" ng-model="user.apiUser" ng-value="true">
+            <span translate="common.yes">Yes</span>
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="apiUser" ng-model="user.apiUser" ng-value="false">
+            <span translate="common.no">No</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group" show-if-admin ng-if="user.apiUser == true">
+        <label class="col-xs-3 control-label">
+          <span translate="user.ip_address">IP Address</span>
+        </label>
+        <div class="col-xs-6">
+          <input type="text" name="ipAddress" class="form-control" ng-model="user.ipRange"
+            placeholder="{{'user.ip_address' | translate}}" required>
+          <div os-field-error field="userForm.ipAddress"></div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="col-xs-3 control-label" translate="user.address">Address</label>
         <div class="col-xs-6">

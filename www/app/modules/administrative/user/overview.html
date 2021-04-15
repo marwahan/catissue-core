@@ -104,6 +104,16 @@
           <strong class="key key-sm" translate="user.disable_notifs">Disable Email Notifications?</strong>
           <span class="value value-md">{{user.dnd | osBoolValue: 'common.yes': 'common.no': 'common.not_specified'}}</span>
         </li>
+
+        <li class="item">
+          <strong class="key key-sm" translate="user.api_user_q">API User?</strong>
+          <span class="value value-md">{{user.apiUser | osBoolValue: 'common.yes': 'common.no': 'common.not_specified'}}</span>
+        </li>
+
+        <li class="item" ng-show="user.apiUser == true">
+          <strong class="key key-sm" translate="user.ip_address">IP Range</strong>
+          <span class="value value-md">{{user.ipRange | osNoValue}}</span>
+        </li>
       </ul>
 
       <div class="os-section os-line-section">

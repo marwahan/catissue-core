@@ -163,10 +163,10 @@ public class AuthTokenFilter extends GenericFilterBean implements InitializingBe
 			tokenDetail.setIpAddress(Utility.getRemoteAddress(httpReq));
 
 			ResponseEvent<AuthToken> atResp = authService.validateToken(new RequestEvent<>(tokenDetail));
-			if (atResp.isSuccessful()) {
-				user = atResp.getPayload().getUser();
-				loginAuditLog = atResp.getPayload().getLoginAuditLog();
-			}
+			atResp.throwErrorIfUnsuccessful();
+
+			user = atResp.getPayload().getUser();
+			loginAuditLog = atResp.getPayload().getLoginAuditLog();
 		} else if (httpReq.getHeader(HttpHeaders.AUTHORIZATION) != null) {
 			AuthToken token = doBasicAuthentication(httpReq, httpResp);
 			if (token != null) {

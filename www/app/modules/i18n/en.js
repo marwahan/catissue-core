@@ -1331,6 +1331,8 @@
     "empty_list": "No users to show!",
     "loading_list": "Loading users, please wait for a moment...",
     "disable_notifs": "Disable Notifications?",
+    "api_user_q": "API User?",
+    "ip_address": "IP Address",
     "no_forms": "No user forms",
     "email_ids": "Email Addresses",
     "email_ids_csv": "Comma separated list of users' email addresses",

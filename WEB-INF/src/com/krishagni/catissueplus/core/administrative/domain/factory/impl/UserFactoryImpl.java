@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import com.krishagni.catissueplus.core.administrative.domain.Institute;
 import com.krishagni.catissueplus.core.administrative.domain.Site;
@@ -54,6 +55,8 @@ public class UserFactoryImpl implements UserFactory {
 		setAuthDomain(detail, user, ose);
 		setManageForms(detail, user, ose);
 		setDnd(detail, user, ose);
+		setApiUser(detail, user, ose);
+		setIpRange(detail, user, ose);
 		setTimeZone(detail, user, ose);
 		user.setCreationDate(Calendar.getInstance().getTime());
 		ose.checkAndThrow();
@@ -79,6 +82,8 @@ public class UserFactoryImpl implements UserFactory {
 		setAuthDomain(detail, existing, user, ose);
 		setManageForms(detail, existing, user, ose);
 		setDnd(detail, existing, user, ose);
+		setApiUser(detail, existing, user, ose);
+		setIpRange(detail, existing, user, ose);
 		setTimeZone(detail, existing, user, ose);
 		ose.checkAndThrow();
 		return user;		
@@ -352,6 +357,47 @@ public class UserFactoryImpl implements UserFactory {
 
 	private void setDnd(UserDetail detail, User user, OpenSpecimenException ose) {
 		user.setDnd(detail.getDnd());
+	}
+
+	private void setApiUser(UserDetail detail, User existing, User user, OpenSpecimenException ose) {
+		if (detail.isAttrModified("apiUser")) {
+			setApiUser(detail, user, ose);
+		} else {
+			user.setApiUser(existing.isApiUser());
+		}
+	}
+
+	private void setApiUser(UserDetail detail, User user, OpenSpecimenException ose) {
+		user.setApiUser(detail.isApiUser());
+	}
+
+	private void setIpRange(UserDetail detail, User existing, User user, OpenSpecimenException ose) {
+		if (detail.isAttrModified("ipRange")) {
+			setIpRange(detail, user, ose);
+		} else {
+			user.setIpRange(existing.getIpRange());
+		}
+
+		if (user.isApiUser() && StringUtils.isBlank(user.getIpRange())) {
+			ose.addError(UserErrorCode.IP_REQ);
+		}
+
+	}
+
+	private void setIpRange(UserDetail detail, User user, OpenSpecimenException ose) {
+		user.setIpRange(detail.getIpRange());
+
+		try {
+			if (StringUtils.isNotBlank(user.getIpRange())) {
+				new IpAddressMatcher(user.getIpRange());
+			}
+		} catch (Exception e) {
+			ose.addError(UserErrorCode.INVALID_IP, user.getIpRange());
+		}
+
+		if (user.isApiUser() && StringUtils.isBlank(user.getIpRange())) {
+			ose.addError(UserErrorCode.IP_REQ);
+		}
 	}
 
 	private void setTimeZone(UserDetail detail, User user, OpenSpecimenException ose) {

@@ -72,6 +72,7 @@ import com.krishagni.catissueplus.core.de.events.GetFormRecordsListOp;
 import com.krishagni.catissueplus.core.de.services.FormService;
 import com.krishagni.catissueplus.core.exporter.domain.ExportJob;
 import com.krishagni.catissueplus.core.exporter.services.ExportService;
+import com.krishagni.rbac.common.errors.RbacErrorCode;
 import com.krishagni.rbac.events.SubjectRoleDetail;
 import com.krishagni.rbac.events.SubjectRoleOpNotif;
 import com.krishagni.rbac.events.SubjectRolesList;
@@ -265,6 +266,7 @@ public class UserServiceImpl implements UserService, ObjectAccessor, Initializin
 			OpenSpecimenException ose = new OpenSpecimenException(ErrorType.USER_ERROR);
 			ensureUniqueLoginNameInDomain(user.getLoginName(), user.getAuthDomain().getName(), ose);
 			ensureUniqueEmailAddress(user.getEmailAddress(), ose);
+			ensureApiUserUpdateByAdmin(user, ose);
 			ose.checkAndThrow();
 
 			daoFactory.getUserDao().saveOrUpdate(user);
@@ -723,6 +725,7 @@ public class UserServiceImpl implements UserService, ObjectAccessor, Initializin
 
 	private UserDetail updateUser(UserDetail input, boolean partial) {
 		User existingUser = getUser(input.getId(), input.getEmailAddress());
+		ensureApiUserUpdateByAdmin(existingUser, null);
 
 		if (Status.ACTIVITY_STATUS_DISABLED.getStatus().equals(input.getActivityStatus())) {
 			AccessCtrlMgr.getInstance().ensureDeleteUserRights(existingUser);
@@ -762,6 +765,7 @@ public class UserServiceImpl implements UserService, ObjectAccessor, Initializin
 		String prevStatus = existingUser.getActivityStatus();
 		Institute prevInstitute = existingUser.getInstitute();
 		existingUser.update(user);
+		ensureApiUserUpdateByAdmin(existingUser, null);
 
 		if (isActivated(prevStatus, user.getActivityStatus())) {
 			onAccountActivation(user, prevStatus);
@@ -1018,6 +1022,15 @@ public class UserServiceImpl implements UserService, ObjectAccessor, Initializin
 		}
 	}
 
+	private void ensureApiUserUpdateByAdmin(User user, OpenSpecimenException ose) {
+		if (!AuthUtil.isAdmin() && user.isApiUser()) {
+			if (ose == null) {
+				throw OpenSpecimenException.userError(RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
+			} else {
+				ose.addError(RbacErrorCode.ADMIN_RIGHTS_REQUIRED);
+			}
+		}
+	}
 
 	private boolean isStatusChangeAllowed(String newStatus) {
 		return newStatus.equals(Status.ACTIVITY_STATUS_ACTIVE.getStatus()) || 

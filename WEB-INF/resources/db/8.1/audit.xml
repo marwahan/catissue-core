@@ -5,10 +5,12 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-  <changeSet author="vpawar" id="API Users and their IP address range">
-    <addColumn tableName="CATISSUE_USER">
-      <column name="API_USER" type="${boolean.type}" defaultValueBoolean="false"/>
+  <changeSet author="vpawar" id="API user fields">
+    <addColumn tableName="CATISSUE_USER_AUD">
+      <column name="API_USER" type="${boolean.type}"/>
+      <column name="apiUser_MOD" type="${boolean.type}"/>
       <column name="IP_RANGE" type="${text.type}(64)"/>
+      <column name="ipRange_MOD" type="${boolean.type}"/>
     </addColumn>
   </changeSet>
 </databaseChangeLog>

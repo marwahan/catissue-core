@@ -48,6 +48,10 @@ public class UserDetail extends AttributeModifiedSupport {
 
 	private boolean dnd;
 
+	private boolean apiUser;
+
+	private String ipRange;
+
 	private String address;
 
 	private String timeZone;
@@ -163,6 +167,22 @@ public class UserDetail extends AttributeModifiedSupport {
 		this.dnd = dnd;
 	}
 
+	public boolean isApiUser() {
+		return apiUser;
+	}
+
+	public void setApiUser(boolean apiUser) {
+		this.apiUser = apiUser;
+	}
+
+	public String getIpRange() {
+		return ipRange;
+	}
+
+	public void setIpRange(String ipRange) {
+		this.ipRange = ipRange;
+	}
+
 	public String getAddress() {
 		return address;
 	}
@@ -214,6 +234,8 @@ public class UserDetail extends AttributeModifiedSupport {
 		detail.setPhoneNumber(user.getPhoneNumber());
 		detail.setManageForms(user.getManageForms());
 		detail.setDnd(user.getDnd());
+		detail.setApiUser(user.isApiUser());
+		detail.setIpRange(user.getIpRange());
 		detail.setTimeZone(user.getTimeZone());
 		detail.setAddress(user.getAddress());
 		detail.setCreationDate(user.getCreationDate());
