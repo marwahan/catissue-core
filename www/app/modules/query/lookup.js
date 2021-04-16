@@ -37,6 +37,8 @@ angular.module('os.query.lookup', [])
           var params = {};
           if (url.indexOf('permissible-values') != -1 || url.indexOf('users') != -1) {
             params.activityStatus = 'all';
+          } else if (url.indexOf('sites') != -1) {
+            params.listAll = true;
           }
 
           params[opts.searchTermName] = searchTerm;
