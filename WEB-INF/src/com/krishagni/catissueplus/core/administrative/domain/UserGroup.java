@@ -1,10 +1,12 @@
 package com.krishagni.catissueplus.core.administrative.domain;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.krishagni.catissueplus.core.administrative.domain.User;
+import com.krishagni.catissueplus.core.administrative.domain.factory.UserGroupErrorCode;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.util.Status;
 import com.krishagni.catissueplus.core.common.util.Utility;
 
@@ -74,5 +76,31 @@ public class UserGroup extends BaseEntity {
 	public void delete() {
 		setActivityStatus(Status.ACTIVITY_STATUS_DISABLED.getStatus());
 		setName(Utility.getDisabledValue(getName(), 64));
+	}
+
+	public int addUsers(Collection<User> users) {
+		int count = 0;
+		for (User user : users) {
+			if (!user.getInstitute().equals(getInstitute())) {
+				throw OpenSpecimenException.userError(UserGroupErrorCode.USER_NOT_OF_INST, user.formattedName(), getInstitute().getName());
+			}
+
+			if (getUsers().add(user)) {
+				++count;
+			}
+		}
+
+		return count;
+	}
+
+	public int removeUsers(Collection<User> users) {
+		int count = 0;
+		for (User user : users) {
+			if (getUsers().remove(user)) {
+				++count;
+			}
+		}
+
+		return count;
 	}
 }

@@ -2,7 +2,9 @@ package com.krishagni.catissueplus.core.administrative.domain.factory.impl;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +23,7 @@ import com.krishagni.catissueplus.core.common.errors.ErrorType;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.UserSummary;
 import com.krishagni.catissueplus.core.common.util.Status;
+import com.krishagni.catissueplus.core.common.util.Utility;
 
 public class UserGroupFactoryImpl implements UserGroupFactory {
 
@@ -49,6 +52,11 @@ public class UserGroupFactoryImpl implements UserGroupFactory {
 
 		ose.checkAndThrow();
 		return group;
+	}
+
+	@Override
+	public Set<User> getUsers(List<UserSummary> inputUsers) {
+		return Utility.nullSafeStream(inputUsers).map(this::getUser).collect(Collectors.toSet());
 	}
 
 	private void setName(UserGroupDetail input, UserGroup existing, UserGroup group, OpenSpecimenException ose) {

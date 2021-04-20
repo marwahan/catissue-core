@@ -22,6 +22,7 @@ import com.krishagni.catissueplus.core.administrative.services.UserGroupService;
 import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
+import com.krishagni.catissueplus.core.common.events.UserSummary;
 
 @Controller
 @RequestMapping("/user-groups")
@@ -118,5 +119,25 @@ public class UserGroupController {
 	@ResponseBody
 	public UserGroupDetail deleteGroup(@PathVariable("id") Long groupId) {
 		return ResponseEvent.unwrap(groupSvc.deleteGroup(RequestEvent.wrap(new EntityQueryCriteria(groupId))));
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/{id}/users")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public UserGroupDetail addUsers(@PathVariable("id") Long groupId, @RequestBody List<UserSummary> users) {
+		UserGroupDetail input = new UserGroupDetail();
+		input.setId(groupId);
+		input.setUsers(users);
+		return ResponseEvent.unwrap(groupSvc.addUsers(RequestEvent.wrap(input)));
+	}
+
+	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}/users")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public UserGroupDetail removeUsers(@PathVariable("id") Long groupId, @RequestBody List<UserSummary> users) {
+		UserGroupDetail input = new UserGroupDetail();
+		input.setId(groupId);
+		input.setUsers(users);
+		return ResponseEvent.unwrap(groupSvc.removeUsers(RequestEvent.wrap(input)));
 	}
 }

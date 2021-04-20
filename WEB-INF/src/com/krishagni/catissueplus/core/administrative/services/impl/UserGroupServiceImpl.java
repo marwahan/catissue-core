@@ -149,6 +149,38 @@ public class UserGroupServiceImpl implements UserGroupService {
 		}
 	}
 
+	@Override
+	@PlusTransactional
+	public ResponseEvent<UserGroupDetail> addUsers(RequestEvent<UserGroupDetail> req) {
+		try {
+			UserGroupDetail input = req.getPayload();
+			UserGroup group = getGroup(input.getId(), input.getName());
+			ensureCreateUpdateRights(group.getInstitute());
+			group.addUsers(groupFactory.getUsers(input.getUsers()));
+			return ResponseEvent.response(UserGroupDetail.from(group));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<UserGroupDetail> removeUsers(RequestEvent<UserGroupDetail> req) {
+		try {
+			UserGroupDetail input = req.getPayload();
+			UserGroup group = getGroup(input.getId(), input.getName());
+			ensureCreateUpdateRights(group.getInstitute());
+			group.removeUsers(groupFactory.getUsers(input.getUsers()));
+			return ResponseEvent.response(UserGroupDetail.from(group));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
+	}
+
 	private UserGroup getGroup(Long groupId, String groupName) {
 		UserGroup result = null;
 		Object key = null;

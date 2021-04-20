@@ -21,4 +21,8 @@ public interface UserGroupService {
 	ResponseEvent<UserGroupDetail> updateGroup(RequestEvent<UserGroupDetail> req);
 
 	ResponseEvent<UserGroupDetail> deleteGroup(RequestEvent<EntityQueryCriteria> req);
+
+	ResponseEvent<UserGroupDetail> addUsers(RequestEvent<UserGroupDetail> req);
+
+	ResponseEvent<UserGroupDetail> removeUsers(RequestEvent<UserGroupDetail> req);
 }
