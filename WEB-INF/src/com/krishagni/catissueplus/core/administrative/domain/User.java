@@ -467,7 +467,7 @@ public class User extends BaseEntity implements UserDetails {
 	}
 
 	public boolean isAllowedAccessFrom(String ipAddress) {
-		return !isApiUser() || new IpAddressMatcher(getIpRange()).matches(ipAddress);
+		return !isApiUser() || getIpRange().equals("*") || new IpAddressMatcher(getIpRange()).matches(ipAddress);
 	}
 
 	private boolean isValidPasswordPattern(String password) {

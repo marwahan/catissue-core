@@ -388,7 +388,7 @@ public class UserFactoryImpl implements UserFactory {
 		user.setIpRange(detail.getIpRange());
 
 		try {
-			if (StringUtils.isNotBlank(user.getIpRange())) {
+			if (StringUtils.isNotBlank(user.getIpRange()) && !user.getIpRange().equals("*")) {
 				new IpAddressMatcher(user.getIpRange());
 			}
 		} catch (Exception e) {
