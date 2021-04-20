@@ -11,4 +11,42 @@
       <column name="IP_RANGE" type="${text.type}(64)"/>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vpawar" id="User groups">
+    <createTable tableName="OS_USER_GROUPS">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="NAME" type="${text.type}(64)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DESCRIPTION" type="${text.type}(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="INSTITUTE_ID" type="${int.type}">
+        <constraints nullable="false" foreignKeyName="FK_USER_GROUP_INSTITUTE"
+          referencedTableName="CATISSUE_INSTITUTION" referencedColumnNames="IDENTIFIER"/>
+      </column>
+      <column name="ACTIVITY_STATUS" type="${text.type}(32)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vpawar" id="User group ID sequence" dbms="oracle">
+    <createSequence sequenceName="OS_USER_GROUP_SEQ" startValue="1" incrementBy="1" ordered="true"/>
+  </changeSet>
+
+  <changeSet author="vpawar" id="User group users">
+    <createTable tableName="OS_USER_GROUP_USERS">
+      <column name="GROUP_ID" type="${int.type}">
+        <constraints nullable="false" foreignKeyName="FK_GRP_USERS_GRP_ID"
+          referencedTableName="OS_USER_GROUPS" referencedColumnNames="IDENTIFIER"/>
+      </column>
+      <column name="USER_ID" type="${int.type}">
+        <constraints nullable="false" foreignKeyName="FK_GRP_USERS_USR_ID"
+          referencedTableName="CATISSUE_USER" referencedColumnNames="IDENTIFIER"/>
+      </column>
+    </createTable>
+  </changeSet>
 </databaseChangeLog>

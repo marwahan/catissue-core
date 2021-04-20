@@ -21,6 +21,7 @@ import com.krishagni.catissueplus.core.administrative.repository.SpecimenRequest
 import com.krishagni.catissueplus.core.administrative.repository.StorageContainerDao;
 import com.krishagni.catissueplus.core.administrative.repository.StorageContainerPositionDao;
 import com.krishagni.catissueplus.core.administrative.repository.UserDao;
+import com.krishagni.catissueplus.core.administrative.repository.UserGroupDao;
 import com.krishagni.catissueplus.core.administrative.repository.impl.AutoFreezerProviderDaoImpl;
 import com.krishagni.catissueplus.core.administrative.repository.impl.ContainerActivityLogDaoImpl;
 import com.krishagni.catissueplus.core.administrative.repository.impl.ContainerStoreListDaoImpl;
@@ -39,6 +40,7 @@ import com.krishagni.catissueplus.core.administrative.repository.impl.SpecimenRe
 import com.krishagni.catissueplus.core.administrative.repository.impl.StorageContainerDaoImpl;
 import com.krishagni.catissueplus.core.administrative.repository.impl.StorageContainerPositionDaoImpl;
 import com.krishagni.catissueplus.core.administrative.repository.impl.UserDaoImpl;
+import com.krishagni.catissueplus.core.administrative.repository.impl.UserGroupDaoImpl;
 import com.krishagni.catissueplus.core.audit.repository.AuditDao;
 import com.krishagni.catissueplus.core.audit.repository.impl.AuditDaoImpl;
 import com.krishagni.catissueplus.core.auth.repository.AuthDao;
@@ -170,6 +172,13 @@ public class DaoFactoryImpl implements DaoFactory {
 	@Override
 	public UserDao getUserDao() {
 		UserDaoImpl dao = new UserDaoImpl();
+		setSessionFactory(dao);
+		return dao;
+	}
+
+	@Override
+	public UserGroupDao getUserGroupDao() {
+		UserGroupDaoImpl dao = new UserGroupDaoImpl();
 		setSessionFactory(dao);
 		return dao;
 	}

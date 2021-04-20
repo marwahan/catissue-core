@@ -322,6 +322,15 @@
     <property name="formSvc" ref="formSvc"/>
   </bean>
 
+  <bean id="userGrpSvc" class="com.krishagni.catissueplus.core.administrative.services.impl.UserGroupServiceImpl">
+    <property name="groupFactory">
+      <bean class="com.krishagni.catissueplus.core.administrative.domain.factory.impl.UserGroupFactoryImpl">
+        <property name="daoFactory" ref="biospecimenDaoFactory"/>
+      </bean>
+    </property>
+    <property name="daoFactory" ref="biospecimenDaoFactory"/>
+  </bean>
+
   <bean id="domainFact" class="com.krishagni.catissueplus.core.auth.domain.factory.impl.DomainRegistrationFactoryImpl">
   	<property name="daoFactory" ref="biospecimenDaoFactory"/>
   </bean>
