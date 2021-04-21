@@ -88,7 +88,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 		try {
 			EntityQueryCriteria crit = req.getPayload();
 			UserGroup group = getGroup(crit.getId(), crit.getName());
-			return ResponseEvent.response(UserGroupDetail.from(group));
+			return ResponseEvent.response(UserGroupDetail.from(group, crit.paramBoolean("includeUsers")));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -104,7 +104,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			ensureCreateUpdateRights(group.getInstitute());
 			ensureUniqueGroupName(null, group);
 			daoFactory.getUserGroupDao().saveOrUpdate(group);
-			return ResponseEvent.response(UserGroupDetail.from(group));
+			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -125,7 +125,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			ensureUniqueGroupName(existing, group);
 
 			existing.update(group);
-			return ResponseEvent.response(UserGroupDetail.from(existing));
+			return ResponseEvent.response(UserGroupDetail.from(existing, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -141,7 +141,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			UserGroup group = getGroup(crit.getId(), crit.getName());
 			ensureDeleteRights(group.getInstitute());
 			group.delete();
-			return ResponseEvent.response(UserGroupDetail.from(group));
+			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -157,7 +157,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			UserGroup group = getGroup(input.getId(), input.getName());
 			ensureCreateUpdateRights(group.getInstitute());
 			group.addUsers(groupFactory.getUsers(input.getUsers()));
-			return ResponseEvent.response(UserGroupDetail.from(group));
+			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {
@@ -173,7 +173,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			UserGroup group = getGroup(input.getId(), input.getName());
 			ensureCreateUpdateRights(group.getInstitute());
 			group.removeUsers(groupFactory.getUsers(input.getUsers()));
-			return ResponseEvent.response(UserGroupDetail.from(group));
+			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
 		} catch (Exception e) {

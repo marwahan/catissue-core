@@ -19,6 +19,8 @@ import com.krishagni.catissueplus.core.administrative.events.UserGroupDetail;
 import com.krishagni.catissueplus.core.administrative.events.UserGroupSummary;
 import com.krishagni.catissueplus.core.administrative.repository.UserGroupListCriteria;
 import com.krishagni.catissueplus.core.administrative.services.UserGroupService;
+import com.krishagni.catissueplus.core.common.errors.CommonErrorCode;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
@@ -89,8 +91,16 @@ public class UserGroupController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public UserGroupDetail getGroup(@PathVariable("id") Long groupId) {
-		return ResponseEvent.unwrap(groupSvc.getGroup(RequestEvent.wrap(new EntityQueryCriteria(groupId))));
+	public UserGroupDetail getGroup(
+		@PathVariable("id")
+		Long groupId,
+
+		@RequestParam(value = "includeUsers", required = false, defaultValue = "false")
+		boolean includeUsers) {
+
+		EntityQueryCriteria crit = new EntityQueryCriteria(groupId);
+		crit.setParams(Collections.singletonMap("includeUsers", includeUsers));
+		return ResponseEvent.unwrap(groupSvc.getGroup(RequestEvent.wrap(crit)));
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -121,23 +131,29 @@ public class UserGroupController {
 		return ResponseEvent.unwrap(groupSvc.deleteGroup(RequestEvent.wrap(new EntityQueryCriteria(groupId))));
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/{id}/users")
+	@RequestMapping(method = RequestMethod.PUT, value = "/{id}/users")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public UserGroupDetail addUsers(@PathVariable("id") Long groupId, @RequestBody List<UserSummary> users) {
-		UserGroupDetail input = new UserGroupDetail();
-		input.setId(groupId);
-		input.setUsers(users);
-		return ResponseEvent.unwrap(groupSvc.addUsers(RequestEvent.wrap(input)));
-	}
+	public UserGroupDetail addRemoveUsers(
+		@PathVariable("id")
+		Long groupId,
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}/users")
-	@ResponseStatus(HttpStatus.OK)
-	@ResponseBody
-	public UserGroupDetail removeUsers(@PathVariable("id") Long groupId, @RequestBody List<UserSummary> users) {
+		@RequestParam(value = "op")
+		String op,
+
+		@RequestBody
+		List<UserSummary> users) {
+
 		UserGroupDetail input = new UserGroupDetail();
 		input.setId(groupId);
 		input.setUsers(users);
-		return ResponseEvent.unwrap(groupSvc.removeUsers(RequestEvent.wrap(input)));
+
+		if ("ADD".equals(op)) {
+			return ResponseEvent.unwrap(groupSvc.addUsers(RequestEvent.wrap(input)));
+		} else if ("REMOVE".equals(op)) {
+			return ResponseEvent.unwrap(groupSvc.removeUsers(RequestEvent.wrap(input)));
+		}
+
+		throw OpenSpecimenException.userError(CommonErrorCode.INVALID_INPUT, "Invalid user group op: " + op);
 	}
 }

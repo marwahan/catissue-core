@@ -123,7 +123,7 @@ public class UserGroupFactoryImpl implements UserGroupFactory {
 
 	private void setActivityStatus(UserGroupDetail input, UserGroup group, OpenSpecimenException ose) {
 		if (StringUtils.isBlank(input.getActivityStatus())) {
-			group.setActivityStatus(Status.ACTIVITY_STATUS.getStatus());
+			group.setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
 			return;
 		}
 

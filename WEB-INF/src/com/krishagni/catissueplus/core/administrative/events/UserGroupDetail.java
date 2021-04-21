@@ -19,13 +19,21 @@ public class UserGroupDetail extends UserGroupSummary {
 	}
 
 	public static UserGroupDetail from(UserGroup group) {
+		return from(group, true);
+	}
+
+	public static UserGroupDetail from(UserGroup group, boolean includeUsers) {
 		UserGroupDetail result = new UserGroupDetail();
 		result.setId(group.getId());
 		result.setName(group.getName());
 		result.setDescription(group.getDescription());
 		result.setInstitute(group.getInstitute().getName());
 		result.setActivityStatus(group.getActivityStatus());
-		result.setUsers(UserSummary.from(group.getUsers()));
+
+		if (includeUsers) {
+			result.setUsers(UserSummary.from(group.getUsers()));
+		}
+
 		return result;
 	}
 }
