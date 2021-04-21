@@ -16,13 +16,14 @@ angular.module('os.administrative.user',
       .state('user-root', {
         abstract: true,
         template: '<div ui-view></div>',
-        controller: function($scope) {
+        controller: function($scope, AuthorizationService) {
           // User Authorization Options
           $scope.userResource = {
             createOpts: {resource: 'User', operations: ['Create']},
             updateOpts: {resource: 'User', operations: ['Update']},
             deleteOpts: {resource: 'User', operations: ['Delete']},
-            importOpts: {resource: 'User', operations: ['Export Import']}
+            importOpts: {resource: 'User', operations: ['Export Import']},
+            updateAllowed: AuthorizationService.isAllowed({resource: 'User', operations: ['Update']})
           }
 
           $scope.extnState = 'user-detail.forms.';
@@ -30,8 +31,17 @@ angular.module('os.administrative.user',
         parent: 'signed-in'
       })
       .state('user-list', {
-        url: '/users?filters',
+        url: '/users?filters&groupId',
         templateUrl: 'modules/administrative/user/list.html',
+        resolve: {
+          group: function($stateParams, UserGroup) {
+            if ($stateParams.groupId > 0) {
+              return UserGroup.getById($stateParams.groupId);
+            }
+
+            return null;
+          }
+        },
         controller: 'UserListCtrl',
         parent: 'user-root'
       })
@@ -328,6 +338,33 @@ angular.module('os.administrative.user',
           }
         },
         controller: 'UserPasswordCtrl',
+        parent: 'user-root'
+      })
+
+      .state('user-groups', {
+        url: '/user-groups?filters',
+        templateUrl: 'modules/administrative/user/list-groups.html',
+        controller: 'UserGroupsListCtrl',
+        resolve: {
+          pagerOpts: function(ListPagerOpts) {
+            return new ListPagerOpts({recordsPerPage: 100});
+          }
+        },
+        parent: 'user-root'
+      })
+      .state('user-group-addedit', {
+        url: '/user-group-addedit/:groupId',
+        templateUrl: 'modules/administrative/user/addedit-group.html',
+        resolve: {
+          group: function($stateParams, UserGroup) {
+            if ($stateParams.groupId > 0) {
+              return UserGroup.getById($stateParams.groupId);
+            }
+
+            return new UserGroup({});
+          }
+        },
+        controller: 'AddEditUserGroupCtrl',
         parent: 'user-root'
       })
   })

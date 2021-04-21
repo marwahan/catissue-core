@@ -1352,6 +1352,24 @@
     "bulk_update_users": "Bulk Update Users",
     "export_user_forms": "Export User Forms",
 
+    "groups": "User Groups",
+    "group": "User Group",
+    "add_to_group": "Add to Group",
+    "search_group": "Search Group",
+    "create_new_group": "Create New",
+    "manage_groups": "Manage Groups",
+    "group_users_added": "Users added to the group {{name}}!",
+    "group_users_removed": "Users removed from the group!",
+    "create_group": "Create Group",
+    "update_group": "Update Group",
+    "group_name": "Name",
+    "group_description": "Description",
+    "group_users_count": "Users",
+    "loading_groups": "Loading user groups, please wait for a moment...",
+    "no_groups": "No user groups to show!",
+    "remove_from_group": "Remove from Group",
+    "multi_institute_users": "Users of multiple institutes cannot be added to the group",
+
     "role": {
        "roles": "Roles",
        "new_role": "New Role",
@@ -1886,8 +1904,8 @@
     "entity_name": "Entity Name",
     "count": "Count",
     "title": "Delete Confirmation",
-    "confirm_delete": "{{entityType}} {{entityName}} and any dependent data will be deleted.",
-    "entity_deleted": "{{entityType}} {{entityName}} deleted successfully.",
+    "confirm_delete": "{{entityType}} '{{entityName}}' and any dependent data will be deleted. Are you sure you want to proceed?",
+    "entity_deleted": "{{entityType}} '{{entityName}}' deleted successfully.",
     "dependents_title": "Error: Cannot delete {{entityName}}",
     "dependents_details": "Cannot delete {{entityType}} {{entityName}} because of following dependent objects",
     "force_delete": "Type 'DELETE ANYWAY' to continue.",
@@ -2157,7 +2175,8 @@
     "dp_req_extension": "DP Requirement Custom Fields",
     "order_extension": "Order Custom Fields",
     "container_extension": "Container Custom Fields",
-    "user_forms": "User Forms"
+    "user_forms": "User Forms",
+    "user_group": "User Group"
   },
 
   "bulk_imports": {
