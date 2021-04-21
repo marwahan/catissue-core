@@ -2818,7 +2818,12 @@
         "forgot_password": "Forgot Password",
         "forgot_password_desc": "Allow or prevent users who have forgotten their passwords to set new password by using 'Forgot Password' feature.",
         "default_domain": "Default Domain",
-        "default_domain_desc": "The user domain to be pre-selected for authentication on the user sign-in page."
+        "default_domain_desc": "The user domain to be pre-selected for authentication on the user sign-in page.",
+
+        "otp_auth": "Two Factor Authentication",
+        "otp_auth_desc": "Enable two factor authentication using OTP",
+        "enable_device_verification": "Device Verification",
+        "enable_device_verification_desc": "Enable device verification using OTP"
       },
       
       "administrative": {
