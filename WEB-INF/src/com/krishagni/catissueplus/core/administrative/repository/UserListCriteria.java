@@ -15,6 +15,8 @@ public class UserListCriteria extends AbstractListCriteria<UserListCriteria> {
 	private String activityStatus;
 	
 	private String instituteName;
+
+	private String group;
 	
 	private String domainName;
 	
@@ -81,7 +83,16 @@ public class UserListCriteria extends AbstractListCriteria<UserListCriteria> {
 	
 	public String instituteName() {
 		return instituteName;
-	}	
+	}
+
+	public UserListCriteria group(String group) {
+		this.group = group;
+		return self();
+	}
+
+	public String group() {
+		return group;
+	}
 	
 	public UserListCriteria domainName(String domainName) {
 		this.domainName = domainName;

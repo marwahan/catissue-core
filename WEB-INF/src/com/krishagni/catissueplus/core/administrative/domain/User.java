@@ -94,6 +94,8 @@ public class User extends BaseEntity implements UserDetails {
 	private Set<SubjectRole> roles = new HashSet<>();
 
 	private Set<SubjectAccess> acl = new HashSet<>();
+
+	private Set<UserGroup> groups = new HashSet<>();
 	
 	@Autowired 
 	private DaoFactory daoFactory;
@@ -305,6 +307,15 @@ public class User extends BaseEntity implements UserDetails {
 
 	public void setAcl(Set<SubjectAccess> acl) {
 		this.acl = acl;
+	}
+
+	@NotAudited
+	public Set<UserGroup> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(Set<UserGroup> groups) {
+		this.groups = groups;
 	}
 
 	@Override

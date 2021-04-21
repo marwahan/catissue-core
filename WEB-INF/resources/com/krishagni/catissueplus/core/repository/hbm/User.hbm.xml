@@ -70,6 +70,13 @@
       <one-to-many class="com.krishagni.rbac.domain.SubjectAccess"/>
     </set>
 
+    <set name="groups" table="OS_USER_GROUP_USERS" cascade="none">
+      <key column="USER_ID"/>
+      <many-to-many class="com.krishagni.catissueplus.core.administrative.domain.UserGroup" column="GROUP_ID">
+        <filter name="activeEntity" condition="activity_status != 'Disabled'"/>
+      </many-to-many>
+    </set>
+
     <filter name="activeEntity"/>
     
     <sql-query name="getDependentEntities">

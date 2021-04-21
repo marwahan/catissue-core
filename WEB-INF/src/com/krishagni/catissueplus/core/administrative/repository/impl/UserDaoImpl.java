@@ -359,6 +359,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 		addActiveSinceRestriction(criteria, listCrit.activeSince());
 		addRoleRestrictions(criteria, listCrit);
 		addResourceRestrictions(criteria, listCrit);
+		addGroupRestrictions(criteria, listCrit);
 		return criteria;
 	}
 
@@ -482,6 +483,15 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 		if (StringUtils.isNotBlank(listCrit.cpShortTitle())) {
 			addCpRestriction(criteria, "acl", listCrit.cpShortTitle());
 		}
+	}
+
+	private void addGroupRestrictions(Criteria criteria, UserListCriteria listCrit) {
+		if (StringUtils.isBlank(listCrit.group())) {
+			return;
+		}
+
+		criteria.createAlias("u.groups", "group")
+			.add(Restrictions.eq("group.name", listCrit.group()));
 	}
 
 	private void addSiteRestriction(Criteria criteria, String alias, String siteName) {
