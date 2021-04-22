@@ -29,7 +29,7 @@
 
     <set name="sharedWithGroups" table="OS_SPECIMEN_LIST_SHARED_GROUPS">
       <key column="LIST_ID"/>
-      <many-to-many class="com.krishagni.catissueplus.core.administrative.domain.UserGroup" column="USER_GROUP_ID">
+      <many-to-many class="com.krishagni.catissueplus.core.administrative.domain.UserGroup" column="GROUP_ID">
         <filter name="activeEntity" condition="activity_status != 'Disabled'"/>
       </many-to-many>
     </set>
@@ -98,7 +98,7 @@
     </sql-query>
 
     <sql-query name="sharedWithUser">
-      <return-scalar column="listId" type="integer"/>
+      <return-scalar column="listId" type="long"/>
 
       select
         l.identifier as listId
