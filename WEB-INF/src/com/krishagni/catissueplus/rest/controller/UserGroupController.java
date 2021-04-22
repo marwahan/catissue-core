@@ -44,7 +44,7 @@ public class UserGroupController {
 		@RequestParam(value = "institute", required = false, defaultValue = "")
 		String institute,
 
-		@RequestParam(value = "listAll", required = false, defaultValue = "true")
+		@RequestParam(value = "listAll", required = false, defaultValue = "false")
 		boolean listAll,
 
 		@RequestParam(value = "includeStats", required = false, defaultValue = "false")
