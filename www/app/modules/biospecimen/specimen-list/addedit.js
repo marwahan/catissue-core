@@ -65,6 +65,7 @@ angular.module('os.biospecimen.specimenlist.addedit', ['os.biospecimen.models'])
         name: $scope.list.name,
         description: $scope.list.description,
         sharedWith: sharedWith,
+        sharedWithGroups: $scope.list.sharedWithGroups,
         specimenIds: $scope.input.specimenIds || []
       });
 
