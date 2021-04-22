@@ -72,4 +72,22 @@
     <addUniqueConstraint constraintName="OS_SPMN_LIST_SHARED_GRPS_UQ"
       tableName="OS_SPECIMEN_LIST_SHARED_GROUPS" columnNames="LIST_ID,GROUP_ID"/>
   </changeSet>
+
+  <changeSet author="vpawar" id="Query folders shared groups">
+    <createTable tableName="OS_QUERY_FOLDER_SHARED_GROUPS">
+      <column name="FOLDER_ID" type="${int.type}">
+        <constraints nullable="false" foreignKeyName="FK_QFOLDER_SHR_GRP_FOLDER_ID"
+          referencedTableName="CATISSUE_QUERY_FOLDERS" referencedColumnNames="IDENTIFIER"/>
+      </column>
+      <column name="GROUP_ID" type="${int.type}">
+        <constraints nullable="false" foreignKeyName="FK_QFOLDER_SHR_GRP_GRP_ID"
+          referencedTableName="OS_USER_GROUPS" referencedColumnNames="IDENTIFIER"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vpawar" id="Query folders shared groups unique constraint">
+    <addUniqueConstraint constraintName="OS_QFOLDER_SHARED_GRPS_UQ"
+      tableName="OS_QUERY_FOLDER_SHARED_GROUPS" columnNames="FOLDER_ID,GROUP_ID"/>
+  </changeSet>
 </databaseChangeLog>

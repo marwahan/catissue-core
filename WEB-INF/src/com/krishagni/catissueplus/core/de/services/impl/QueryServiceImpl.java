@@ -616,9 +616,10 @@ public class QueryServiceImpl implements QueryService {
 			
 			QueryFolder queryFolder = queryFolderFactory.createQueryFolder(folderDetails);			
 			daoFactory.getQueryFolderDao().saveOrUpdate(queryFolder);
-			
-			if (!queryFolder.getSharedWith().isEmpty()) {
-				notifyFolderShared(queryFolder.getOwner(), queryFolder, queryFolder.getSharedWith());
+
+			Collection<User> sharedUsers = queryFolder.getAllSharedUsers();
+			if (!sharedUsers.isEmpty()) {
+				notifyFolderShared(queryFolder.getOwner(), queryFolder, sharedUsers);
 			}			
 			return ResponseEvent.response(QueryFolderDetails.from(queryFolder));
 		} catch (OpenSpecimenException ose) {
@@ -653,10 +654,10 @@ public class QueryServiceImpl implements QueryService {
 			folderDetails.setOwner(owner);
 			
 			QueryFolder queryFolder = queryFolderFactory.createQueryFolder(folderDetails);
-			Set<User> newUsers = new HashSet<>(queryFolder.getSharedWith());
-			newUsers.removeAll(existing.getSharedWith());
+			Set<User> newUsers = queryFolder.getAllSharedUsers();
+			newUsers.removeAll(existing.getAllSharedUsers());
+
 			existing.update(queryFolder);
-			
 			daoFactory.getQueryFolderDao().saveOrUpdate(existing);
 			
 			if (!newUsers.isEmpty()) {

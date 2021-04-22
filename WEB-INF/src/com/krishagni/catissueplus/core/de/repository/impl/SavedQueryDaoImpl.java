@@ -218,11 +218,15 @@ public class SavedQueryDaoImpl extends AbstractDao<SavedQuery> implements SavedQ
 			.createAlias("createdBy", "c")
 			.createAlias("folders", "f", JoinType.LEFT_OUTER_JOIN)
 			.createAlias("f.sharedWith", "su", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("f.sharedWithGroups", "sg", JoinType.LEFT_OUTER_JOIN)
+			.createAlias("sg.users", "gu", JoinType.LEFT_OUTER_JOIN)
 			.add(Restrictions.isNull("s.deletedOn"))
 			.add(Restrictions.disjunction()
 				.add(Restrictions.eq("f.sharedWithAll", true))
 				.add(Restrictions.eq("c.id", crit.userId()))
-				.add(Restrictions.eq("su.id", crit.userId())));
+				.add(Restrictions.eq("su.id", crit.userId()))
+				.add(Restrictions.eq("gu.id", crit.userId()))
+			);
 
 		addCpCondition(query, crit.cpId());
 		addSearchConditions(query, crit.query());

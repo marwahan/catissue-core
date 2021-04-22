@@ -517,7 +517,7 @@
   
   <bean id="queryFolderFactory" class="com.krishagni.catissueplus.core.de.domain.factory.impl.QueryFolderFactoryImpl">
     <property name="daoFactory" ref="deDaoFactory"/>
-    <property name="userDao" ref="userDao"/>
+    <property name="bioSpmnDaoFactory" ref="biospecimenDaoFactory"/>
   </bean>
 
   <bean id="querySvc" class="com.krishagni.catissueplus.core.de.services.impl.QueryServiceImpl">
