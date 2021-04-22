@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.krishagni.catissueplus.core.administrative.domain.User;
+import com.krishagni.catissueplus.core.administrative.domain.UserGroup;
 import com.krishagni.catissueplus.core.biospecimen.ConfigParams;
 import com.krishagni.catissueplus.core.biospecimen.domain.Specimen;
 import com.krishagni.catissueplus.core.biospecimen.domain.SpecimenList;
@@ -597,7 +598,11 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 		}
 		
 		if (details.isAttrModified("sharedWith")){
-			ensureValidUsers(specimenList, siteCpPairs);
+			ensureValidUsers(specimenList);
+		}
+
+		if (details.isAttrModified("sharedWithGroups")) {
+			ensureValidGroups(specimenList);
 		}
 	}
 	
@@ -616,21 +621,28 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 		}
 	}
 
-	private void ensureValidUsers(SpecimenList specimenList, List<SiteCpPair> siteCps) {
-		if (CollectionUtils.isEmpty(specimenList.getSharedWith())) {
+	private void ensureValidUsers(SpecimenList specimenList) {
+		if (CollectionUtils.isEmpty(specimenList.getSharedWith()) || AuthUtil.isAdmin()) {
 			return;
 		}
-		
-		Long userId = specimenList.getOwner().getId();
-		List<Long> sharedUsers = new ArrayList<Long>();
-		for (User user : specimenList.getSharedWith()) {
-			if (user.getId().equals(userId)) {
-				continue;
-			}
-			sharedUsers.add(user.getId());
-		}
-		
+
+		List<Long> sharedUsers = specimenList.getSharedWith().stream()
+			.filter(user -> !user.equals(specimenList.getOwner()))
+			.map(User::getId)
+			.collect(Collectors.toList());
 		ensureValidUsers(sharedUsers);
+	}
+
+	private void ensureValidGroups(SpecimenList specimenList) {
+		if (CollectionUtils.isEmpty(specimenList.getSharedWithGroups()) || AuthUtil.isAdmin()) {
+			return;
+		}
+
+		for (UserGroup group : specimenList.getSharedWithGroups()) {
+			if (!group.getInstitute().equals(AuthUtil.getCurrentUserInstitute())) {
+				throw OpenSpecimenException.userError(SpecimenListErrorCode.INVALID_GROUPS_LIST);
+			}
+		}
 	}
 	
 	private void ensureValidUsers(List<Long> userIds) {
@@ -735,7 +747,7 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 	}
 
 	private void notifyUsersOnCreate(SpecimenList specimenList) {
-		notifyUsersOnListOp(specimenList, specimenList.getSharedWith(), "ADD");
+		notifyUsersOnListOp(specimenList, "ADD");
 	}
 
 	private void notifyUsersOnUpdate(SpecimenList existing, Collection<User> addedUsers, Collection<User> removedUsers) {
@@ -744,7 +756,13 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 	}
 
 	private void notifyUsersOnDelete(SpecimenList specimenList) {
-		notifyUsersOnListOp(specimenList, specimenList.getSharedWith(), "DELETE");
+		notifyUsersOnListOp(specimenList, "DELETE");
+	}
+
+	private void notifyUsersOnListOp(SpecimenList list, String op) {
+		Set<User> notifyUsers = new HashSet<>(list.getSharedWith());
+		list.getSharedWithGroups().forEach(group -> notifyUsers.addAll(group.getUsers()));
+		notifyUsersOnListOp(list, notifyUsers, op);
 	}
 
 	private void notifyUsersOnListOp(SpecimenList specimenList, Collection<User> notifyUsers, String op) {

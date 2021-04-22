@@ -70,8 +70,7 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<User> getUsersByIdsAndInstitute(Collection<Long> userIds, Long instituteId) {
-		Criteria criteria = sessionFactory.getCurrentSession()
-			.createCriteria(User.class, "u")
+		Criteria criteria = getCurrentSession().createCriteria(User.class, "u")
 			.add(Restrictions.in("u.id", userIds));
 		
 		if (instituteId != null) {
