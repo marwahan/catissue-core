@@ -110,6 +110,12 @@ public class SpecimenList extends BaseEntity {
 		this.sharedWithGroups = sharedWithGroups;
 	}
 
+	public Set<User> getAllSharedUsers() {
+		Set<User> users = new HashSet<>(getSharedWith());
+		getSharedWithGroups().forEach(g -> users.addAll(g.getUsers()));
+		return users;
+	}
+
 	@NotAudited
 	public Set<SpecimenListItem> getSpecimens() {
 		return specimens;

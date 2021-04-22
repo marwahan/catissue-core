@@ -509,8 +509,8 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 			ensureUniqueName(existing, specimenList);
 			ensureValidSpecimensAndUsers(listDetails, specimenList, null);
 
-			Collection<User> addedUsers   = CollectionUtils.subtract(specimenList.getSharedWith(), existing.getSharedWith());
-			Collection<User> removedUsers = CollectionUtils.subtract(existing.getSharedWith(), specimenList.getSharedWith());
+			Collection<User> addedUsers   = CollectionUtils.subtract(specimenList.getAllSharedUsers(), existing.getAllSharedUsers());
+			Collection<User> removedUsers = CollectionUtils.subtract(existing.getAllSharedUsers(), specimenList.getAllSharedUsers());
 
 			existing.update(specimenList);
 			daoFactory.getSpecimenListDao().saveOrUpdate(existing);
@@ -747,7 +747,7 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 	}
 
 	private void notifyUsersOnCreate(SpecimenList specimenList) {
-		notifyUsersOnListOp(specimenList, "ADD");
+		notifyUsersOnListOp(specimenList, specimenList.getAllSharedUsers(), "ADD");
 	}
 
 	private void notifyUsersOnUpdate(SpecimenList existing, Collection<User> addedUsers, Collection<User> removedUsers) {
@@ -756,13 +756,7 @@ public class SpecimenListServiceImpl implements SpecimenListService, Initializin
 	}
 
 	private void notifyUsersOnDelete(SpecimenList specimenList) {
-		notifyUsersOnListOp(specimenList, "DELETE");
-	}
-
-	private void notifyUsersOnListOp(SpecimenList list, String op) {
-		Set<User> notifyUsers = new HashSet<>(list.getSharedWith());
-		list.getSharedWithGroups().forEach(group -> notifyUsers.addAll(group.getUsers()));
-		notifyUsersOnListOp(list, notifyUsers, op);
+		notifyUsersOnListOp(specimenList, specimenList.getAllSharedUsers(), "DELETE");
 	}
 
 	private void notifyUsersOnListOp(SpecimenList specimenList, Collection<User> notifyUsers, String op) {
