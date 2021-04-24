@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.krishagni.catissueplus.core.administrative.domain.Institute;
 import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.administrative.domain.UserGroup;
+import com.krishagni.catissueplus.core.administrative.domain.UserGroupSavedEvent;
 import com.krishagni.catissueplus.core.administrative.domain.factory.UserGroupErrorCode;
 import com.krishagni.catissueplus.core.administrative.domain.factory.UserGroupFactory;
 import com.krishagni.catissueplus.core.administrative.events.UserGroupDetail;
@@ -23,6 +24,7 @@ import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.EntityQueryCriteria;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
+import com.krishagni.catissueplus.core.common.service.impl.EventPublisher;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 
 public class UserGroupServiceImpl implements UserGroupService {
@@ -104,6 +106,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			ensureCreateUpdateRights(group.getInstitute());
 			ensureUniqueGroupName(null, group);
 			daoFactory.getUserGroupDao().saveOrUpdate(group);
+			publishGroupSavedEvent(group);
 			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -125,6 +128,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			ensureUniqueGroupName(existing, group);
 
 			existing.update(group);
+			publishGroupSavedEvent(existing);
 			return ResponseEvent.response(UserGroupDetail.from(existing, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -141,6 +145,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			UserGroup group = getGroup(crit.getId(), crit.getName());
 			ensureDeleteRights(group.getInstitute());
 			group.delete();
+			publishGroupSavedEvent(group);
 			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -157,6 +162,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			UserGroup group = getGroup(input.getId(), input.getName());
 			ensureCreateUpdateRights(group.getInstitute());
 			group.addUsers(groupFactory.getUsers(input.getUsers()));
+			publishGroupSavedEvent(group);
 			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -173,6 +179,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 			UserGroup group = getGroup(input.getId(), input.getName());
 			ensureCreateUpdateRights(group.getInstitute());
 			group.removeUsers(groupFactory.getUsers(input.getUsers()));
+			publishGroupSavedEvent(group);
 			return ResponseEvent.response(UserGroupDetail.from(group, false));
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -223,5 +230,9 @@ public class UserGroupServiceImpl implements UserGroupService {
 		User user = new User();
 		user.setInstitute(institute);
 		AccessCtrlMgr.getInstance().ensureDeleteUserRights(user);
+	}
+
+	private void publishGroupSavedEvent(UserGroup group) {
+		EventPublisher.getInstance().publish(new UserGroupSavedEvent(group));
 	}
 }
