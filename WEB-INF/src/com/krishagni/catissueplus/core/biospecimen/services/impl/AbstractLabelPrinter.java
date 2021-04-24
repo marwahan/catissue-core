@@ -22,6 +22,7 @@ import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.administrative.domain.UserGroup;
 import com.krishagni.catissueplus.core.administrative.domain.UserGroupSavedEvent;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
+import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJob;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJobItem;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJobItem.Status;
@@ -36,6 +37,7 @@ import com.krishagni.catissueplus.core.common.events.EventCode;
 import com.krishagni.catissueplus.core.common.events.OpenSpecimenEvent;
 import com.krishagni.catissueplus.core.common.repository.PrintRuleConfigsListCriteria;
 import com.krishagni.catissueplus.core.common.service.LabelPrinter;
+import com.krishagni.catissueplus.core.common.service.impl.EventPublisher;
 import com.krishagni.catissueplus.core.common.util.AuthUtil;
 import com.krishagni.catissueplus.core.common.util.Utility;
 
@@ -149,6 +151,8 @@ public abstract class AbstractLabelPrinter<T> implements LabelPrinter<T> {
 			}
 		} else if (event instanceof UserGroupSavedEvent && rules != null) {
 			UserGroup group = ((UserGroupSavedEvent) event).getEventData();
+			boolean cacheUpdated = false;
+
 			for (LabelPrintRule rule : rules) {
 				int idx = rule.getUserGroups().indexOf(group);
 				if (idx == -1) {
@@ -161,6 +165,13 @@ public abstract class AbstractLabelPrinter<T> implements LabelPrinter<T> {
 				}
 
 				rule.recomputeEffectiveUsers();
+				cacheUpdated = true;
+			}
+
+			if (cacheUpdated) {
+				PrintRuleConfig ruleCfg = new PrintRuleConfig();
+				ruleCfg.setObjectType(getObjectType());
+				EventPublisher.getInstance().publish(PrintRuleEvent.CACHE_UPDATED, ruleCfg);
 			}
 		}
 	}
@@ -175,6 +186,7 @@ public abstract class AbstractLabelPrinter<T> implements LabelPrinter<T> {
 
 	protected abstract Long getItemId(T obj);
 
+	@PlusTransactional
 	protected void loadRulesFromDb() {
 		try {
 			logger.info("Loading print rules from database for: " + getObjectType());
