@@ -31,6 +31,7 @@ import com.krishagni.catissueplus.core.administrative.events.DistributionOrderLi
 import com.krishagni.catissueplus.core.administrative.events.DistributionOrderSummary;
 import com.krishagni.catissueplus.core.administrative.events.DistributionProtocolDetail;
 import com.krishagni.catissueplus.core.administrative.repository.DistributionOrderDao;
+import com.krishagni.catissueplus.core.common.OrderByNotNullProperty;
 import com.krishagni.catissueplus.core.common.access.SiteCpPair;
 import com.krishagni.catissueplus.core.common.events.UserSummary;
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
@@ -43,7 +44,7 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 		Criteria query = getOrderListQuery(listCrit)
 			.setFirstResult(listCrit.startAt())
 			.setMaxResults(listCrit.maxResults())
-			.addOrder(Order.desc("id"));
+			.addOrder(OrderByNotNullProperty.desc("executionDate", "creationDate"));
 
 		addProjections(query, CollectionUtils.isNotEmpty(listCrit.sites()));
 		List<Object[]> rows = query.list();
@@ -70,8 +71,8 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 	@Override
 	public Long getOrdersCount(DistributionOrderListCriteria listCrit) {
 		Number count = (Number) getOrderListQuery(listCrit)
-				.setProjection(Projections.rowCount())
-				.uniqueResult();
+			.setProjection(Projections.rowCount())
+			.uniqueResult();
 		return count.longValue();
 	}
 
@@ -85,10 +86,9 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DistributionOrder> getOrders(List<String> names) {
-		return getSessionFactory().getCurrentSession()
-				.getNamedQuery(GET_ORDERS_BY_NAME)
-				.setParameterList("names", names)
-				.list();
+		return getCurrentSession().getNamedQuery(GET_ORDERS_BY_NAME)
+			.setParameterList("names", names)
+			.list();
 	}
 
 	@Override
@@ -105,9 +105,9 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 	@SuppressWarnings("unchecked")
 	public List<DistributionOrderItem> getDistributedOrderItems(List<Long> specimenIds) {
 		return getSessionFactory().getCurrentSession()
-				.getNamedQuery(GET_DISTRIBUTED_ITEMS_BY_SPMN_IDS)
-				.setParameterList("ids", specimenIds)
-				.list();
+			.getNamedQuery(GET_DISTRIBUTED_ITEMS_BY_SPMN_IDS)
+			.setParameterList("ids", specimenIds)
+			.list();
 	}
 
 	@Override
