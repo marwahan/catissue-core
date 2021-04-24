@@ -103,4 +103,8 @@ public class UserGroup extends BaseEntity {
 
 		return count;
 	}
+
+	public boolean isDeleted() {
+		return Status.isDisabledStatus(getActivityStatus());
+	}
 }

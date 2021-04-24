@@ -19,6 +19,8 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krishagni.catissueplus.core.administrative.domain.User;
+import com.krishagni.catissueplus.core.administrative.domain.UserGroup;
+import com.krishagni.catissueplus.core.administrative.domain.UserGroupSavedEvent;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJob;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintJobItem;
@@ -140,13 +142,26 @@ public abstract class AbstractLabelPrinter<T> implements LabelPrinter<T> {
 
 	public void onApplicationEvent(OpenSpecimenEvent event) {
 		EventCode code = event.getEventCode();
-		if (code != PrintRuleEvent.CREATED && code != PrintRuleEvent.UPDATED && code != PrintRuleEvent.DELETED) {
-			return;
-		}
+		if (code == PrintRuleEvent.CREATED || code == PrintRuleEvent.UPDATED || code == PrintRuleEvent.DELETED) {
+			PrintRuleConfig ruleCfg = (PrintRuleConfig) event.getEventData();
+			if (ruleCfg.getObjectType().equals(getObjectType())) {
+				loadRulesFromDb();
+			}
+		} else if (event instanceof UserGroupSavedEvent && rules != null) {
+			UserGroup group = ((UserGroupSavedEvent) event).getEventData();
+			for (LabelPrintRule rule : rules) {
+				int idx = rule.getUserGroups().indexOf(group);
+				if (idx == -1) {
+					continue;
+				}
 
-		PrintRuleConfig ruleCfg = (PrintRuleConfig) event.getEventData();
-		if (ruleCfg.getObjectType().equals(getObjectType())) {
-			loadRulesFromDb();
+				rule.getUserGroups().remove(idx);
+				if (!group.isDeleted()) {
+					rule.getUserGroups().add(group);
+				}
+
+				rule.recomputeEffectiveUsers();
+			}
 		}
 	}
 

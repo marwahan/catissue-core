@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.util.ReflectionUtils;
 
 import com.krishagni.catissueplus.core.administrative.domain.User;
+import com.krishagni.catissueplus.core.administrative.domain.UserGroup;
 import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.util.MessageUtil;
@@ -52,6 +52,8 @@ public abstract class LabelPrintRule {
 	private IpAddressMatcher ipAddressMatcher;
 
 	private List<User> users = new ArrayList<>();
+
+	private List<UserGroup> userGroups = new ArrayList<>();
 	
 	private String printerName;
 	
@@ -66,6 +68,8 @@ public abstract class LabelPrintRule {
 	private String lineEnding;
 
 	private String fileExtn;
+
+	private List<User> effectiveUsers;
 
 	public String getLabelType() {
 		return labelType;
@@ -96,6 +100,14 @@ public abstract class LabelPrintRule {
 
 	public void setUsers(List<User> users) {
 		this.users = users;
+	}
+
+	public List<UserGroup> getUserGroups() {
+		return userGroups;
+	}
+
+	public void setUserGroups(List<UserGroup> userGroups) {
+		this.userGroups = userGroups;
 	}
 
 	public String getPrinterName() {
@@ -161,8 +173,37 @@ public abstract class LabelPrintRule {
 		this.fileExtn = fileExtn;
 	}
 
+	public List<User> getEffectiveUsers() {
+		if (effectiveUsers != null) {
+			return effectiveUsers;
+		}
+
+		List<User> result = new ArrayList<>();
+		if (users != null) {
+			result.addAll(users);
+		}
+
+		if (userGroups != null) {
+			userGroups.forEach(group -> result.addAll(group.getUsers()));
+		}
+
+		effectiveUsers = result;
+		return result;
+	}
+
+	public void clearEffectiveUsers() {
+		effectiveUsers.clear();
+		effectiveUsers = null;
+	}
+
+	public void recomputeEffectiveUsers() {
+		clearEffectiveUsers();
+		getEffectiveUsers();
+	}
+
 	public boolean isApplicableFor(User user, String ipAddr) {
-		if (CollectionUtils.isNotEmpty(users) && !users.stream().anyMatch(u -> u.equals(user))) {
+		List<User> applicableFor = getEffectiveUsers();
+		if (!applicableFor.isEmpty() && applicableFor.indexOf(user) == -1) {
 			return false;
 		}
 
@@ -216,6 +257,7 @@ public abstract class LabelPrintRule {
 		result.append("label design = ").append(getLabelDesign())
 			.append(", label type = ").append(getLabelType())
 			.append(", user = ").append(getUsersList(true))
+			.append(", user groups = ").append(getUserGroupsList(true))
 			.append(", printer = ").append(getPrinterName())
 			.append(", line ending = ").append(getLineEnding())
 			.append(", file extension = ").append(getFileExtn());
@@ -238,7 +280,9 @@ public abstract class LabelPrintRule {
 			rule.put("labelType", getLabelType());
 			rule.put("ipAddressMatcher", getIpAddressRange(getIpAddressMatcher()));
 			rule.put("users", getUsersList(ufn));
+			rule.put("userGroups", getUserGroupsList(false));
 			rule.put("$$users", getUsersInDisplayNameFmt());
+			rule.put("$$userGroups", getUserGroupsListJson());
 			rule.put("printerName", getPrinterName());
 			rule.put("cmdFilesDir", getCmdFilesDir());
 			rule.put("labelDesign", getLabelDesign());
@@ -307,5 +351,16 @@ public abstract class LabelPrintRule {
 
 	private String getUsersInDisplayNameFmt() {
 		return Utility.nullSafeStream(getUsers()).map(User::formattedName).collect(Collectors.joining(", "));
+	}
+
+	private String getUserGroupsList(boolean ufn) {
+		Function<UserGroup, String> mapper = ufn ? (g) -> g.getName() : (g) -> g.getId().toString();
+		return Utility.nullSafeStream(getUserGroups()).map(mapper).collect(Collectors.joining(","));
+	}
+
+	private String getUserGroupsListJson() {
+		return "[" + Utility.nullSafeStream(getUserGroups())
+			.map(g -> "{\"id\": " + g.getId() + ", \"name\": \"" + g.getName() + "\"}")
+			.collect(Collectors.joining(", ")) + "]";
 	}
 }
