@@ -52,8 +52,8 @@ public class ShipmentDaoImpl extends AbstractDao<Shipment> implements ShipmentDa
 	@Override
 	public Long getShipmentsCount(ShipmentListCriteria crit) {
 		Number count = (Number) getShipmentsQuery(crit)
-				.setProjection(Projections.rowCount())
-				.uniqueResult();
+			.setProjection(Projections.rowCount())
+			.uniqueResult();
 		return count.longValue();
 	}
 
