@@ -281,7 +281,7 @@ public abstract class LabelPrintRule {
 			rule.put("ipAddressMatcher", getIpAddressRange(getIpAddressMatcher()));
 			rule.put("users", getUsersList(ufn));
 			rule.put("userGroups", getUserGroupsList(false));
-			rule.put("$$users", getUsersInDisplayNameFmt());
+			rule.put("$$users", getUsersListJson());
 			rule.put("$$userGroups", getUserGroupsListJson());
 			rule.put("printerName", getPrinterName());
 			rule.put("cmdFilesDir", getCmdFilesDir());
@@ -349,8 +349,15 @@ public abstract class LabelPrintRule {
 		return Utility.nullSafeStream(getUsers()).map(mapper).collect(Collectors.joining(","));
 	}
 
-	private String getUsersInDisplayNameFmt() {
-		return Utility.nullSafeStream(getUsers()).map(User::formattedName).collect(Collectors.joining(", "));
+	private String getUsersListJson() {
+		return "[" + Utility.nullSafeStream(getUsers())
+			.map(u ->
+				"{" +
+					"\"id\": " + u.getId() +
+					(StringUtils.isNotBlank(u.getFirstName()) ? ", \"firstName\":\"" + u.getFirstName() + "\"" : "") +
+					(StringUtils.isNotBlank(u.getLastName()) ? ", \"lastName\":\"" + u.getLastName() + "\"" : "") +
+				"}"
+			).collect(Collectors.joining(", ")) + "]";
 	}
 
 	private String getUserGroupsList(boolean ufn) {
