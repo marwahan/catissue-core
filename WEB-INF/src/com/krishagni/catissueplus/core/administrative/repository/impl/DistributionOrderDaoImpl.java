@@ -26,6 +26,7 @@ import org.hibernate.sql.JoinType;
 import com.krishagni.catissueplus.core.administrative.domain.DistributionOrder;
 import com.krishagni.catissueplus.core.administrative.domain.DistributionOrderItem;
 import com.krishagni.catissueplus.core.administrative.domain.Site;
+import com.krishagni.catissueplus.core.administrative.domain.factory.DistributionOrderErrorCode;
 import com.krishagni.catissueplus.core.administrative.events.DistributionOrderItemListCriteria;
 import com.krishagni.catissueplus.core.administrative.events.DistributionOrderListCriteria;
 import com.krishagni.catissueplus.core.administrative.events.DistributionOrderSummary;
@@ -33,6 +34,7 @@ import com.krishagni.catissueplus.core.administrative.events.DistributionProtoco
 import com.krishagni.catissueplus.core.administrative.repository.DistributionOrderDao;
 import com.krishagni.catissueplus.core.common.OrderByNotNullProperty;
 import com.krishagni.catissueplus.core.common.access.SiteCpPair;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.UserSummary;
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
 
@@ -179,6 +181,7 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 		addExecutionDtRestriction(query, crit);
 		addReceivingSiteRestriction(query, crit, matchMode);
 		addReceivingInstRestriction(query, crit, matchMode);
+		addStatusRestriction(query, crit);
 		return query;
 	}
 
@@ -306,6 +309,18 @@ public class DistributionOrderDaoImpl extends AbstractDao<DistributionOrder> imp
 		
 		query.createAlias("site.institute", "institute")
 			.add(Restrictions.ilike("institute.name", crit.receivingInstitute(), mode));
+	}
+
+	private void addStatusRestriction(Criteria query, DistributionOrderListCriteria crit) {
+		if (StringUtils.isBlank(crit.status())) {
+			return;
+		}
+
+		try {
+			query.add(Restrictions.eq("status", DistributionOrder.Status.valueOf(crit.status())));
+		} catch (Exception e) {
+			throw OpenSpecimenException.userError(DistributionOrderErrorCode.INVALID_STATUS, crit.status());
+		}
 	}
 	
 	private void addProjections(Criteria query, boolean isDistinct) {

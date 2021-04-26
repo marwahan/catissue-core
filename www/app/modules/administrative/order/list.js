@@ -1,7 +1,7 @@
 
 angular.module('os.administrative.order.list', ['os.administrative.models'])
   .controller('OrderListCtrl', function(
-    $scope, $state,
+    $scope, $state, $translate,
     DistributionOrder, DistributionProtocol, Util, ListPagerOpts) {
 
     var pvsLoaded = false;
@@ -43,6 +43,7 @@ angular.module('os.administrative.order.list', ['os.administrative.models'])
       }
 
       loadDps();
+      loadStatuses();
       pvsLoaded = true;
     }
 
@@ -53,11 +54,24 @@ angular.module('os.administrative.order.list', ['os.administrative.models'])
         }
       );
     }
+
+    function loadStatuses() {
+      $scope.statuses = [ {name: 'PENDING'}, {name: 'EXECUTED'} ];
+      $translate('orders.statuses.PENDING').then(
+        function() {
+          angular.forEach($scope.statuses,
+            function(status) {
+              status.caption = $translate.instant('orders.statuses.' + status.name);
+            }
+          );
+        }
+      );
+    }
  
     function getOrdersCount() {
       return DistributionOrder.getOrdersCount($scope.filterOpts);
     }
-    
+
     $scope.loadSearchPvs = loadSearchPvs;
 
     $scope.loadDps = loadDps;

@@ -47,6 +47,13 @@
       </os-date-picker>
     </div>
 
+    <div class="form-group">
+      <os-select ng-model="filterOpts.status" class="form-control" os-md-input
+        list="statuses" select-prop="name" display-prop="caption"
+        placeholder="{{'orders.status' | translate}}">
+      </os-select>
+    </div>
+
     <os-clear-filters opts="filterOpts"></os-clear-filters>
   </div>
 
