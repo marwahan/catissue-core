@@ -40,9 +40,14 @@ import com.krishagni.catissueplus.core.common.util.EmailUtil;
 import com.krishagni.catissueplus.core.common.util.MessageUtil;
 import com.krishagni.catissueplus.core.common.util.NotifUtil;
 import com.krishagni.catissueplus.core.common.util.Status;
+import com.krishagni.catissueplus.core.common.util.Utility;
 
 public class UserAuthenticationServiceImpl implements UserAuthenticationService {
 	private static final String ACCOUNT_LOCKED_NOTIF_TMPL = "account_locked_notification";
+
+	private static final String FAILED_LOGIN_USER_NOTIF_TMPL = "failed_login_user";
+
+	private static final String FAILED_LOGIN_USER_ADMIN_TMPL = "failed_login_admins";
 
 	private DaoFactory daoFactory;
 
@@ -117,7 +122,10 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 		} catch (OpenSpecimenException ose) {
 			if (user != null && user.isEnabled()) {
 				insertLoginAudit(user, loginDetail.getIpAddress(), false);
-				checkFailedLoginAttempt(user, loginDetail.getIpAddress());
+				checkFailedLoginAttempt(user);
+				if (ose.containsError(AuthErrorCode.INVALID_CREDENTIALS)) {
+					notifyFailedLogin(loginDetail, user);
+				}
 			}
 			return ResponseEvent.error(ose, true);
 		} catch (Exception e) {
@@ -244,7 +252,7 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 		return loginAuditLog;
 	}
 	
-	private void checkFailedLoginAttempt(User user, String ipAddress) {
+	private void checkFailedLoginAttempt(User user) {
 		int failedLoginAttempts = AuthConfig.getInstance().getAllowedFailedLoginAttempts();
 		List<LoginAuditLog> logs = daoFactory.getAuthDao()
 			.getLoginAuditLogsByUser(user.getId(), failedLoginAttempts);
@@ -261,6 +269,37 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 		
 		user.setActivityStatus(Status.ACTIVITY_STATUS_LOCKED.getStatus());
 		notifyUserAccountLocked(user, failedLoginAttempts);
+	}
+
+	private void notifyFailedLogin(LoginDetail loginDetail, User user) {
+		if (!AuthConfig.getInstance().isFailedLoginNotifEnabled()) {
+			return;
+		}
+
+		String[] subjParams = { user.formattedName(), user.getLoginName() };
+		Map<String, Object> props = new HashMap<>();
+		props.put("user", user);
+		props.put("$subject", subjParams);
+		props.put("ccAdmin", false);
+		props.put("ignoreDnd", true);
+		props.put("ipAddress", loginDetail.getIpAddress());
+		props.put("dateTime", Utility.getDateTimeString(Calendar.getInstance().getTime()));
+		EmailUtil.getInstance().sendEmail(FAILED_LOGIN_USER_NOTIF_TMPL, new String[] { user.getEmailAddress() }, null, props);
+
+		List<User> admins = daoFactory.getUserDao().getSuperAndInstituteAdmins(user.getInstitute().getName());
+		for (User admin : admins) {
+			props.put("admin", admin);
+			EmailUtil.getInstance().sendEmail(FAILED_LOGIN_USER_ADMIN_TMPL, new String[] { admin.getEmailAddress() }, null, props);
+		}
+
+		Notification notif = new Notification();
+		notif.setEntityId(user.getId());
+		notif.setEntityType(User.getEntityName());
+		notif.setCreatedBy(daoFactory.getUserDao().getSystemUser());
+		notif.setCreationTime(Calendar.getInstance().getTime());
+		notif.setOperation("UPDATE");
+		notif.setMessage(MessageUtil.getInstance().getMessage(FAILED_LOGIN_USER_ADMIN_TMPL + "_subj", subjParams));
+		NotifUtil.getInstance().notify(notif, Collections.singletonMap("user-overview", admins));
 	}
 	
 	private void insertApiCallLog(LoginDetail loginDetail, User user, LoginAuditLog loginAuditLog) {

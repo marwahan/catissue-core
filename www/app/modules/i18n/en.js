@@ -2842,9 +2842,12 @@
         "default_domain_desc": "The user domain to be pre-selected for authentication on the user sign-in page.",
 
         "otp_auth": "Two Factor Authentication",
-        "otp_auth_desc": "Enable two factor authentication using OTP",
+        "otp_auth_desc": "Enable two factor authentication using OTP.",
         "enable_device_verification": "Device Verification",
-        "enable_device_verification_desc": "Enable device verification using OTP"
+        "enable_device_verification_desc": "Enable device verification using OTP.",
+
+        "notify_failed_logins": "Notify Failed Logins",
+        "notify_failed_logins_desc": "Enable to notify users and admins whenever an unsuccessful login attempt is made."
       },
       
       "administrative": {
