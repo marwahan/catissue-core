@@ -84,6 +84,14 @@ angular.module('os.biospecimen.models.form', ['os.common.models'])
       );
     };
 
+    Form.getAtRevision = function(formId, revId) {
+      return $http.get(Form.url() + formId + '/revisions/' + revId + '/definition', {params: {maxPvs: 100}}).then(
+        function(result) {
+          return result.data;
+        }
+      );
+    }
+
     Form.listForms = function(formType, params) {
       var qp = angular.extend({formType: formType}, params || {});
       return $http.get(Form.url(), {params: qp}).then(

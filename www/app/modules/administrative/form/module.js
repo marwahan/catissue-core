@@ -47,11 +47,15 @@ angular.module('os.administrative.form',
         parent: 'form-root'
       })
       .state('form-preview', {
-        url: '/form-preview/:formId',
+        url: '/form-preview/:formId?revId',
         templateUrl: 'modules/administrative/form/preview.html',
         controller: 'FormPreviewCtrl',
         resolve: {
           formDef: function($stateParams, Form) {
+            if ($stateParams.formId > 0 && $stateParams.revId > 0) {
+              return Form.getAtRevision($stateParams.formId, $stateParams.revId);
+            }
+
             return Form.getDefinition($stateParams.formId);
           }
         },
