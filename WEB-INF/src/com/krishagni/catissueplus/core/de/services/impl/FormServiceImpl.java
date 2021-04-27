@@ -316,7 +316,7 @@ public class FormServiceImpl implements FormService, InitializingBean {
 				throw OpenSpecimenException.userError(FormErrorCode.NOT_FOUND, formIds, formIds.size());
 			}
 
-			formIds.forEach(Container::softDeleteContainer);
+			formIds.forEach(formId -> Container.softDeleteContainer(getUserContext(), formId));
 			formDao.deleteFormContexts(formIds);
 
 			return ResponseEvent.response(true);
