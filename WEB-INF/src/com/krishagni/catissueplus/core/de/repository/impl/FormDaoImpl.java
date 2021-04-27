@@ -45,6 +45,7 @@ import com.krishagni.catissueplus.core.de.domain.Form;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
 import com.krishagni.catissueplus.core.de.events.FormCtxtSummary;
 import com.krishagni.catissueplus.core.de.events.FormRecordSummary;
+import com.krishagni.catissueplus.core.de.events.FormRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormSummary;
 import com.krishagni.catissueplus.core.de.events.ObjectCpDetail;
 import com.krishagni.catissueplus.core.de.repository.FormDao;
@@ -927,6 +928,38 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 			.executeUpdate();
 	}
 
+	@Override
+	public List<FormRevisionDetail> getFormRevisions(Long formId) {
+		List<Object[]> rows = getCurrentSession().getNamedQuery(GET_FORM_REVISIONS)
+			.setParameter("formId", formId)
+			.list();
+
+		List<FormRevisionDetail> revisions = new ArrayList<>();
+		for (Object[] row : rows) {
+			int idx = -1;
+
+			FormRevisionDetail revision = new FormRevisionDetail();
+			revision.setRev((Long) row[++idx]);
+			revision.setRevType((Integer) row[++idx]);
+
+			UserSummary user = new UserSummary();
+			user.setId((Long) row[++idx]);
+			user.setFirstName((String) row[++idx]);
+			user.setLastName((String) row[++idx]);
+			user.setEmailAddress((String) row[++idx]);
+			revision.setRevBy(user);
+
+			revision.setRevTime((Date) row[++idx]);
+			revision.setId((Long) row[++idx]);
+			revision.setName((String) row[++idx]);
+			revision.setCaption((String) row[++idx]);
+			revision.setDeletedOn((Date) row[++idx]);
+			revisions.add(revision);
+		}
+
+		return revisions;
+	}
+
 	private DetachedCriteria getListFormIdsQuery(FormListCriteria crit) {
 		return getListFormsQuery(crit).setProjection(Projections.distinct(Projections.property("form.id")));
 	}
@@ -1308,5 +1341,11 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 	private static final String MV_VISIT_FORM_RECORDS = RE_FQN + ".moveVisitRecords";
 
 	private static final String MV_SPMN_FORM_RECORDS  = RE_FQN + ".moveSpecimenRecords";
+
+	//
+	// form revisions
+	private static final String FORM_FQN = Form.class.getName();
+
+	private static final String GET_FORM_REVISIONS = FORM_FQN + ".getRevisions";
 
 }

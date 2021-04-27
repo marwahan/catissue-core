@@ -14,6 +14,7 @@ import com.krishagni.catissueplus.core.de.domain.Form;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
 import com.krishagni.catissueplus.core.de.events.FormCtxtSummary;
 import com.krishagni.catissueplus.core.de.events.FormRecordSummary;
+import com.krishagni.catissueplus.core.de.events.FormRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormSummary;
 import com.krishagni.catissueplus.core.de.events.ObjectCpDetail;
 
@@ -139,4 +140,9 @@ public interface FormDao extends Dao<FormContextBean> {
 	int moveVisitRecords(Long cpId, Long srcFormCtxtId, Long tgtFormCtxtId);
 
 	int moveSpecimenRecords(Long cpId, Long srcFormCtxtId, Long tgtFormCtxtId);
+
+	//
+	// form revisions
+	//
+	List<FormRevisionDetail> getFormRevisions(Long formId);
 }

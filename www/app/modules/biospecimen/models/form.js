@@ -67,6 +67,15 @@ angular.module('os.biospecimen.models.form', ['os.common.models'])
       return $http.delete( Form.url() + this.$id()).then(function(result) { return result.data; });
     };
 
+
+    Form.prototype.getRevisions = function() {
+      return $http.get(Form.url() + this.$id() + '/revisions').then(
+        function(resp) {
+          return resp.data;
+        }
+      );
+    }
+
     Form.getDefinition = function(formId) {
       return $http.get(Form.url() + formId + '/definition', {params: {maxPvs: 100}}).then(
         function(result) {

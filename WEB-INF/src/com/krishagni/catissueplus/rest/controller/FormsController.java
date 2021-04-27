@@ -42,6 +42,7 @@ import com.krishagni.catissueplus.core.de.events.FormDataDetail;
 import com.krishagni.catissueplus.core.de.events.FormFieldSummary;
 import com.krishagni.catissueplus.core.de.events.FormRecordCriteria;
 import com.krishagni.catissueplus.core.de.events.FormRecordsList;
+import com.krishagni.catissueplus.core.de.events.FormRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormSummary;
 import com.krishagni.catissueplus.core.de.events.GetFormFieldPvsOp;
 import com.krishagni.catissueplus.core.de.events.GetFormRecordsListOp;
@@ -541,6 +542,13 @@ public class FormsController {
 	@ResponseBody
 	public Map<String, Integer> moveRecords(@RequestBody MoveFormRecordsOp input) {
 		return Collections.singletonMap("count", ResponseEvent.unwrap(formSvc.moveRecords(RequestEvent.wrap(input))));
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value="/{id}/revisions")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public List<FormRevisionDetail> getRevisions(@PathVariable("id") Long formId) {
+		return ResponseEvent.unwrap(formSvc.getFormRevisions(RequestEvent.wrap(formId)));
 	}
 
 	private Map<String, Object> saveOrUpdateFormData(Long formId, Map<String, Object> valueMap) {

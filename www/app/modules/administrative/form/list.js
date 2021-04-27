@@ -210,5 +210,34 @@ angular.module('os.administrative.form.list', ['os.administrative.models'])
       Util.downloadFile(ApiUrls.getBaseUrl() + 'forms/' + form.formId + '/definition-zip');
     }
 
+    $scope.showRevisions = function(form) {
+      $modal.open({
+        templateUrl: 'modules/common/audit/revisions.html',
+        controller: function($scope, $modalInstance, revisions) {
+          $scope.revisions = revisions;
+
+          $scope.done = function() {
+            $modalInstance.close(true);
+          }
+        },
+        resolve: {
+          revisions: function() {
+            return form.getRevisions().then(
+              function(revisions) {
+                revisions.forEach(
+                  function(rev) {
+                    rev.changedOn = rev.revTime;
+                    rev.changedBy = rev.revBy;
+                  }
+                );
+
+                return revisions;
+              }
+            );
+          }
+        }
+      });
+    }
+
     init();
   });

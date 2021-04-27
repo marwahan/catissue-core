@@ -1853,14 +1853,15 @@
     "preview_form": "Preview: {{caption}}",
 
     "tooltip": {
-      "add": "Click to add new Form",
-      "edit": "Click to edit Form",
-      "delete": "Click to delete Form",
-      "delete_forms": "Click to delete selected forms",
-      "search": "Click to search Form",
-      "attach_form_to_cp": "Click to attach form to a Collection Protocol",
-      "download_xml": "Click to download the form XML",
-      "import_zip": "Create or update form by importing the form XML/ZIP"
+      "add": "Add new form",
+      "edit": "Edit form",
+      "delete": "Delete form",
+      "delete_forms": "Delete selected forms",
+      "search": "Search forms",
+      "attach_form_to_cp": "Attach form to a collection protocol",
+      "download_xml": "Download form XML",
+      "import_zip": "Create or update form by importing the form XML/ZIP",
+      "revisions": "Revisions"
     },
 
     "filter": {
