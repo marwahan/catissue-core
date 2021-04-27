@@ -215,9 +215,15 @@ angular.module('os.administrative.form.list', ['os.administrative.models'])
         templateUrl: 'modules/common/audit/revisions.html',
         controller: function($scope, $modalInstance, revisions) {
           $scope.revisions = revisions;
+          $scope.actionsTmpl = 'modules/administrative/form/download_revision.html';
 
           $scope.done = function() {
             $modalInstance.close(true);
+          }
+
+          $scope.downloadRevision = function(revision) {
+            var formId = revision.id, revId = revision.rev;
+            Util.downloadFile(ApiUrls.getBaseUrl() + 'forms/' + formId + '/revisions/' + revId + '/definition-zip');
           }
         },
         resolve: {

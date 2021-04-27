@@ -32,11 +32,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.krishagni.catissueplus.core.administrative.repository.FormListCriteria;
 import com.krishagni.catissueplus.core.auth.domain.UserRequestData;
+import com.krishagni.catissueplus.core.common.Pair;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.BulkDeleteEntityOp;
 import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.util.Utility;
+import com.krishagni.catissueplus.core.de.domain.FormErrorCode;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
 import com.krishagni.catissueplus.core.de.events.FormDataDetail;
 import com.krishagni.catissueplus.core.de.events.FormFieldSummary;
@@ -175,13 +178,7 @@ public class FormsController {
 	throws IOException {
 		ResponseEvent<Container> resp = formSvc.getFormDefinition(getRequest(formId));
 		resp.throwErrorIfUnsuccessful();
-
-		httpResp.setCharacterEncoding("UTF-8");
-		Writer writer = httpResp.getWriter();
-
-		ContainerSerializer serializer = new ContainerJsonSerializer(resp.getPayload(), writer);
-		serializer.serialize(maxPvListSize);
-		writer.flush();
+		serializeToJson(resp.getPayload(), maxPvListSize, httpResp);
 	}
 
 	@RequestMapping(method = RequestMethod.PUT, value="{id}")
@@ -440,35 +437,10 @@ public class FormsController {
 	@RequestMapping(method = RequestMethod.GET, value="/{id}/definition-zip")
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
-	public void exportForm(@PathVariable("id") Long containerId, HttpServletResponse httpResp) {
+	public void exportFormZip(@PathVariable("id") Long containerId, HttpServletResponse httpResp) {
 		ResponseEvent<Container> resp = formSvc.getFormDefinition(getRequest(containerId));
 		resp.throwErrorIfUnsuccessful();
-			
-		String tmpDir = getTmpDirName();
-		String zipFileName = null;
-		FileInputStream fin = null;
-		
-		try {
-			Container container = resp.getPayload();
-			FormDefinitionExporter formExporter = new FormDefinitionExporter();
-			formExporter.export(container, tmpDir);
-			
-			String fileName = container.getName() + ".zip";
-			zipFileName = zipFiles(tmpDir);
-			
-			httpResp.setContentType("application/zip");
-			httpResp.setHeader("Content-Disposition", "attachment; filename=" + fileName);
-			
-			OutputStream out = httpResp.getOutputStream();
-			fin = new FileInputStream(zipFileName);
-			IoUtil.copy(fin, out);
-		} catch (Exception e) {
-			throw new RuntimeException("Error occurred when exporting form", e);
-		} finally {
-			IoUtil.delete(tmpDir);
-			IoUtil.delete(zipFileName);
-			IoUtil.close(fin);
-		}
+		exportFormZip(resp.getPayload(), httpResp);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value="/{id}/permissible-values")
@@ -551,6 +523,41 @@ public class FormsController {
 		return ResponseEvent.unwrap(formSvc.getFormRevisions(RequestEvent.wrap(formId)));
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value="/{id}/revisions/{revId}/definition")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public void getFormAtRevision(
+		@PathVariable("id")
+		Long formId,
+
+		@PathVariable("revId")
+		Long revId,
+
+		@RequestParam(value = "maxPvs", required = false, defaultValue = "0")
+		int maxPvListSize,
+
+		HttpServletResponse httpResp)
+	throws IOException {
+		Container form = ResponseEvent.unwrap(formSvc.getFormAtRevision(RequestEvent.wrap(Pair.make(formId, revId))));
+		if (form == null) {
+			throw OpenSpecimenException.userError(FormErrorCode.NOT_FOUND, formId + ":" + revId);
+		}
+
+		serializeToJson(form, maxPvListSize, httpResp);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value="/{id}/revisions/{revId}/definition-zip")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public void getFormAtRevision(@PathVariable("id") Long formId, @PathVariable("revId") Long revId, HttpServletResponse httpResp) {
+		Container form = ResponseEvent.unwrap(formSvc.getFormAtRevision(RequestEvent.wrap(Pair.make(formId, revId))));
+		if (form == null) {
+			throw OpenSpecimenException.userError(FormErrorCode.NOT_FOUND, formId + ":" + revId);
+		}
+
+		exportFormZip(form, httpResp);
+	}
+
 	private Map<String, Object> saveOrUpdateFormData(Long formId, Map<String, Object> valueMap) {
 		Map<String, Object> appData = (Map<String, Object>) valueMap.computeIfAbsent(
 			"appData",
@@ -596,5 +603,42 @@ public class FormsController {
   
 	private <T> RequestEvent<T> getRequest(T payload) {
 		return new RequestEvent<T>(payload);				
-	}	
+	}
+
+	private void serializeToJson(Container form, int maxPvListSize, HttpServletResponse httpResp)
+	throws IOException {
+		httpResp.setCharacterEncoding("UTF-8");
+		Writer writer = httpResp.getWriter();
+
+		ContainerSerializer serializer = new ContainerJsonSerializer(form, writer);
+		serializer.serialize(maxPvListSize);
+		writer.flush();
+	}
+
+	private void exportFormZip(Container form, HttpServletResponse httpResp) {
+		String tmpDir = getTmpDirName();
+		String zipFileName = null;
+		FileInputStream fin = null;
+
+		try {
+			FormDefinitionExporter formExporter = new FormDefinitionExporter();
+			formExporter.export(form, tmpDir);
+
+			String fileName = form.getName() + ".zip";
+			zipFileName = zipFiles(tmpDir);
+
+			httpResp.setContentType("application/zip");
+			httpResp.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+
+			OutputStream out = httpResp.getOutputStream();
+			fin = new FileInputStream(zipFileName);
+			IoUtil.copy(fin, out);
+		} catch (Exception e) {
+			throw new RuntimeException("Error occurred when exporting form", e);
+		} finally {
+			IoUtil.delete(tmpDir);
+			IoUtil.delete(zipFileName);
+			IoUtil.close(fin);
+		}
+	}
 }

@@ -793,6 +793,13 @@ public class FormServiceImpl implements FormService, InitializingBean {
 		return ResponseEvent.response(formDao.getFormRevisions(req.getPayload()));
 	}
 
+	@Override
+	@PlusTransactional
+	public ResponseEvent<Container> getFormAtRevision(RequestEvent<Pair<Long, Long>> req) {
+		Pair<Long, Long> formRevIds = req.getPayload();
+		return ResponseEvent.response(formDao.getFormAtRevision(formRevIds.first(), formRevIds.second()));
+	}
+
 	//
 	// Internal APIs
 	//

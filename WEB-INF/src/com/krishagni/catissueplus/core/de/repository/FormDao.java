@@ -18,6 +18,7 @@ import com.krishagni.catissueplus.core.de.events.FormRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormSummary;
 import com.krishagni.catissueplus.core.de.events.ObjectCpDetail;
 
+import edu.common.dynamicextensions.domain.nui.Container;
 import krishagni.catissueplus.beans.FormContextBean;
 import krishagni.catissueplus.beans.FormRecordEntryBean;
 
@@ -145,4 +146,6 @@ public interface FormDao extends Dao<FormContextBean> {
 	// form revisions
 	//
 	List<FormRevisionDetail> getFormRevisions(Long formId);
+
+	Container getFormAtRevision(Long formId, Long revId);
 }

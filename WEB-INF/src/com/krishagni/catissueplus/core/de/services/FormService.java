@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.krishagni.catissueplus.core.administrative.repository.FormListCriteria;
+import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.events.BulkDeleteEntityOp;
 import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
@@ -87,6 +88,8 @@ public interface FormService {
 	// Form revisions
 	//
 	ResponseEvent<List<FormRevisionDetail>> getFormRevisions(RequestEvent<Long> req);
+
+	ResponseEvent<Container> getFormAtRevision(RequestEvent<Pair<Long, Long>> req);
 
 	/**
 	 * Internal usage

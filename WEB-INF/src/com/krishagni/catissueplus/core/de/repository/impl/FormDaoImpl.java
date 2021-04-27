@@ -1,5 +1,6 @@
 package com.krishagni.catissueplus.core.de.repository.impl;
 
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
+import org.hibernate.type.BlobType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -38,6 +40,8 @@ import com.krishagni.catissueplus.core.common.OrderByNotNullProperty;
 import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.access.SiteCpPair;
+import com.krishagni.catissueplus.core.common.errors.CommonErrorCode;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
 import com.krishagni.catissueplus.core.common.events.UserSummary;
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
@@ -50,6 +54,7 @@ import com.krishagni.catissueplus.core.de.events.FormSummary;
 import com.krishagni.catissueplus.core.de.events.ObjectCpDetail;
 import com.krishagni.catissueplus.core.de.repository.FormDao;
 
+import edu.common.dynamicextensions.domain.nui.Container;
 import krishagni.catissueplus.beans.FormContextBean;
 import krishagni.catissueplus.beans.FormRecordEntryBean;
 
@@ -958,6 +963,32 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 		}
 
 		return revisions;
+	}
+
+	@Override
+	public Container getFormAtRevision(Long formId, Long revId) {
+		try {
+			Blob xmlBlob = (Blob) getCurrentSession()
+				.createSQLQuery(
+					"select " +
+						"xml " +
+					"from " +
+						"dyextn_containers_aud " +
+					"where " +
+						"identifier = :formId and rev = :rev"
+				)
+				.setParameter("formId", formId)
+				.setParameter("rev", revId)
+				.addScalar("xml", BlobType.INSTANCE)
+				.uniqueResult();
+			if (xmlBlob == null) {
+				return null;
+			}
+
+			return Container.fromXml(new String(xmlBlob.getBytes(1, (int) xmlBlob.length())));
+		} catch (Exception e) {
+			throw OpenSpecimenException.serverError(CommonErrorCode.SQL_EXCEPTION, e.getMessage());
+		}
 	}
 
 	private DetachedCriteria getListFormIdsQuery(FormListCriteria crit) {

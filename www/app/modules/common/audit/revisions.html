@@ -18,6 +18,9 @@
           <th class="col">
             <span translate="audit.updated_by">Updated By</span>
           </th>
+          <th class="col" ng-show="actionsTmpl">
+            <span>&nbsp;</span>
+          </th>
         </tr>
       </thead>
       <tbody class="os-table-body">
@@ -27,6 +30,9 @@
           </td>
           <td class="col">
             <span>{{revision.changedBy | osUserDisplayName}}</span>
+          </td>
+          <td class="col" ng-show="actionsTmpl">
+            <div ng-include src="actionsTmpl"></div>
           </td>
         </tr>
       </tbody>
