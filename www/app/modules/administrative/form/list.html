@@ -53,7 +53,7 @@
             <span translate="form.last_updated">Last Updated</span>
           </th>
           <th class="col">
-            <span translate="form.cp_count">CP Count</span>
+            <span translate="form.associations">Associations</span>
           </th>
           <th class="col">
             <span>&nbsp;</span>
@@ -90,25 +90,25 @@
             <span>{{form.creationTime |  date:global.dateFmt}}</span>
           </td>
           <td class="col">
-            <span>{{form.cpCount == -1 ? ('form.all' | translate) : form.cpCount}}</span>
+            <span>{{form.associations}}</span>
           </td>
           <td class="col os-click-esc">
             <div class="btn-group btn-group-xs">
               <button type="button" class="btn btn-default" ng-click="downloadForm(form)"
-                title="{{'form.tooltip.download_xml' | translate}}">
+                os-tooltip="{{'form.tooltip.download_xml' | translate}}" placement="bottom">
                 <span class="fa fa-download"></span>
               </button>
               <button type="button" class="btn btn-default" ng-click="showFormContexts(form)"
-                title="{{'form.tooltip.attach_form_to_cp' | translate}}">
+                os-tooltip="{{'form.tooltip.attach_form_to_cp' | translate}}" placement="bottom">
                 <span class="fa fa-wrench"></span>
               </button>
               <button type="button" class="btn btn-default" ng-click="showRevisions(form)"
-                title="{{'form.tooltip.revisions' | translate}}">
+                os-tooltip="{{'form.tooltip.revisions' | translate}}" placement="bottom">
                 <span class="fa fa-history"></span>
               </button>
-              <button type="button" class="btn btn-default" ng-click="confirmFormDeletion(form)" 
-                title="{{'form.tooltip.delete' | translate}}"> 
-                <i class="fa fa-trash-o"></i>
+              <button type="button" class="btn btn-default" ng-click="confirmFormDeletion(form)"
+                os-tooltip="{{'form.tooltip.delete' | translate}}" placement="bottom">
+                <span class="fa fa-trash-o"></span>
               </button>
             </div>
           </td>

@@ -1819,7 +1819,6 @@
     "name": "Form Name",
     "created_by": "Created By",
     "last_updated": "Last Updated",
-    "cp_count": "CP Count",
     "not_used": "This form is not used for data entry at any level. Start by selecting the level.",
     "na": "Not Applicable",
     "multiple_records": "Multiple Records?",

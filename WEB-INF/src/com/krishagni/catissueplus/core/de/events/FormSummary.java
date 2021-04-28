@@ -24,7 +24,7 @@ public class FormSummary {
 	
 	private Date modificationTime;
 	
-	private Integer cpCount;
+	private Integer associations;
 	
 	private boolean sysForm;
 
@@ -84,12 +84,12 @@ public class FormSummary {
 		this.modificationTime = modificationTime;
 	}
 
-	public Integer getCpCount() {
-		return cpCount;
+	public Integer getAssociations() {
+		return associations;
 	}
 
-	public void setCpCount(Integer cpCount) {
-		this.cpCount = cpCount;
+	public void setAssociations(Integer associations) {
+		this.associations = associations;
 	}
 
 	public boolean isSysForm() {

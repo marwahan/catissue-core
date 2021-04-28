@@ -31,22 +31,21 @@
 
     <filter name="activeForms"/>
 
-    <sql-query name="getCpCounts">
+    <sql-query name="getAssociationsCount">
       <return-scalar column="formId" type="long"/>
-      <return-scalar column="allCp" type="integer"/>
-      <return-scalar column="cpCount" type="integer"/>
+      <return-scalar column="associationsCount" type="integer"/>
 
       select
-        fc.container_id as formId, min(fc.cp_id) as allCp, count(distinct fc.cp_id) as cpCount
+        f.identifier as formId, count(fc.identifier) as associationsCount
       from
-        catissue_form_context fc
-        left join catissue_collection_protocol cp on cp.identifier = fc.cp_id
+        dyextn_containers f
+        left join catissue_form_context fc on fc.container_id = f.identifier
       where
+        f.deleted_on is null and
         fc.deleted_on is null and
-        fc.container_id in :formIds and
-        (cp.identifier is null or cp.activity_status != 'Disabled')
+        f.identifier in :formIds
       group by
-        fc.container_id
+        f.identifier
     </sql-query>
 
     <sql-query name="getFormsAttachedToAllProtocols">

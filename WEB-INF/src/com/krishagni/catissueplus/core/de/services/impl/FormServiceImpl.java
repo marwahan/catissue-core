@@ -231,9 +231,9 @@ public class FormServiceImpl implements FormService, InitializingBean {
 			List<FormSummary> result = forms.stream().map(FormSummary::from).collect(Collectors.toList());
 			if (!result.isEmpty() && crit.includeStat()) {
 				Map<Long, FormSummary> formsMap = result.stream().collect(Collectors.toMap(FormSummary::getFormId, f -> f));
-				Map<Long, Integer> cpCounts = formDao.getCpCounts(formsMap.keySet());
+				Map<Long, Integer> associationCounts = formDao.getAssociationsCount(formsMap.keySet());
 				for (FormSummary form : result) {
-					form.setCpCount(cpCounts.getOrDefault(form.getFormId(), 0));
+					form.setAssociations(associationCounts.getOrDefault(form.getFormId(), 0));
 				}
 			}
 

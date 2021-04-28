@@ -166,21 +166,17 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<Long, Integer> getCpCounts(Collection<Long> formIds) {
-		List<Object[]> rows = getCurrentSession().getNamedQuery(GET_CP_COUNTS)
+	public Map<Long, Integer> getAssociationsCount(Collection<Long> formIds) {
+		List<Object[]> rows = getCurrentSession().getNamedQuery(GET_ASSOCIATIONS_CNT)
 			.setParameterList("formIds", formIds)
 			.list();
 
-		Map<Long, Integer> formCpCounts = new HashMap<>();
+		Map<Long, Integer> result = new HashMap<>();
 		for (Object[] row : rows) {
-			int idx = -1;
-			Long formId = (Long) row[++idx];
-			Integer allCp  = (Integer) row[++idx];
-			Integer cpsCnt = (Integer) row[++idx];
-			formCpCounts.put(formId, allCp != null && allCp < 0 ? -1 : cpsCnt);
+			result.put((Long) row[0], (Integer) row[1]);
 		}
 
-		return formCpCounts;
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -217,7 +213,7 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 			form.setCaption((String)row[2]);
 			form.setCreationTime((Date)row[3]);
 			form.setModificationTime((Date)row[4]);
-			form.setCpCount(-1);
+			form.setAssociations(-1);
 
 			UserSummary user = new UserSummary();
 			user.setId((Long)row[5]);
@@ -1279,7 +1275,7 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 	
 	private static final String GET_QUERY_FORMS = FQN + ".getQueryForms";
 
-	private static final String GET_CP_COUNTS = FQN + ".getCpCounts";
+	private static final String GET_ASSOCIATIONS_CNT = FQN + ".getAssociationsCount";
 	
 	private static final String GET_FORM_CTXTS = FQN + ".getFormContexts";
 	
