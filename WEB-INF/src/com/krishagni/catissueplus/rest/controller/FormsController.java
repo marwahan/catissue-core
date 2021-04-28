@@ -41,6 +41,7 @@ import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.util.Utility;
 import com.krishagni.catissueplus.core.de.domain.FormErrorCode;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
+import com.krishagni.catissueplus.core.de.events.FormContextRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormDataDetail;
 import com.krishagni.catissueplus.core.de.events.FormFieldSummary;
 import com.krishagni.catissueplus.core.de.events.FormRecordCriteria;
@@ -556,6 +557,13 @@ public class FormsController {
 		}
 
 		exportFormZip(form, httpResp);
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value="/{id}/context-revisions")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public List<FormContextRevisionDetail> getContextRevisions(@PathVariable("id") Long formId) {
+		return ResponseEvent.unwrap(formSvc.getFormContextRevisions(RequestEvent.wrap(formId)));
 	}
 
 	private Map<String, Object> saveOrUpdateFormData(Long formId, Map<String, Object> valueMap) {

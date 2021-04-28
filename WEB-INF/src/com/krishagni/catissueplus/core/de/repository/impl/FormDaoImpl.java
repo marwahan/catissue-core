@@ -47,6 +47,7 @@ import com.krishagni.catissueplus.core.common.events.UserSummary;
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
 import com.krishagni.catissueplus.core.de.domain.Form;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
+import com.krishagni.catissueplus.core.de.events.FormContextRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormCtxtSummary;
 import com.krishagni.catissueplus.core.de.events.FormRecordSummary;
 import com.krishagni.catissueplus.core.de.events.FormRevisionDetail;
@@ -991,6 +992,42 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 		}
 	}
 
+	@Override
+	public List<FormContextRevisionDetail> getFormContextRevisions(Long formId) {
+		List<Object[]> rows = getCurrentSession().getNamedQuery(GET_FORM_CTXT_REVS)
+			.setParameter("formId", formId)
+			.list();
+
+		List<FormContextRevisionDetail> revisions = new ArrayList<>();
+		for (Object[] row : rows) {
+			int idx = -1;
+
+			FormContextRevisionDetail rev = new FormContextRevisionDetail();
+			rev.setRev((Long) row[++idx]);
+			rev.setRevType((Integer) row[++idx]);
+			rev.setRevTime((Date) row[++idx]);
+
+			UserSummary user = new UserSummary();
+			user.setId((Long) row[++idx]);
+			user.setFirstName((String) row[++idx]);
+			user.setLastName((String) row[++idx]);
+			user.setEmailAddress((String) row[++idx]);
+			rev.setRevBy(user);
+
+			rev.setId((Long) row[++idx]);
+			rev.setEntityType((String) row[++idx]);
+
+			if (row[++idx] != null) {
+				rev.setRevType(2);
+			}
+
+			rev.setEntityName((String) row[++idx]);
+			revisions.add(rev);
+		}
+
+		return revisions;
+	}
+
 	private DetachedCriteria getListFormIdsQuery(FormListCriteria crit) {
 		return getListFormsQuery(crit).setProjection(Projections.distinct(Projections.property("form.id")));
 	}
@@ -1301,6 +1338,8 @@ public class FormDaoImpl extends AbstractDao<FormContextBean> implements FormDao
 	private static final String GET_RECS = FQN + ".getRecords";
 	
 	private static final String GET_DEPENDENT_ENTITIES = FQN + ".getDependentEntities";
+
+	private static final String GET_FORM_CTXT_REVS = FQN + ".getFormContextRevisions";
 	
 	private static final String GET_CHANGE_LOG_DIGEST_SQL =
 			"select " +

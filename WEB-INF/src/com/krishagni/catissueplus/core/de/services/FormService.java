@@ -15,6 +15,7 @@ import com.krishagni.catissueplus.core.de.events.AddRecordEntryOp;
 import com.krishagni.catissueplus.core.de.events.EntityFormRecords;
 import com.krishagni.catissueplus.core.de.events.FileDetail;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
+import com.krishagni.catissueplus.core.de.events.FormContextRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormCtxtSummary;
 import com.krishagni.catissueplus.core.de.events.FormDataDetail;
 import com.krishagni.catissueplus.core.de.events.FormFieldSummary;
@@ -90,6 +91,8 @@ public interface FormService {
 	ResponseEvent<List<FormRevisionDetail>> getFormRevisions(RequestEvent<Long> req);
 
 	ResponseEvent<Container> getFormAtRevision(RequestEvent<Pair<Long, Long>> req);
+
+	ResponseEvent<List<FormContextRevisionDetail>> getFormContextRevisions(RequestEvent<Long> req);
 
 	/**
 	 * Internal usage

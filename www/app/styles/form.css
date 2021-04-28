@@ -26,6 +26,13 @@
   margin: 10px 0;
 }
 
+.os-association-revisions-tab {
+  max-height: 350px;
+  overflow-y: scroll;
+  margin: 0px -20px;
+  padding: 0px 20px;
+}
+
 .os-tag {
   border: 1px solid #ddd;
   background: #f5f5f5;

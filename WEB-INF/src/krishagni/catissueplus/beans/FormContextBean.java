@@ -2,8 +2,12 @@ package krishagni.catissueplus.beans;
 
 import java.util.Date;
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+
 import com.krishagni.catissueplus.core.de.domain.Form;
 
+@Audited
 public class FormContextBean {
 	
 	private Long identifier;
@@ -98,6 +102,7 @@ public class FormContextBean {
 		this.deletedOn = deletedOn;
 	}
 
+	@NotAudited
 	public Form getForm() {
 		return form;
 	}

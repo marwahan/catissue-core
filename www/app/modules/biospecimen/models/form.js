@@ -76,6 +76,14 @@ angular.module('os.biospecimen.models.form', ['os.common.models'])
       );
     }
 
+    Form.prototype.getContextRevisions = function() {
+      return $http.get(Form.url() + this.$id() + '/context-revisions').then(
+        function(resp) {
+          return resp.data;
+        }
+      );
+    }
+
     Form.getDefinition = function(formId) {
       return $http.get(Form.url() + formId + '/definition', {params: {maxPvs: 100}}).then(
         function(result) {

@@ -68,6 +68,7 @@ import com.krishagni.catissueplus.core.de.events.AddRecordEntryOp;
 import com.krishagni.catissueplus.core.de.events.EntityFormRecords;
 import com.krishagni.catissueplus.core.de.events.FileDetail;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
+import com.krishagni.catissueplus.core.de.events.FormContextRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormCtxtSummary;
 import com.krishagni.catissueplus.core.de.events.FormDataDetail;
 import com.krishagni.catissueplus.core.de.events.FormFieldSummary;
@@ -798,6 +799,12 @@ public class FormServiceImpl implements FormService, InitializingBean {
 	public ResponseEvent<Container> getFormAtRevision(RequestEvent<Pair<Long, Long>> req) {
 		Pair<Long, Long> formRevIds = req.getPayload();
 		return ResponseEvent.response(formDao.getFormAtRevision(formRevIds.first(), formRevIds.second()));
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<List<FormContextRevisionDetail>> getFormContextRevisions(RequestEvent<Long> req) {
+		return ResponseEvent.response(formDao.getFormContextRevisions(req.getPayload()));
 	}
 
 	//

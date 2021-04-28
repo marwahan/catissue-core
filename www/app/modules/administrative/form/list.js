@@ -147,7 +147,8 @@ angular.module('os.administrative.form.list', ['os.administrative.models'])
               currentUser: function() {
                 return currentUser;
               }
-            }
+            },
+            size: 'lg'
           });
 
           formCtxtsModal.result.then(

@@ -1852,6 +1852,8 @@
     "preview": "Preview",
     "preview_form": "Preview: {{caption}}",
 
+    "associations": "Associations",
+
     "tooltip": {
       "add": "Add new form",
       "edit": "Edit form",

@@ -33,8 +33,13 @@ angular.module('os.administrative.form.formctxts', ['os.administrative.models'])
           }
 
           for (var i = 0; i < entities.length; i++) {
+            var entityType = fc.level
+            if (entityType.lastIndexOf('-') != -1) {
+              entityType = entityType.substring(0, entityType.lastIndexOf('-'));
+            }
+
             var entity = entities[i];
-            if (entity.name == fc.level) {
+            if (entity.name == entityType) {
               fc.level = entity;
               break;
             }
@@ -69,6 +74,8 @@ angular.module('os.administrative.form.formctxts', ['os.administrative.models'])
         selectedCps: [],
         selectedEntity: undefined
       }
+
+      $scope.revisions = undefined;
     }
 
 
@@ -159,6 +166,7 @@ angular.module('os.administrative.form.formctxts', ['os.administrative.models'])
           $scope.view = 'show_contexts';
           Alerts.success("form.association_deleted", $scope.removeCtxData.ctx);
           $scope.removeCtxData = {};
+          $scope.revisions = undefined;
           reload = true;
         }
       );
@@ -195,6 +203,7 @@ angular.module('os.administrative.form.formctxts', ['os.administrative.models'])
         function(data) {
           $scope.cpFormCtxts[$scope.editCtxData.idx].multiRecord =  data[0].multiRecord;
           $scope.cancelEditCtx();
+          $scope.revisions = undefined;
         }
       );
     }
@@ -206,6 +215,40 @@ angular.module('os.administrative.form.formctxts', ['os.administrative.models'])
 
     $scope.cancel = function() {
       $modalInstance.close(reload);
+    }
+
+    $scope.loadRevisions = function() {
+      $scope.cpFormCtxt = {
+        allProtocols: false,
+        isMultiRecord: false,
+        selectedCps: [],
+        selectedEntity: undefined
+      }
+
+      if ($scope.revisions) {
+        return;
+      }
+
+      $scope.form.getContextRevisions().then(
+        function(revisions) {
+          $scope.revisions = revisions;
+          for (var i = 0; i < revisions.length; ++i) {
+            var revision = revisions[i];
+            var entityType = revision.entityType;
+            if (entityType.lastIndexOf('-') != -1) {
+              entityType = entityType.substring(0, entityType.lastIndexOf('-'));
+            }
+
+            for (var j = 0; j < entities.length; ++j) {
+              var entity = entities[j];
+              if (entity.name == entityType) {
+                revision.entity = entity;
+                break;
+              }
+            }
+          }
+        }
+      );
     }
 
     init();

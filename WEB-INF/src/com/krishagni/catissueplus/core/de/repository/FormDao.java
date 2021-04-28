@@ -12,6 +12,7 @@ import com.krishagni.catissueplus.core.common.events.DependentEntityDetail;
 import com.krishagni.catissueplus.core.common.repository.Dao;
 import com.krishagni.catissueplus.core.de.domain.Form;
 import com.krishagni.catissueplus.core.de.events.FormContextDetail;
+import com.krishagni.catissueplus.core.de.events.FormContextRevisionDetail;
 import com.krishagni.catissueplus.core.de.events.FormCtxtSummary;
 import com.krishagni.catissueplus.core.de.events.FormRecordSummary;
 import com.krishagni.catissueplus.core.de.events.FormRevisionDetail;
@@ -148,4 +149,6 @@ public interface FormDao extends Dao<FormContextBean> {
 	List<FormRevisionDetail> getFormRevisions(Long formId);
 
 	Container getFormAtRevision(Long formId, Long revId);
+
+	List<FormContextRevisionDetail> getFormContextRevisions(Long formId);
 }

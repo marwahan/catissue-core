@@ -608,5 +608,33 @@
         fc.deleted_on is null and
         fc.is_sys_form = 0
     </sql-query>
+
+    <sql-query name="getFormContextRevisions">
+      <return-scalar column="rev" type="long"/>
+      <return-scalar column="revtype" type="integer"/>
+      <return-scalar column="revtstmp" type="timestamp"/>
+      <return-scalar column="userId" type="long"/>
+      <return-scalar column="first_name" type="string"/>
+      <return-scalar column="last_name" type="string"/>
+      <return-scalar column="email_address" type="string"/>
+      <return-scalar column="formCtxtId" type="long"/>
+      <return-scalar column="entity_type" type="string"/>
+      <return-scalar column="deleted_on" type="timestamp"/>
+      <return-scalar column="short_title" type="string"/>
+
+      select
+        r.rev, r.revtype, ar.revtstmp,
+        u.identifier as userId, u.first_name, u.last_name, u.email_address,
+        r.identifier as formCtxtId, r.entity_type, r.deleted_on, cp.short_title
+      from
+        catissue_form_context_aud r
+        inner join os_revisions ar on ar.rev = r.rev
+        inner join catissue_user u on u.identifier = ar.user_id
+        left join catissue_collection_protocol cp on cp.identifier = r.cp_id
+      where
+        r.container_id = :formId
+      order by
+        ar.revtstmp desc
+    </sql-query>
   </class>
 </hibernate-mapping>
