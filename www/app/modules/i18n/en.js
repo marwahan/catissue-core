@@ -1822,7 +1822,7 @@
     "cp_count": "CP Count",
     "not_used": "This form is not used for data entry at any level. Start by selecting the level.",
     "na": "Not Applicable",
-    "multiple_records": "Multiple Records",
+    "multiple_records": "Multiple Records?",
     "single_record": "Single Record",
     "collection_protocol": "Collection Protocol",
     "level": "Level",
@@ -2633,7 +2633,11 @@
     "no_of_revisions": "Number of Revisions",
     "view_all": "View all",
     "revisions": "Revisions",
-    "no_revisions": "No revisions to show!"
+    "no_revisions": "No revisions to show!",
+    "op": "Action",
+    "add_op": "Add",
+    "update_op": "Update",
+    "delete_op": "Delete"
   },
 
   "jobs": {
