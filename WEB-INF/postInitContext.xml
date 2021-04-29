@@ -72,4 +72,6 @@
     <property name="templateService" ref="templateService"/>
     <property name="deInitializer" ref="deInitializer"/>
   </bean>
+
+  <import resource="classpath*:pluginPostInitContext.xml"/>
 </beans>
