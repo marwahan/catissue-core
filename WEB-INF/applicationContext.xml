@@ -1025,15 +1025,6 @@
     </property>
   </bean>
 
-  <bean id="importSpeForms" class="com.krishagni.catissueplus.core.init.ImportSpecimenEventForms">
-    <property name="txnMgr" ref="transactionManager"/>
-    <property name="userDao" ref="userDao"/>
-    <property name="daoFactory" ref="deDaoFactory"/>
-    <property name="deInitializer" ref="deInitializer"/>
-    <property name="templateService" ref="templateService"/>
-    <property name="cfgSvc" ref="cfgSvc"/>
-  </bean>
-
   <!-- Move these to importer-beans.xml -->
   <bean id="importJobDao" class="com.krishagni.catissueplus.core.importer.repository.impl.ImportJobDaoImpl">
     <property name="sessionFactory" ref="sessionFactory"/>
