@@ -26,6 +26,22 @@
     <property name="cfgSvc" ref="cfgSvc"/>
   </bean>
 
+  <bean id="importEntityForms" class="com.krishagni.catissueplus.core.init.ImportEntityForms" depends-on="post-init-liquibase">
+    <property name="txnMgr" ref="transactionManager"/>
+    <property name="userDao" ref="userDao"/>
+    <property name="daoFactory" ref="deDaoFactory"/>
+    <property name="deInitializer" ref="deInitializer"/>
+    <property name="templateService" ref="templateService"/>
+  </bean>
+
+  <bean id="importDeForms" class="com.krishagni.catissueplus.core.init.ImportDeForms" depends-on="post-init-liquibase">
+    <property name="txnMgr" ref="transactionManager"/>
+    <property name="userDao" ref="userDao"/>
+    <property name="daoFactory" ref="deDaoFactory"/>
+    <property name="deInitializer" ref="deInitializer"/>
+    <property name="templateService" ref="templateService"/>
+  </bean>
+
   <bean id="importContainerTypes" class="com.krishagni.catissueplus.core.init.ImportContainerTypes" depends-on="post-init-liquibase">
     <property name="jdbcTemplate" ref="jdbcTemplate"/>
     <property name="daoFactory" ref="biospecimenDaoFactory"/>
