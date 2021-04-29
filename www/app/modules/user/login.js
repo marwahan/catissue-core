@@ -1,6 +1,6 @@
 
 angular.module('openspecimen')
-  .factory('AuthService', function($cookieStore, $http, $rootScope, $window, $q, ApiUtil, ApiUrls, SettingUtil) {
+  .factory('AuthService', function($cookies, $http, $rootScope, $window, $q, ApiUtil, ApiUrls, SettingUtil) {
     var url = function() {
       return ApiUrls.getUrl('sessions');
     };
@@ -9,11 +9,11 @@ angular.module('openspecimen')
       if (user) {
         var impUserStr = user.domainName + '/' + user.loginName;
         $http.defaults.headers.common['X-OS-IMPERSONATE-USER'] = impUserStr;
-        $cookieStore.put('osImpersonateUser', impUserStr);
+        $cookies.put('osImpersonateUser', impUserStr);
         ui.os.global.impersonate = true;
       } else {
         delete $http.defaults.headers.common['X-OS-IMPERSONATE-USER'];
-        $cookieStore.remove('osImpersonateUser');
+        $cookies.remove('osImpersonateUser');
         ui.os.global.impersonate = false;
       }
     }

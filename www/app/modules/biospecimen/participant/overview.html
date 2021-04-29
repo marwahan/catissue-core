@@ -357,39 +357,41 @@
 </script>
 
 <script type="text/ng-template" id="modules/biospecimen/participant/overview-visit-spmns-count.html">
-  <progress class="progress" max="visit.totalPrimarySpmns"
-    bs-popover trigger="hover" placement="bottom" container="body" content-template="specimen-count.html">
-    <bar value="visit.plannedPrimarySpmnsColl" type="success">
-      <span><b> {{visit.plannedPrimarySpmnsColl}} </b> </span>
-    </bar>
-    <bar value="visit.unplannedPrimarySpmnsColl" type="unplanned">
-      <span><b> {{visit.unplannedPrimarySpmnsColl}} </b> </span>
-    </bar>
-    <bar value="visit.uncollectedPrimarySpmns" type="missed">
-      <span><b> {{visit.uncollectedPrimarySpmns}} </b> </span>
-    </bar>
-    <bar value="visit.pendingPrimarySpmns" type="warning">
-      <span><b> {{visit.pendingPrimarySpmns}} </b> </span>
-    </bar>
-  </progress>
+  <div bs-popover trigger="hover" placement="bottom" container="body" content-template="specimen-count.html">
+    <progress class="progress" max="visit.totalPrimarySpmns">
+      <bar value="visit.plannedPrimarySpmnsColl" type="success">
+        <span><b> {{visit.plannedPrimarySpmnsColl}} </b> </span>
+      </bar>
+      <bar value="visit.unplannedPrimarySpmnsColl" type="unplanned">
+        <span><b> {{visit.unplannedPrimarySpmnsColl}} </b> </span>
+      </bar>
+      <bar value="visit.uncollectedPrimarySpmns" type="missed">
+        <span><b> {{visit.uncollectedPrimarySpmns}} </b> </span>
+      </bar>
+      <bar value="visit.pendingPrimarySpmns" type="warning">
+        <span><b> {{visit.pendingPrimarySpmns}} </b> </span>
+      </bar>
+    </progress>
+  </div>
 </script>
 
 <script type="text/ng-template" id="modules/biospecimen/participant/overview-visit-spmns-storage.html">
-  <progress class="progress" max="visit.reqStorage"
-    bs-popover trigger="hover" placement="bottom" container="body" content-template="storage-utilization.html">
-    <bar value="visit.storedSpecimens" type="success" ng-if="!!visit.storedSpecimens">
-      <span><b> {{visit.storedSpecimens}} </b></span>
-    </bar>
-    <bar value="visit.notStoredSpecimens" type="virtual" ng-if="!!visit.notStoredSpecimens">
-      <span><b> {{visit.notStoredSpecimens}} </b></span>
-    </bar>
-    <bar value="visit.distributedSpecimens" type="distributed" ng-if="!!visit.distributedSpecimens">
-      <span><b> {{visit.distributedSpecimens}} </b></span>
-    </bar>
-    <bar value="visit.closedSpecimens" type="closed" ng-if="!!visit.closedSpecimens">
-      <span><b> {{visit.closedSpecimens}} </b></span>
-    </bar>
-  </progress>
+  <div bs-popover trigger="hover" placement="bottom" container="body" content-template="storage-utilization.html">
+    <progress class="progress" max="visit.reqStorage">
+      <bar value="visit.storedSpecimens" type="success" ng-if="!!visit.storedSpecimens">
+        <span><b> {{visit.storedSpecimens}} </b></span>
+      </bar>
+      <bar value="visit.notStoredSpecimens" type="virtual" ng-if="!!visit.notStoredSpecimens">
+        <span><b> {{visit.notStoredSpecimens}} </b></span>
+      </bar>
+      <bar value="visit.distributedSpecimens" type="distributed" ng-if="!!visit.distributedSpecimens">
+        <span><b> {{visit.distributedSpecimens}} </b></span>
+      </bar>
+      <bar value="visit.closedSpecimens" type="closed" ng-if="!!visit.closedSpecimens">
+        <span><b> {{visit.closedSpecimens}} </b></span>
+      </bar>
+    </progress>
+  </div>
 </script>
 
 <script id="specimen-count.html" type="text/ng-template">

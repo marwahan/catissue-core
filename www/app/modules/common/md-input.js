@@ -1,34 +1,27 @@
 
 angular.module('openspecimen')
   .directive('osMdInput', function($timeout, $document) {
+    var value;
 
-    function toggleLabel(scope, show) { 
-      if (scope.showLabel == show) {
-        return;
+    function toggleLabel(labelEl, val) {
+      labelEl.hide();
+      if (val != undefined && val != null && val.length > 0) {
+        labelEl.show();
+      } else if (!!value) {
+        labelEl.show();
       }
+    }
 
-      $timeout(function() {
-        scope.showLabel = show;
-      });
-    };
-
-    function onKeyUp(scope, element) {
+    function onKeyUp(element) {
       return function() {
         var input = element.find('input');
         if (input.length <= 0) {
           return;
         }
-          
-        input.bind('keyup', function(event) {
-          var val = input.val();
-          var showLabel = false;
-          if (angular.isDefined(val) && val.length > 0) {
-            showLabel = true;
-          } else if (!!scope.value) {
-            showLabel = true;
-          }
 
-          toggleLabel(scope, showLabel);
+        var labelEl = element.find('label.os-md-input-label');
+        input.bind('keyup', function(event) {
+          toggleLabel(labelEl, input.val());
         });
       };
     };
@@ -82,11 +75,12 @@ angular.module('openspecimen')
     }
 
     function linker(scope, element, attrs) {
-      scope.showLabel = false;
-      $timeout(onKeyUp(scope, element));
+      $timeout(onKeyUp(element));
+
+      var labelEl = element.find('label.os-md-input-label');
       scope.$watch(attrs.ngModel, function(newVal) {
-        scope.value = newVal;
-        toggleLabel(scope, !!newVal);
+        value = newVal;
+        toggleLabel(labelEl, newVal);
       });
 
       var textAreaEl = element.find('textarea');
@@ -97,14 +91,12 @@ angular.module('openspecimen')
 
     return {
       restrict: 'A',
-      scope: true,
       compile: function(tElem, tAttrs) {
         var inputDiv = angular.element('<div/>')
           .addClass('os-md-input');
 
         var label = angular.element('<label/>')
           .addClass('os-md-input-label')
-          .attr('ng-show', 'showLabel')
           .append(tAttrs.placeholder);
 
         inputDiv.append(label);

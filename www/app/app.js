@@ -26,9 +26,11 @@ var osApp = angular.module('openspecimen', [
 
 osApp.config(function(
     $stateProvider, $urlRouterProvider, $httpProvider, $controllerProvider,
-    $compileProvider, $filterProvider, $provide,
+    $compileProvider, $filterProvider, $provide, $locationProvider,
     $translateProvider, $translatePartialLoaderProvider,
     uiSelectConfig, ApiUrlsProvider) {
+
+    $locationProvider.hashPrefix('');
 
     osApp.providers = {
       controller : $controllerProvider.register,
