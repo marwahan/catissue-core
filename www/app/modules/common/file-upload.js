@@ -1,6 +1,6 @@
 
 angular.module('openspecimen')
-  .directive('osFileUpload', function($timeout, $q, $http, $cookieStore, Alerts) {
+  .directive('osFileUpload', function($timeout, $q, $http, $cookies, Alerts) {
     return {
       restrict: 'A',
       replace: true,
@@ -79,7 +79,7 @@ angular.module('openspecimen')
               }
 
               if (ui.os.global.impersonate) {
-                xhr.setRequestHeader('X-OS-IMPERSONATE-USER', $cookieStore.get('osImpersonateUser'));
+                xhr.setRequestHeader('X-OS-IMPERSONATE-USER', $cookies.get('osImpersonateUser'));
               }
             },
             add: function (e, data) {
