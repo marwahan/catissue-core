@@ -259,8 +259,8 @@ angular.module('os.common.form', [])
 
       template: 
         '<div>' +
-        '  <div ng-if="isInteracted()" class="alert alert-danger os-form-err-msg" ' +
-        '    ng-messages="field.$error" ng-messages-include="modules/common/error-messages.html"> ' +
+        '  <div ng-if="isInteracted()" class="alert alert-danger os-form-err-msg" ng-messages="field.$error"> ' +
+        '    <div ng-messages-include="modules/common/error-messages.html"> </div>' +
         '  </div>' +
         '</div>'
     };
