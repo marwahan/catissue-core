@@ -108,6 +108,7 @@ public abstract class LabelPrintRule {
 
 	public void setUserGroups(List<UserGroup> userGroups) {
 		this.userGroups = userGroups;
+		Utility.nullSafeStream(userGroups).forEach(ug -> ug.getUsers().forEach(u -> u.getFirstName())); // init
 	}
 
 	public String getPrinterName() {

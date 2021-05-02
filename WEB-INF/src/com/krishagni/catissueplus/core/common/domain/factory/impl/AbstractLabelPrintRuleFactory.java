@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 import com.krishagni.catissueplus.core.administrative.domain.User;
+import com.krishagni.catissueplus.core.administrative.domain.UserGroup;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.domain.LabelPrintRule;
@@ -274,7 +275,9 @@ public abstract class AbstractLabelPrintRuleFactory implements LabelPrintRuleFac
 		}
 
 		Set<Long> groupIds = groupIdsList.stream().map(Long::parseLong).collect(Collectors.toSet());
-		rule.setUserGroups(daoFactory.getUserGroupDao().getByIds(groupIds));
+		List<UserGroup> groups = daoFactory.getUserGroupDao().getByIds(groupIds);
+		groups.forEach(group -> group.getUsers().forEach(user -> user.getFirstName())); // lazy init
+		rule.setUserGroups(groups);
 	}
 
 	private List<String> parseTokens(String input) {
