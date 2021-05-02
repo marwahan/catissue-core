@@ -1540,3 +1540,7 @@ form .form-group:empty {
 .os-fancy-scroll::-webkit-scrollbar-track {
   background: #ffffff;
 }
+
+.ui-select-bootstrap .ui-select-toggle > a.btn {
+  margin-top: -8px;
+}
