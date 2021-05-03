@@ -63,8 +63,7 @@ public class VisitsController {
 	
 	@Autowired
 	private FormService formSvc;
-	
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody

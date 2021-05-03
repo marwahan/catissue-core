@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -283,7 +282,6 @@ public class EmailServiceImpl implements EmailService, ConfigChangeListener, Ini
 		props.put("appUrl", getAppUrl());
 		props.put("adminEmailAddress", adminEmailId);
 		props.put("adminPhone", cfgSvc.getStrSetting("email", "admin_phone_no", "Not Specified"));
-		props.put("dateFmt", new SimpleDateFormat(ConfigUtil.getInstance().getDateTimeFmt()));
 		props.put("urlEncoder", URLEncoder.class);
 		String subject = StringUtils.isNotBlank(tmplSubj) ? tmplSubj : getSubject(tmplKey, (Object[]) props.get("$subject"));
 		String content = templateService.render(getBaseTmpl(), props);
