@@ -391,7 +391,7 @@ public class Utility {
 			if (StringUtils.isBlank(contentType) || !contentType.equals("application/pdf")) {
 				fileText = IOUtils.toString(in);
 			} else {
-				fileText = PdfUtil.getText(in);
+				fileText = PdfUtil.getInstance().getText(in);
 			}
 			return fileText;
 		} catch (IOException e) {

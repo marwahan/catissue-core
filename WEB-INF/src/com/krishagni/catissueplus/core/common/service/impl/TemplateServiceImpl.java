@@ -1,5 +1,7 @@
 package com.krishagni.catissueplus.core.common.service.impl;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Locale;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ public class TemplateServiceImpl implements TemplateService {
 		this.messageSource = messageSource;
 	}
 
+	@Override
 	public String render(String templateName, Map<String, Object> properties) {
 		try {
 			properties.put("locale", Locale.getDefault());
@@ -36,6 +39,16 @@ public class TemplateServiceImpl implements TemplateService {
 		} catch (VelocityException ex) {
 			throw OpenSpecimenException.serverError(ex);
 		}
-		
+	}
+
+	@Override
+	public void render(String templateName, Map<String, Object> properties, File output) {
+		try (FileWriter writer = new FileWriter(output)) {
+			properties.put("locale", Locale.getDefault());
+			properties.put("messageSource", messageSource);
+			VelocityEngineUtils.mergeTemplate(velocityEngine, templateName, properties, writer);
+		} catch (Exception e) {
+			throw OpenSpecimenException.serverError(e);
+		}
 	}
 }
