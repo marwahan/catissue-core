@@ -11,6 +11,7 @@ import org.apache.velocity.exception.VelocityException;
 import org.springframework.context.MessageSource;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import com.krishagni.catissueplus.core.common.barcodes.BarcodeGenerator;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.common.service.TemplateService;
@@ -21,6 +22,8 @@ public class TemplateServiceImpl implements TemplateService {
 	private MessageSource messageSource;
 
 	private ConfigurationService cfgSvc;
+
+	private BarcodeGenerator barcodeGenerator;
 	
 	public VelocityEngine getVelocityEngine() {
 		return velocityEngine;
@@ -38,6 +41,10 @@ public class TemplateServiceImpl implements TemplateService {
 		this.cfgSvc = cfgSvc;
 	}
 
+	public void setBarcodeGenerator(BarcodeGenerator barcodeGenerator) {
+		this.barcodeGenerator = barcodeGenerator;
+	}
+
 	@Override
 	public String render(String templateName, Map<String, Object> props) {
 		try {
@@ -45,6 +52,7 @@ public class TemplateServiceImpl implements TemplateService {
 			props.put("messageSource", messageSource);
 			props.put("dateFmt", new SimpleDateFormat(getDateFmt()));
 			props.put("dateOnlyFmt", new SimpleDateFormat(getDateOnlyFormat()));
+			props.put("barcodeGenerator", barcodeGenerator);
 			return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, templateName, props);
 		} catch (VelocityException ex) {
 			throw OpenSpecimenException.serverError(ex);
@@ -58,6 +66,7 @@ public class TemplateServiceImpl implements TemplateService {
 			props.put("messageSource", messageSource);
 			props.put("dateFmt", new SimpleDateFormat(getDateFmt()));
 			props.put("dateOnlyFmt", new SimpleDateFormat(getDateOnlyFormat()));
+			props.put("barcodeGenerator", barcodeGenerator);
 			VelocityEngineUtils.mergeTemplate(velocityEngine, templateName, props, writer);
 		} catch (Exception e) {
 			throw OpenSpecimenException.serverError(e);
