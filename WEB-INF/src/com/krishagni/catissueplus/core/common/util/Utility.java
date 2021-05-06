@@ -119,7 +119,7 @@ public class Utility {
 	}
 
 	public static String getResourceDigest(String resource)
-			throws IOException {
+	throws IOException {
 		InputStream in = null;
 		try {
 			in = getResourceInputStream(resource);
@@ -130,7 +130,7 @@ public class Utility {
 	}
 
 	public static byte[] getInputStreamBytes(InputStream in)
-			throws IOException {
+	throws IOException {
 		ByteArrayOutputStream bout = null;
 		try {
 			bout = new ByteArrayOutputStream();
