@@ -18,6 +18,7 @@ angular.module('os.query.defineview', ['os.query.models'])
       $scope.dctx = {havingClause: queryCtx.havingClause};
       $scope.outputColumnExprs = queryCtx.outputColumnExprs;
       $scope.caseSensitive = (queryCtx.caseSensitive == undefined || queryCtx.caseSensitive == null || queryCtx.caseSensitive);
+      $scope.wideRows = queryCtx.wideRowMode == 'DEEP';
       $scope.wideRowMode = angular.copy(queryCtx.wideRowMode); 
       $scope.reporting = angular.copy(queryCtx.reporting);
       $scope.pivotTable = (queryCtx.reporting.type == 'crosstab');
