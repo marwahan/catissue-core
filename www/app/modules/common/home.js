@@ -22,7 +22,7 @@ angular.module('openspecimen')
         return q.promise;
       }
 
-      return $translate(pageCards[0].title).then(
+      return $translate('common.home').then(
         function() {
           angular.forEach(pageCards,
             function(card) {
@@ -32,7 +32,12 @@ angular.module('openspecimen')
           );
 
           pageCards.sort(function(c1, c2) { return c1.title.localeCompare(c2.title); });
+          sorted = true;
           return pageCards;
+        },
+
+        function(msg) {
+          alert('failed to load page cards: ' + msg);
         }
       );
     }
