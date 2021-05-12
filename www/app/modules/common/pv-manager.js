@@ -68,12 +68,6 @@ angular.module('openspecimen')
       'Closed'
     ];
 
-    var visitNamePrintModes = [
-      {name: 'PRE_PRINT', displayKey:'cp.visit_name_print_modes.PRE_PRINT'},
-      {name: 'ON_COMPLETION', displayKey:'cp.visit_name_print_modes.ON_COMPLETION'},
-      {name: 'NONE', displayKey:'cp.visit_name_print_modes.NONE'}
-    ];
-
     var spmnLabelPrePrintModes = [
       {name: 'ON_REGISTRATION', displayKey:'cp.spmn_label_pre_print_modes.ON_REGISTRATION'},
       {name: 'ON_VISIT', displayKey:'cp.spmn_label_pre_print_modes.ON_VISIT'},
@@ -112,7 +106,6 @@ angular.module('openspecimen')
       'specimen-status': specimenStatuses,
       'container-position-labeling-schemes': positionLabelingSchemes,
       'activity-status': activityStatuses,
-      'visit-name-print-modes': visitNamePrintModes,
       'specimen-label-pre-print-modes': spmnLabelPrePrintModes,
       'specimen-label-auto-print-modes': spmnLabelAutoPrintModes,
       'interval-units': intervalUnits,

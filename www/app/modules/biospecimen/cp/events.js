@@ -24,7 +24,6 @@ angular.module('os.biospecimen.cp.events', ['os.biospecimen.models'])
       }
 
       $scope.eventPointUnits     = PvManager.getPvs('interval-units');
-      $scope.visitNamePrintModes = PvManager.getPvs('visit-name-print-modes');
       pvsLoaded = true;
     }
 
