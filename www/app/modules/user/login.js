@@ -200,5 +200,12 @@ angular.module('openspecimen')
       return AuthService.logout();
     }
 
+    $scope.handleKey = function(e, prop) {
+      if (e.keyCode == 32 && e.target && e.target.closest('.dropdown-menu')) {
+        $scope.loginData[prop] = $scope.loginData[prop] || '';
+        $scope.loginData[prop] += e.key;
+      }
+    }
+
     init();
   });

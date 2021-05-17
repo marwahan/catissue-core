@@ -25,9 +25,9 @@
 
         <span ng-if="!samlDomain || (!!loginData.domainName && loginData.domainName != samlDomain.name)">
           <input type="text" class="form-control" ng-model="loginData.loginName"
-            required placeholder="{{'user.login_name' | translate}}">
+            required placeholder="{{'user.login_name' | translate}}" ng-keyup="handleKey($event, 'loginName')">
           <input type="password" class="form-control" ng-model="loginData.password"
-            required placeholder="{{'user.password' | translate}}">
+            required placeholder="{{'user.password' | translate}}" ng-keyup="handleKey($event, 'password')">
 
           <os-plugin-hooks view-name="'sign-in'" sec-name="'input-fields'">
           </os-plugin-hooks>
