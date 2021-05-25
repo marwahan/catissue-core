@@ -235,6 +235,24 @@
     </row>
 
     <row>
+      <dropDown>
+        <name>availabilityStatus</name>
+        <udn>availabilityStatus</udn>
+        <caption>#getMessage("specimen_availability_status")</caption>
+        <column>AVAILABILITY_STATUS</column>
+        <options>
+          <option><value>Available</value></option>
+          <option><value>Pending</value></option>
+          <option><value>Not Collected</value></option>
+          <option><value>Missed Collection</value></option>
+          <option><value>Reserved</value></option>
+          <option><value>Distributed</value></option>
+          <option><value>Closed</value></option>
+        </options>
+      </dropDown>
+    </row>
+
+    <row>
       <textField>
         <name>comments</name>
         <udn>comments</udn>

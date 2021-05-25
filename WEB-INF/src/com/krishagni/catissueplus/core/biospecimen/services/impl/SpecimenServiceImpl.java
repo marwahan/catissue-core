@@ -1023,6 +1023,7 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 			specimen.updateHierarchyStatus();
 		}
 
+		specimen.updateAvailableStatus();
 		daoFactory.getSpecimenDao().saveOrUpdate(specimen);
 		specimen.addOrUpdateCollRecvEvents();
 		specimen.addOrUpdateExtension();
