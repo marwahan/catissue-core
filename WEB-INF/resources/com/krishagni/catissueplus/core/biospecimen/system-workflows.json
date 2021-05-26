@@ -126,6 +126,9 @@
     {
         "name": "specimen-list-view",
         "data": {
+            "icons": [
+                "<os-specimen-status-icon specimen=\"row\"></os-specimen-status-icon>"
+            ],
             "columns": [
                 {
                     "expr": "Specimen.label",
@@ -206,6 +209,9 @@
     {
         "name": "common-specimens-list-view",
         "data": {
+            "icons": [
+                "<os-specimen-status-icon specimen=\"row\"></os-specimen-status-icon>"
+            ],
             "columns": [
                 {
                     "expr": "Participant.ppid",
@@ -290,6 +296,9 @@
     {
         "name": "order-specimens-list-view",
         "data": {
+            "icons": [
+                "<os-specimen-status-icon specimen=\"row\"></os-specimen-status-icon>"
+            ],
             "columns": [
                 {
                     "expr": "Specimen.specimenOrders.label",
