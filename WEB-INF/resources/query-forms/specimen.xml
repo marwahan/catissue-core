@@ -280,6 +280,14 @@
         <parentKey>IDENTIFIER</parentKey>
         <primaryKey>SPECIMEN_ID</primaryKey>
         <row>
+          <numberField>
+            <name>positionId</name>
+            <udn>positionId</udn>
+            <caption>#getMessage("specimen_spec_position_id")</caption>
+            <column>POSITION_IDENTIFIER</column>
+            <hidden>true</hidden>
+          </numberField>
+
           <textField>
             <name>containerName</name>
             <udn>containerName</udn>
