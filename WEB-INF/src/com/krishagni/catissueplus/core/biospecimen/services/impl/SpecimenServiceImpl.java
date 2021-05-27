@@ -166,6 +166,8 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 				specimens = Specimen.sortByLabels(specimens, crit.labels());
 			} else if (CollectionUtils.isNotEmpty(crit.barcodes())) {
 				specimens = Specimen.sortByBarcodes(specimens, crit.barcodes());
+			} else if (CollectionUtils.isNotEmpty(crit.ids())) {
+				specimens = Specimen.sortByIds(specimens, crit.ids());
 			}
 
 			List<? extends SpecimenInfo> result = null;

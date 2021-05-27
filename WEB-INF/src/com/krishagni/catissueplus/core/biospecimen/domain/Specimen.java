@@ -1702,37 +1702,21 @@ public class Specimen extends BaseExtensionEntity {
 	}
 
 	public static List<Specimen> sortByLabels(Collection<Specimen> specimens, final List<String> labels) {
-		List<Specimen> result = new ArrayList<Specimen>(specimens);
-		Collections.sort(result, new Comparator<Specimen>() {
-			@Override
-			public int compare(Specimen s1, Specimen s2) {
-				int s1Idx = labels.indexOf(s1.getLabel());
-				int s2Idx = labels.indexOf(s2.getLabel());
-				return s1Idx - s2Idx;
-			}
-		});
-
-		return result;
+		return specimens.stream()
+			.sorted(Comparator.comparingInt((s) -> labels.indexOf(s.getLabel())))
+			.collect(Collectors.toList());
 	}
 
 	public static List<Specimen> sortByIds(Collection<Specimen> specimens, final List<Long> ids) {
-		List<Specimen> result = new ArrayList<>(specimens);
-		Collections.sort(result, new Comparator<Specimen>() {
-			@Override
-			public int compare(Specimen s1, Specimen s2) {
-				int s1Idx = ids.indexOf(s1.getId());
-				int s2Idx = ids.indexOf(s2.getId());
-				return s1Idx - s2Idx;
-			}
-		});
-
-		return result;
+		return specimens.stream()
+			.sorted(Comparator.comparingInt((s) -> ids.indexOf(s.getId())))
+			.collect(Collectors.toList());
 	}
 
 	public static List<Specimen> sortByBarcodes(Collection<Specimen> specimens, final List<String> barcodes) {
-		List<Specimen> result = new ArrayList<>(specimens);
-		result.sort(Comparator.comparingInt((s) -> barcodes.indexOf(s.getBarcode())));
-		return result;
+		return specimens.stream()
+			.sorted(Comparator.comparingInt((s) -> barcodes.indexOf(s.getBarcode())))
+			.collect(Collectors.toList());
 	}
 
 	public static boolean isValidLineage(String lineage) {
