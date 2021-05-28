@@ -78,4 +78,15 @@
         update set spmn.availability_status = spmn_status.available_status;
     </sql>
   </changeSet>
+
+  <changeSet author="vpawar" id="Remove references to the old clinical diagnosis field with the new one">
+    <sql>
+      update
+        catissue_saved_queries
+      set
+        query_def = replace(query_def, 'SpecimenCollectionGroup.clinicalDiagnosis', 'SpecimenCollectionGroup.clinicalDiagnoses.value')
+      where
+        query_def like '%SpecimenCollectionGroup.clinicalDiagnosis%'
+    </sql>
+  </changeSet>
 </databaseChangeLog>
