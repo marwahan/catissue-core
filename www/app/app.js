@@ -333,7 +333,8 @@ osApp.config(function(
   })
   .run(function(
     $rootScope, $window, $document, $http, $cookies, $q,  $state, $translate, $translatePartialLoader,
-    AuthService, LocationChangeListener, ApiUtil, Setting, PluginReg, Util) {
+    AuthService, AuthorizationService, HomePageSvc, LocationChangeListener,
+    ApiUtil, Setting, PluginReg, Util, ItemsHolder) {
 
     function isRedirectAllowed(st) {
       return !st.data || st.data.redirect !== false;
@@ -419,6 +420,37 @@ osApp.config(function(
       appProps: ui.os.appProps,
       impersonate: !!$cookies['osImpersonateUser']
     };
+
+    window.addEventListener('message', function(event) {
+      var data = event.data;
+      if (data.op == 'getGlobalProps') {
+        window.frames['vueapp'].postMessage({op: 'getGlobalProps', resp: ui}, '*');
+      } else if (data.op == 'getAuthToken') {
+        window.frames['vueapp'].postMessage({op: 'getAuthToken', resp: $window.localStorage['osAuthToken']}, '*');
+      } else if (data.op == 'getUserDetails') {
+        var resp = {
+          currentUser: JSON.parse(JSON.stringify(AuthorizationService.currentUser())),
+          userRights: AuthorizationService.userRights()
+        }
+
+        window.frames['vueapp'].postMessage({op: 'getUserDetails', resp: resp}, '*');
+      } else if (data.op == 'getAppMenuItems') {
+        HomePageSvc.getMenuItems().then(
+          function(items) {
+            window.frames['vueapp'].postMessage({op: 'getAppMenuItems', resp: items}, '*');
+          }
+        );
+      } else if (data.op == 'changeRoute') {
+        var dest = data.payload;
+        var params = angular.extend(angular.extend({}, $state.params), dest.params || {});
+        $state.go(dest.state || $state.current.name, params, dest.opts || {});
+      } else if (data.op == 'addItems') {
+        data.payload = data.payload || {};
+        if (data.payload.type) {
+          ItemsHolder.setItems(data.payload.type, data.payload.items);
+        }
+      }
+    });
 
     Setting.getLocale().then(
       function(localeSettings) {
