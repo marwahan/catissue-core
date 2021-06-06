@@ -186,7 +186,11 @@ export default {
           listSource: {
             displayProp: 'name',
             selectProp: 'name',
-            loadFn: (opts) => instituteSvc.getInstitutes(opts)
+            loadFn: (opts) => {
+              opts = opts || {};
+              opts.name = opts.query;
+              return instituteSvc.getInstitutes(opts);
+            }
           }
         },
         { name: 'group', type: 'dropdown', caption: 'User Group',

@@ -33,6 +33,7 @@ button {
   display: inline-block;
   font-size: inherit;
   line-height: inherit;
+  cursor: pointer;
 }
 
 .os-page-toolbar button:hover,
