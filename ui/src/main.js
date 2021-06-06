@@ -44,7 +44,7 @@ window.addEventListener('message', function(event) {
     http.protocol = server.secure ? 'https' : 'http';
     http.host = server.hostname;
     http.port = server.port;
-    http.path = server.app || '';
+    http.path = server.app || '..';
     if (http.path) {
       http.path += '/';
     }
