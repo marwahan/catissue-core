@@ -31,7 +31,7 @@ angular.module('os.administrative.user',
         parent: 'signed-in'
       })
       .state('user-list', {
-        url: '/users?filters&groupId&vue&view',
+        url: '/users?filters&groupId&old',
         templateUrl: 'modules/administrative/user/list.html',
         resolve: {
           group: function($stateParams, UserGroup) {

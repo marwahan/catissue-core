@@ -11,7 +11,7 @@ angular.module('os.administrative.user.list', ['os.administrative.models'])
     function init() {
       pagerOpts = $scope.pagerOpts = new ListPagerOpts({listSizeGetter: getUsersCount});
       ctx = $scope.ctx = {
-        vue: $stateParams.vue == 'true',
+        old: $stateParams.old == 'true',
         exportDetail: {objectType: 'user'},
         group: group,
         emptyState: {
@@ -22,21 +22,16 @@ angular.module('os.administrative.user.list', ['os.administrative.models'])
         }
       };
 
-      if (ctx.vue) {
+      if (!ctx.old) {
         //var url = 'http://localhost:8081/#/';
-        var url = 'vue-app/#/';
-        if ($stateParams.view == 'users-list') {
-          url += 'users?';
-          angular.forEach($stateParams,
-            function(value, key) {
-              if (value) {
-                url += key + '=' + value + '&';
-              }
+        var url = 'vue-app/#/users?';
+        angular.forEach($stateParams,
+          function(value, key) {
+            if (value) {
+              url += key + '=' + value + '&';
             }
-          );
-        } else if ($stateParams.view == 'user-addedit') {
-          url += 'user-addedit/777';
-        }
+          }
+        );
 
         ctx.vueUrl = $sce.trustAsResourceUrl(url);
       }
