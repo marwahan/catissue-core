@@ -79,6 +79,13 @@
             </span>
           </li>
 
+          <li class="item">
+            <strong class="key key-sm" translate="cp.zero_out_qty">Zero out quantity</strong>
+            <span class="value value-md">
+              {{settingCtx.cp.setQtyToZero | osBoolValue: 'common.yes': 'common.no': 'common.use_system_setting'}}
+            </span>
+          </li>
+
           <li class="item" ng-show="!cp.specimenCentric">
             <strong class="key key-sm" translate="cp.bulk_part_reg_allowed">Bulk Participant Registration Allowed</strong>
             <span class="value value-md" ng-switch on="settingCtx.cp.bulkPartRegEnabled">
@@ -266,6 +273,27 @@
           <label class="radio-inline">
             <input type="radio" name="closeParents" ng-model="settingCtx.cp.closeParentSpecimens" ng-value="false">
             <span translate="common.no">No</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-xs-3">
+          <span translate="cp.zero_out_qty">Zero Out Quantity</span>
+        </label>
+        <div class="col-xs-6">
+          <label class="radio-inline">
+            <input type="radio" name="zeroOut" ng-model="settingCtx.cp.setQtyToZero" ng-value="true">
+            <span translate="common.yes">Yes</span>
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="zeroOut" ng-model="settingCtx.cp.setQtyToZero" ng-value="false">
+            <span translate="common.no">No</span>
+          </label>
+          <label class="radio-inline" ng-click="settingCtx.cp.setQtyToZero = null">
+            <input type="radio" name="zeroOut" ng-model="settingCtx.cp.setQtyToZero"
+              ng-checked="settingCtx.cp.setQtyToZero == null || settingCtx.cp.setQtyToZero == undefined">
+            <span translate="common.use_system_setting"></span>
           </label>
         </div>
       </div>

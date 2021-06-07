@@ -102,4 +102,10 @@
       <column name="AVAILABILITY_STATUS" type="${text.type}(32)"/>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vpawar" id="CP setting to zero out quantity of disposed specimens">
+    <addColumn tableName="CATISSUE_COLLECTION_PROTOCOL">
+      <column name="SET_QTY_TO_ZERO" type="${boolean.type}"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

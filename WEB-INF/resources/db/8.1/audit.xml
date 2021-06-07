@@ -51,4 +51,11 @@
       <column name="availabilityStatus_MOD" type="${boolean.type}"/>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vpawar" id="CP setting to zero out quantity of disposed specimens">
+    <addColumn tableName="CAT_COLLECTION_PROTOCOL_AUD">
+      <column name="SET_QTY_TO_ZERO" type="${boolean.type}"/>
+      <column name="setQtyToZero_MOD" type="${boolean.type}"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

@@ -119,6 +119,7 @@ public class CollectionProtocolFactoryImpl implements CollectionProtocolFactory 
 		setSpecimenBarcodeFormat(input, cp, ose);
 		setBarcodeSetting(input, cp, ose);
 		setCloseParentSpecimens(input, cp, ose);
+		setSetQtyToZero(input, cp, ose);
 		setContainerSelectionStrategy(input, cp, ose);
 		setVisitCollectionMode(input, cp, ose);
 		setVisitNamePrintMode(input, cp, ose);
@@ -369,6 +370,10 @@ public class CollectionProtocolFactoryImpl implements CollectionProtocolFactory 
 
 	private void setCloseParentSpecimens(CollectionProtocolDetail input, CollectionProtocol result, OpenSpecimenException ose) {
 		result.setCloseParentSpecimens(input.getCloseParentSpecimens());
+	}
+
+	private void setSetQtyToZero(CollectionProtocolDetail input, CollectionProtocol result, OpenSpecimenException ose) {
+		result.setSetQtyToZero(input.getSetQtyToZero());
 	}
 
 	private void setVisitNameFmt(CollectionProtocolDetail input, CollectionProtocol result, OpenSpecimenException ose) {

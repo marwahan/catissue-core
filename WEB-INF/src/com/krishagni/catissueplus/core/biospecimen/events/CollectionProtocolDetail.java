@@ -60,6 +60,8 @@ public class CollectionProtocolDetail extends CollectionProtocolSummary {
 
 	private Boolean closeParentSpecimens;
 
+	private Boolean setQtyToZero;
+
 	private String containerSelectionStrategy;
 
 	private Boolean aliquotsInSameContainer;
@@ -265,6 +267,14 @@ public class CollectionProtocolDetail extends CollectionProtocolSummary {
 		this.closeParentSpecimens = closeParentSpecimens;
 	}
 
+	public Boolean getSetQtyToZero() {
+		return setQtyToZero;
+	}
+
+	public void setSetQtyToZero(Boolean setQtyToZero) {
+		this.setQtyToZero = setQtyToZero;
+	}
+
 	public String getContainerSelectionStrategy() {
 		return containerSelectionStrategy;
 	}
@@ -432,6 +442,7 @@ public class CollectionProtocolDetail extends CollectionProtocolSummary {
 		result.setSpecimenCentric(cp.isSpecimenCentric());
 		result.setBarcodingEnabled(cp.isBarcodingEnabled());
 		result.setCloseParentSpecimens(cp.isCloseParentSpecimens());
+		result.setSetQtyToZero(cp.getSetQtyToZero());
 		result.setContainerSelectionStrategy(cp.getContainerSelectionStrategy());
 		result.setAliquotsInSameContainer(cp.getAliquotsInSameContainer());
 		result.setLabelSequenceKey(cp.getLabelSequenceKey().name());

@@ -1324,6 +1324,14 @@ public class Specimen extends BaseExtensionEntity {
 		event.setUser(user);
 		event.setTime(time);
 		event.saveOrUpdate();
+
+		zeroOutAvailableQty();
+	}
+
+	private void zeroOutAvailableQty() {
+		if (getAvailableQuantity() != null && getCollectionProtocol().isZeroOutQtyEnabled()) {
+			setAvailableQuantity(BigDecimal.ZERO);
+		}
 	}
 
 	private void virtualize(Date time, String comments) {

@@ -236,6 +236,7 @@
     "aliquot_label_fmt": "Aliquot Label Format",
     "specimen_barcode_fmt": "Barcode Format",
     "close_parent_spmns": "Close Parent Specimens",
+    "zero_out_qty": "Zero Out Specimen Quantity",
     "store_all_aliquots_in_same_container": "Store all Aliquots in same Container",
     "visit_name_fmt": "Visit Name Format",
     "manual_enabled_for": "User Inputs Allowed For",
@@ -2988,7 +2989,9 @@
         "pde_link_age": "Survey Link Age",
         "pde_link_age_desc": "Number of days during which a survey link is valid.",
         "ext_participant_sites": "External Participant Sites",
-        "ext_participant_sites_desc": "A comma-separated list of site IDs or names from which participant details are sourced from the external databases like EPIC etc"
+        "ext_participant_sites_desc": "A comma-separated list of site IDs or names from which participant details are sourced from the external databases like EPIC etc",
+        "zero_disposed_spmn_qty": "Zero Out Specimen Quantity",
+        "zero_disposed_spmn_qty_desc": "Enable to set the available quantity of specimens to zero when they are disposed."
       },
 
       "common": {

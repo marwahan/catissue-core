@@ -101,7 +101,8 @@ angular.module('os.biospecimen.cp')
 
       $scope.settingCtx.cp.$saveOrUpdate().then(
         function(savedcp) {
-          angular.extend(cp, savedcp);
+          angular.extend($scope.settingCtx.cp, savedcp);
+          angular.extend(cp, $scope.settingCtx.cp);
           setViewCtx();
         }
       );
