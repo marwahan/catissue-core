@@ -154,6 +154,13 @@ public class ParticipantFactoryImpl implements ParticipantFactory, InitializingB
 				@Override
 				public ParticipantDetail doInTransaction(TransactionStatus transactionStatus) {
 					List<MatchedParticipant> matches = lookupFactory.getLookupLogic().getMatchingParticipants(input);
+					matches = matches.stream().filter(
+						match -> !(
+							match.getMatchedAttrs().size() == 1 &&
+							match.getMatchedAttrs().get(0).equals("lnameAndDob")
+						)
+					).collect(Collectors.toList());
+
 					if (matches.size() > 1) {
 						throw OpenSpecimenException.userError(ParticipantErrorCode.MULTI_MATCHES);
 					}
