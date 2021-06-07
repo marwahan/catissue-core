@@ -11,6 +11,7 @@ angular.module('os.biospecimen.specimen.addderivative', [])
       $scope.visit = visit;
 
       var ps = $scope.parentSpecimen = specimen;
+      ExtensionsUtil.createExtensionFieldMap(ps, true);
 
       var opts = {incrFreezeThawCycles: incrFreezeThawCycles};
       var derivative = $scope.derivative = SpecimenUtil.getNewDerivative($scope, opts);

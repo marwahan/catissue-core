@@ -10,6 +10,7 @@ angular.module('os.biospecimen.specimen.addaliquots', [])
       $scope.cpr = cpr;
       $scope.visit = visit;
       var ps = $scope.parentSpecimen = specimen;
+      ExtensionsUtil.createExtensionFieldMap(ps, true);
 
       var freezeThawIncrStep = incrFreezeThawCycles ? 1 : 0;
       $scope.aliquotSpec = new Specimen({
