@@ -159,7 +159,7 @@ export default {
             return user.firstName + ' ' + user.lastName;
           },
           href: function (user) {
-            return ui.ngServer + '#/users/' + user.rowObject.id + '/overview';
+            return '../#/users/' + user.rowObject.id + '/overview';
           },
           hrefTarget: '_parent'
         },
