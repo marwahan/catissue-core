@@ -71,6 +71,7 @@
         :loading="ctx.loading"
         @filtersUpdated="loadUsers"
         @selectedRows="onUsersSelection"
+        @rowClicked="onUserRowClick"
         ref="listView"
       >
       </ListView>
@@ -288,6 +289,10 @@ export default {
 
     onUsersSelection: function(selection) {
       this.ctx.selectedUsers = selection;
+    },
+
+    onUserRowClick: function(user) {
+      routerSvc.ngGoto('user-detail.overview', {userId: user.id});
     },
 
     bulkEdit: function() {

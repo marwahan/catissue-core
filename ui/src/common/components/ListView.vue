@@ -16,7 +16,7 @@
           <span v-show="selectedRows.length == 1">1 record selected</span>
           <span v-show="selectedRows.length > 1">{{selectedRows.length}} records selected</span>
         </div>
-        <data-table :value="list" v-model:selection="selectedRows">
+        <data-table :value="list" v-model:selection="selectedRows" @row-click="rowClick($event)">
           <column class="os-selection-cb" v-if="allowSelection" selectionMode="multiple"></column>
           <column v-for="column of columns" :header="column.caption" :key="column.name">
             <template #body="slotProps">
@@ -105,7 +105,7 @@ export default {
     'loading'
   ],
 
-  emits: ['selectedRows', 'filtersUpdated', 'pageSizeChanged'],
+  emits: ['selectedRows', 'filtersUpdated', 'pageSizeChanged', 'rowClicked'],
 
   components: {
     'data-table': DataTable,
@@ -226,6 +226,10 @@ export default {
     reload: function() {
       this.selectedRows = [];
       this.emitFiltersUpdated();
+    },
+
+    rowClick: function(row) {
+      this.$emit('rowClicked', row.data.rowObject);
     }
   },
 
@@ -387,6 +391,7 @@ export default {
 
 .os-table-hover :deep(tbody tr:hover) {
   background: #f7f7f7;
+  cursor: pointer;
 }
 
 .os-table :deep(.p-datatable .p-datatable-tbody > tr.p-highlight) {
