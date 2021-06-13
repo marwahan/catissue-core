@@ -5,7 +5,7 @@
       <span>...</span>
     </li>
     <li v-for="(item, idx) of items" :key="idx" :class="{collapsed: (items.length - idx) > 2}">
-      <a :href="item.url" target="item.target">
+      <a :href="item.url" :target="item.target">
         <span>{{item.label}}</span>
       </a>
     </li>
