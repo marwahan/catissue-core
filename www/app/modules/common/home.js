@@ -144,8 +144,9 @@ angular.module('openspecimen')
             function(card) {
               var result = angular.extend({}, card);
               if (!result.href) {
-                result.href = $state.href(result.sref, {}, {absolute: true});
+                result.href = $state.href(result.sref, {}, {absolute: false});
               }
+
               return result;
             }
           );

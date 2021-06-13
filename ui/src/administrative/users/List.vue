@@ -226,7 +226,7 @@ export default {
 
       usersCount: -1,
 
-      ugCrumb: [ {url: ui.ngServer + '#/users-groups', label: 'User Groups'} ]
+      ugCrumb: [ {url: ui.ngServer + '#/user-groups', label: 'User Groups', target: '_parent'} ]
     });
 
     if (props.groupId) {

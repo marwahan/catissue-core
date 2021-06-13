@@ -69,7 +69,7 @@ export default {
     items: function() {
       let items = this.ui.menuItems
         .filter(menuItem => !menuItem.showIf || authSvc.isAllowed(menuItem.showIf))
-        .map(menuItem => ({label: menuItem.title, url: menuItem.href, target: '_parent'}));
+        .map(menuItem => ({label: menuItem.title, url: this.ui.ngServer + menuItem.href, target: '_parent'}));
       items.splice(0, 0, {label: 'Home', url: this.ui.ngServer + '#/home', target: '_parent'});
       return items;
     }

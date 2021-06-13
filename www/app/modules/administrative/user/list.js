@@ -23,7 +23,7 @@ angular.module('os.administrative.user.list', ['os.administrative.models'])
       };
 
       if (!ctx.old) {
-        //var url = 'http://localhost:8081/#/';
+        // var url = 'http://localhost:8081/#/users?';
         var url = 'vue-app/#/users?';
         angular.forEach($stateParams,
           function(value, key) {
@@ -34,11 +34,11 @@ angular.module('os.administrative.user.list', ['os.administrative.models'])
         );
 
         ctx.vueUrl = $sce.trustAsResourceUrl(url);
+      } else {
+        initPvsAndFilterOpts();
+        loadUsers($scope.userFilterOpts);
+        ItemsHolder.setItems('users', undefined);
       }
-
-      initPvsAndFilterOpts();
-      loadUsers($scope.userFilterOpts);
-      ItemsHolder.setItems('users', undefined);
     }
   
     function initPvsAndFilterOpts() {
