@@ -1,9 +1,9 @@
 
 angular.module('os.administrative.user.list', ['os.administrative.models'])
   .controller('UserListCtrl', function(
-    $scope, $state, $stateParams, $modal, $translate, $sce, currentUser, group,
+    $scope, $state, $stateParams, $modal, $translate, currentUser, group,
     osRightDrawerSvc, osExportSvc, User, ItemsHolder, PvManager,
-    Util, DeleteUtil, CheckList, Alerts, ListPagerOpts, UserGroup) {
+    Util, DeleteUtil, CheckList, Alerts, ListPagerOpts, UserGroup, VueApp) {
 
     var pagerOpts, filterOpts, ctx;
     var pvInit = false;
@@ -23,17 +23,7 @@ angular.module('os.administrative.user.list', ['os.administrative.models'])
       };
 
       if (!ctx.old) {
-        // var url = 'http://localhost:8081/#/users?';
-        var url = 'vue-app/#/users?';
-        angular.forEach($stateParams,
-          function(value, key) {
-            if (value) {
-              url += key + '=' + value + '&';
-            }
-          }
-        );
-
-        ctx.vueUrl = $sce.trustAsResourceUrl(url);
+        VueApp.setVueView('users', $stateParams);
       } else {
         initPvsAndFilterOpts();
         loadUsers($scope.userFilterOpts);

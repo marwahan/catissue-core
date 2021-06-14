@@ -331,10 +331,43 @@ osApp.config(function(
       };
     }
   })
+  .factory('VueApp', function($sce, $rootScope) {
+    var baseUrl = 'vue-app/#/';
+    // var baseUrl = 'http://localhost:8081/#/';
+
+    function setVueView(state, params) {
+      var global = ui.os.global;
+      global.initVueApp = global.vueAppView = true;
+
+      var url = baseUrl + state + '?';
+      angular.forEach(params,
+        function(value, key) {
+          if (value) {
+            url += key + '=' + value + '&';
+          }
+        }
+      );
+
+      $rootScope.vueUrl = $sce.trustAsResourceUrl(url);
+    }
+
+    function unloadVueView() {
+      var global = ui.os.global;
+
+      global.vueAppView = false;
+      $rootScope.vueUrl = null;
+    }
+
+    return {
+      setVueView: setVueView,
+
+      unloadVueView: unloadVueView
+    }
+  })
   .run(function(
-    $rootScope, $window, $document, $http, $cookies, $q,  $state, $translate, $translatePartialLoader,
+    $rootScope, $window, $document, $http, $cookies, $q,  $state, $translate, $translatePartialLoader, $sce,
     AuthService, AuthorizationService, HomePageSvc, LocationChangeListener,
-    ApiUtil, Setting, PluginReg, Util, ItemsHolder) {
+    ApiUtil, Setting, PluginReg, Util, ItemsHolder, VueApp) {
 
     function isRedirectAllowed(st) {
       return !st.data || st.data.redirect !== false;
@@ -368,9 +401,17 @@ osApp.config(function(
       $rootScope.loggedIn = true;
     }
 
+    ui.os.global = $rootScope.global = {
+      defaultDomain: 'openspecimen',
+      filterWaitInterval: ui.os.appProps.searchDelay,
+      appProps: ui.os.appProps,
+      impersonate: !!$cookies['osImpersonateUser']
+    };
+
     $rootScope.$on('$stateChangeSuccess',
       function(event, toState, toParams, fromState, fromParams) {
         $rootScope.state = toState;
+        VueApp.unloadVueView();
       }
     );
 
@@ -413,13 +454,6 @@ osApp.config(function(
     }
 
     $rootScope.back = LocationChangeListener.back;
-
-    ui.os.global = $rootScope.global = {
-      defaultDomain: 'openspecimen',	
-      filterWaitInterval: ui.os.appProps.searchDelay,
-      appProps: ui.os.appProps,
-      impersonate: !!$cookies['osImpersonateUser']
-    };
 
     window.addEventListener('message', function(event) {
       var data = event.data;
