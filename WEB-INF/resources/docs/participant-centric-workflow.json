@@ -657,8 +657,7 @@
                "name": "emailAddress",
                "caption": "Collector Email Address"
              }
-           ],
-           "showInOverviewIf": "useShowIf"
+           ]
          },
          {
            "name": "specimen.collectionEvent.container",
