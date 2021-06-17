@@ -146,6 +146,7 @@
       "select": "Select",
       "unselect": "Unselect",
       "submit": "Submit",
+      "submit_n_print": "Submit & Print",
       "edit": "Edit",
       "done": "Done",
       "search": "Search",

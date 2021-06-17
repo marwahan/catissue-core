@@ -4,16 +4,24 @@
   <table class="os-table os-table-fixed os-table-tree bulk-edit os-border os-table-muted-hdr">
     <thead class="os-table-head">
       <tr class="row">
-        <th class="col" ng-class="{'os-col-30': storeSpmnsAllowed, 'os-col-35': !storeSpmnsAllowed}">
+        <th class="col"
+          ng-show="uiOpts.treeColumns.description"
+          ng-style="{width: uiOpts.treeColumns.description.width + '%'}">
           <span translate="specimens.description">Description</span>
         </th>
-        <th class="col" ng-class="{'os-col-15': storeSpmnsAllowed, 'os-col-25': !storeSpmnsAllowed}">
+        <th class="col"
+          ng-show="uiOpts.treeColumns.label"
+          ng-style="{width: uiOpts.treeColumns.label.width + '%'}">
           <span>{{(barcodingEnabled ? 'specimens.barcode' : 'specimens.label') | translate}}</span>
         </th>
-        <th class="col" ng-class="{'os-col-10': storeSpmnsAllowed, 'os-col-15': !storeSpmnsAllowed}">
+        <th class="col"
+          ng-show="uiOpts.treeColumns.quantity"
+          ng-style="{width: uiOpts.treeColumns.quantity.width + '%'}">
           <span translate="specimens.qty">Quantity</span>
         </th>
-        <th class="col os-col-25" ng-if="storeSpmnsAllowed">
+        <th class="col" ng-if="storeSpmnsAllowed"
+          ng-show="uiOpts.treeColumns.position"
+          ng-style="{width: uiOpts.treeColumns.position.width + '%'}">
           <div class="os-col-60 os-no-left-padding">
             <span translate="specimens.container">Container</span>
             <span class="os-more-options">
@@ -56,14 +64,17 @@
             <span translate="specimens.position">Position</span>
           </div>
         </th>
-        <th class="col" ng-class="{'os-col-10': storeSpmnsAllowed, 'os-col-15': !storeSpmnsAllowed}">
+        <th class="col"
+          ng-show="uiOpts.treeColumns.status"
+          ng-style="{width: uiOpts.treeColumns.status.width + '%'}">
           <span>Status</span>
         </th>
         <th class="col os-col-5">
-          <div class="pull-left">
+          <div class="pull-left" ng-show="uiOpts.treeColumns.printLabel">
             <span class="fa fa-print"></span>
           </div>
-          <div class="pull-left" style="margin-left: 12px;">
+          <div class="pull-left" ng-show="uiOpts.treeColumns.closeSpecimen"
+            ng-style="{'margin-left': uiOpts.treeColumns.printLabel ? '12px' : '0px'}">
             <span class="fa fa-ban"></span>
           </div>
         </th>
@@ -73,7 +84,9 @@
     <tbody class="os-table-body" os-storage-positions>
       <tr class="row" ng-class="{'os-pool-specimen': !!specimen.pooledSpecimen}"
         ng-repeat="specimen in specimens | openedTreeNodes" ng-form="sform" ng-if="specimen.showInTree">
-        <td class="col" ng-class="{'os-col-30': storeSpmnsAllowed, 'os-col-35': !storeSpmnsAllowed}">
+        <td class="col"
+          ng-show="uiOpts.treeColumns.description"
+          ng-style="{width: uiOpts.treeColumns.description.width + '%'}">
           <div ng-style="{'padding-left': (specimen.hasChildren ? specimen.depth * 20 : specimen.depth * 20 + 16) + 'px'}">
             <a ng-if="specimen.hasChildren && specimen.isOpened"
               class="fa fa-chevron-circle-down"
@@ -118,8 +131,9 @@
             </span>
           </div>
         </td>
-        <td class="col" ng-class="{'os-col-15': storeSpmnsAllowed, 'os-col-25': !storeSpmnsAllowed}"
-          ng-switch="barcodingEnabled">
+        <td class="col" ng-switch="barcodingEnabled"
+          ng-show="uiOpts.treeColumns.label"
+          ng-style="{width: uiOpts.treeColumns.label.width + '%'}">
           <div ng-switch-when="true" ng-switch="spmnBarcodesAutoGen">
             <div ng-switch-when="true">
               <span translate="specimens.auto">Auto</span>
@@ -168,7 +182,9 @@
             </div>
           </div>
         </td>
-        <td class="col" ng-class="{'os-col-10': storeSpmnsAllowed, 'os-col-15': !storeSpmnsAllowed}">
+        <td class="col"
+          ng-show="uiOpts.treeColumns.quantity"
+          ng-style="{width: uiOpts.treeColumns.quantity.width + '%'}">
           <div ng-switch on="specimen.existingStatus == 'Collected'">
             <span ng-switch-when="true">
               <os-spmn-measure-val value="specimen.availableQty" specimen="specimen"></os-spmn-measure-val>
@@ -182,9 +198,11 @@
           </div>
           <div os-field-error field="sform.qty"></div>
         </td>
-        <td class="col os-col-25" ng-if="storeSpmnsAllowed"
+        <td class="col" ng-if="storeSpmnsAllowed"
           ng-style="(!autoAlloc.enabled || autoAlloc.manual) && {'overflow': 'visible'}"
-          ng-switch on="autoAlloc.enabled && !autoAlloc.manual">
+          ng-switch on="autoAlloc.enabled && !autoAlloc.manual"
+          ng-show="uiOpts.treeColumns.position"
+          ng-style="{width: uiOpts.treeColumns.position.width + '%'}">
           <span ng-switch-when="true">
             <os-disp-storage-position position="specimen.storageLocation"></os-disp-storage-position>
           </span>
@@ -194,17 +212,19 @@
             </os-storage-position>
           </span>
         </td>
-        <td class="col" ng-class="{'os-col-10': storeSpmnsAllowed, 'os-col-15': !storeSpmnsAllowed}"
-          style="overflow: visible;">
+        <td class="col" style="overflow: visible;"
+          ng-show="uiOpts.treeColumns.status"
+          ng-style="{width: uiOpts.treeColumns.status.width + '%'}">
           <os-select os-md-input edit-when="specimen.existingStatus != 'Collected'" list="specimenStatuses" 
             ng-model="specimen.status" on-select="statusChanged(specimen)" required>
           </os-select>
         </td>
         <td class="col">
-          <div class="pull-left">
+          <div class="pull-left" ng-show="uiOpts.treeColumns.printLabel">
             <os-checkbox ng-model="specimen.printLabel" ng-change="togglePrintLabels(specimen)"></os-checkbox>
           </div>
-          <div class="pull-left" style="margin-left: 12px;" ng-show="specimen.children.length > 0">
+          <div class="pull-left" ng-show="specimen.children.length > 0 && uiOpts.treeColumns.closeSpecimen"
+            ng-style="{'margin-left': uiOpts.treeColumns.printLabel ? '12px' : '0px'}">
             <os-checkbox ng-model="specimen.closeAfterChildrenCreation"></os-checkbox>
           </div>
         </td>
@@ -223,6 +243,10 @@
     <div class="col-xs-10">
       <button type="submit" class="btn btn-primary" os-form-submit="saveSpecimens()" mousedown-click="true"> 
         <span translate="common.buttons.submit"> Submit </span>
+      </button>
+      <button type="submit" class="btn btn-primary" os-form-submit="saveSpecimens(true)" mousedown-click="true"
+        ng-show="showManifestPrint">
+        <span translate="common.buttons.submit_n_print"> Submit & Print</span>
       </button>
       <button class="btn os-btn-text" ng-click="cancel()">
         <span translate="common.buttons.cancel"> Cancel </span>

@@ -9,7 +9,7 @@
         </a> 
       </li>
       <li ng-if="!cp.specimenCentric">
-        <a ui-sref="participant-detail.overview({cprId: cpr.id})">
+        <a ui-sref="participant-detail.overview({cpId: cp.id, cprId: cpr.id})">
           <span>{{cpr.ppid}}</span>
         </a>
       </li>
