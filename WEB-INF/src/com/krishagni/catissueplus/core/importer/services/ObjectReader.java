@@ -57,6 +57,8 @@ public class ObjectReader implements Closeable {
 
 	private boolean trimTimeOfAllDates = false;
 
+	private boolean ignoreId = false;
+
 	public ObjectReader(String filePath, ObjectSchema schema, String dateFmt, String timeFmt) {
 		this(filePath, schema, dateFmt, timeFmt, null);
 	}
@@ -103,6 +105,10 @@ public class ObjectReader implements Closeable {
 
 	public void setTrimTimeOfAllDates(boolean trimTimeOfAllDates) {
 		this.trimTimeOfAllDates = trimTimeOfAllDates;
+	}
+
+	public void setIgnoreId(boolean ignoreId) {
+		this.ignoreId = ignoreId;
 	}
 
 	public Object next() {
@@ -157,6 +163,10 @@ public class ObjectReader implements Closeable {
 	private Object parseObject() {
 		try {
 			Map<String, Object> objectProps = parseObject(schema.getRecord(), "");
+			if (ignoreId && objectProps != null) {
+				objectProps.remove("id");
+			}
+
 			if (objectClass == null) {
 				return objectProps;
 			} else {

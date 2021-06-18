@@ -761,6 +761,7 @@ public class ImportServiceImpl implements ImportService, ApplicationListener<Con
 				csvWriter = getOutputCsvWriter(schema, job);
 				objReader = new ObjectReader(filePath, schema, job.getDateFormat(), job.getTimeFormat(), job.getFieldSeparator());
 				objReader.setTimeZone(job.getTimeZone());
+				objReader.setIgnoreId(job.getType() == Type.CREATE);
 
 				List<String> columnNames = objReader.getCsvColumnNames();
 				columnNames.add("OS_IMPORT_STATUS");
