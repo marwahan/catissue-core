@@ -561,7 +561,7 @@ public abstract class DeObject {
 				continue;
 			}
                 
-			if (cv.getControl() instanceof SubFormControl) {
+			if (cv.getControl() instanceof SubFormControl && cv.getValue() != null) {
 				SubFormControl sfCtrl = (SubFormControl)cv.getControl();
 				if (sfCtrl.isOneToOne()) {
 					cv.setValue(getAttrs((FormData)cv.getValue()));
@@ -573,6 +573,7 @@ public abstract class DeObject {
 					cv.setValue(values);
 				}
 			}
+
 			attrs.add(Attr.from(cv));
 		}
 
