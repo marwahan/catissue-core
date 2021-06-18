@@ -29,7 +29,10 @@ import edu.common.dynamicextensions.domain.nui.Control;
 import edu.common.dynamicextensions.domain.nui.DataType;
 import edu.common.dynamicextensions.domain.nui.DatePicker;
 import edu.common.dynamicextensions.domain.nui.FileUploadControl;
+import edu.common.dynamicextensions.domain.nui.Label;
+import edu.common.dynamicextensions.domain.nui.LinkControl;
 import edu.common.dynamicextensions.domain.nui.MultiSelectControl;
+import edu.common.dynamicextensions.domain.nui.PageBreak;
 import edu.common.dynamicextensions.domain.nui.SignatureControl;
 import edu.common.dynamicextensions.domain.nui.SubFormControl;
 
@@ -129,10 +132,14 @@ public class ExtensionSchemaBuilder implements ObjectSchemaBuilder {
 	}
 	
 	protected Record getFormRecord(Container form, boolean useUdn) {
-		List<Field> fields = new ArrayList<Field>();
-		List<Record> subRecords = new ArrayList<Record>();
+		List<Field> fields = new ArrayList<>();
+		List<Record> subRecords = new ArrayList<>();
 		
 		for (Control ctrl : form.getOrderedControlList()) {
+			if (ctrl instanceof Label || ctrl instanceof PageBreak || ctrl instanceof LinkControl) {
+				continue;
+			}
+
 			if (ctrl instanceof SubFormControl) {
 				subRecords.add(getSubRecord((SubFormControl)ctrl, useUdn));
 			} else {
