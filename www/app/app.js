@@ -102,6 +102,52 @@ osApp.config(function(
         },
         controller: 'SignedInCtrl'
       })
+      .state('headless-view', {
+        url: '?token',
+        abstract: true,
+        templateUrl: 'modules/common/headless-view.html',
+        controller: function($scope, Alerts) {
+          $scope.alerts = Alerts.messages;
+        },
+        resolve: {
+          initToken: function($stateParams, $http, $window, AuthService) {
+            if ($stateParams.token) {
+              $http.defaults.headers.common['X-OS-API-TOKEN'] =
+                $window.localStorage['osAuthToken'] =
+                  $stateParams.token;
+              return AuthService.refreshCookie();
+            }
+
+            return null;
+          },
+
+          currentUser: function(initToken, User) {
+            if (initToken) {
+              return User.getCurrentUser();
+            }
+
+            return null;
+          },
+
+          authInit: function(currentUser, AuthorizationService) {
+            return AuthorizationService.initializeUserRights(currentUser);
+          },
+
+          userUiState: function(initToken, User) {
+            if (initToken) {
+              return User.getUiState();
+            }
+
+            return null;
+          },
+
+          authToken: function(userUiState, AuthService) {
+            if (userUiState && userUiState.authToken) {
+              AuthService.saveToken(userUiState.authToken);
+            }
+          }
+        }
+      })
       .state('home', {
         url: '/home',
         templateUrl: 'modules/common/home.html',

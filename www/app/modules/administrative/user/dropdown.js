@@ -43,11 +43,13 @@ angular.module('os.administrative.user.dropdown', ['os.administrative.models'])
 
       var selectedUser = usersList.find(function(user) { return user[selectProp] == scope.ngModel; });
       if (selectedUser) {
+        scope.ngModel = selectedUser;
         return;
       }
 
       User.getById(scope.ngModel).then(
         function(user) {
+          scope.ngModel = user;
           usersList.push(user);
         }
       );
