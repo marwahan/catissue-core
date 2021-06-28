@@ -167,7 +167,9 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
       data.opts.showCollectionEvent = wfData.showCollectionEvent != 'false' && wfData.showCollectionEvent != false;
       data.opts.showReceivedEvent   = wfData.showReceivedEvent != 'false' && wfData.showReceivedEvent != false;
       data.opts.defReceiveQuality   = wfData.defReceiveQuality;
+      data.opts.defCollectionStatus = wfData.defCollectionStatus;
       data.opts.treeColumns         = wfData.treeColumns;
+
       if (navigateToCollPage) {
         navigateToCollPage(state, params);
       } else {
@@ -386,13 +388,16 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
             }
           );
 
+          $scope.global = ui.os.global;
           $scope.specimens = CollectSpecimensSvc.getSpecimens().map(
             function(specimen) {
+              specimen.hasChildren = specimen.hasChildren &&
+                (specimen.children || []).some(function(s) { return s.selected; });
               specimen.existingStatus = specimen.status || 'Pending';
               specimen.isVirtual = specimen.showVirtual();
               specimen.initialQty = Util.getNumberInScientificNotation(specimen.initialQty);
               if (specimen.status != 'Collected') {
-                specimen.status = 'Collected';
+                specimen.status = uiOpts.defCollectionStatus || 'Collected';
                 specimen.printLabel = printLabel(printSettings, specimen);
               }
 
@@ -410,6 +415,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
             }
           );
 
+          $scope.showCollector = $scope.specimens.some(function(specimen) { return specimen.lineage == 'New'; });
           if ($scope.showCollVisitDetails) {
             $scope.showCollVisitDetails = ($scope.specimens || []).some(
               function(specimen) {
@@ -1083,8 +1089,10 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
               if (visited.indexOf(uiSpecimen) >= 0 || // already visited
                   !uiSpecimen.selected || // not selected
                   (uiSpecimen.existingStatus == 'Collected' && 
-                  !uiSpecimen.closeAfterChildrenCreation)) {
-                  // collected and not close after children creation
+                  !uiSpecimen.closeAfterChildrenCreation) ||
+                  ((!uiSpecimen.existingStatus || uiSpecimen.existingStatus == 'Pending') &&
+                   (uiSpecimen.status == 'Pending'))) {
+                // collected and not close after children creation
                 return;
               }
   
@@ -1142,8 +1150,8 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
             if ($scope.showCollVisitDetails) {
               var collDetail = $scope.collDetail;
               angular.extend(collEvent, {
-                user: collDetail.collector,
-                time: collDetail.collectionDate
+                user: collEvent.user || collDetail.collector,
+                time: collEvent.time || collDetail.collectionDate
               });
               angular.extend(recvEvent, {
                 user: collDetail.receiver,
@@ -1437,7 +1445,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
   })
 
   .directive('osCollectSpecimensNthStep', function(
-    $state, $injector, CollectSpecimensSvc, ExtensionsUtil, SpecimenUtil, Util, ApiUrls) {
+    $state, $injector, CollectSpecimensSvc, ExtensionsUtil, SpecimenUtil, Util, ApiUrls, Visit) {
     return {
       restrict: 'E',
 
@@ -1468,10 +1476,12 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
 
         function init() {
           var specimens = $scope.specimens;
+          var uiOpts = CollectSpecimensSvc.opts();
+
           specimens.forEach(
             function(spmn) {
               if (!spmn.status || spmn.status == 'Pending') {
-                spmn.status = 'Collected';
+                spmn.status = uiOpts.defCollectionStatus || 'Collected';
               }
 
               if (spmn.children && spmn.children.some(function(s) { return s.selected; })) {

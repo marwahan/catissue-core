@@ -654,6 +654,7 @@
     "collection_status": "Collection Stats",
     "storage_utilization": "Utilization Stats",
     "anticipated_visits": "Pending Visits",
+    "new_visits": "New Visits",
     "missed_or_not_collected_visits": "Missed/Not Collected Visits",
     "missed_by": "User",
     "anticipated_specimens": "Pending Specimens",

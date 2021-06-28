@@ -312,6 +312,14 @@ angular.module('os.biospecimen.participant',
             } else {
               return null;
             }
+          },
+
+          addParticipantWorkflow: function(cp, CpConfigSvc) {
+            return CpConfigSvc.getCommonCfg(cp.id || -1, 'addParticipant').then(
+              function(cfg) {
+                return cfg && cfg.workflow;
+              }
+            );
           }
         },
         parent: 'cp-view',

@@ -1005,7 +1005,7 @@ public class SpecimenServiceImpl implements SpecimenService, ObjectAccessor, Con
 		}
 
 		specimen.updateAvailableStatus();
-		daoFactory.getSpecimenDao().saveOrUpdate(specimen);
+		daoFactory.getSpecimenDao().saveOrUpdate(specimen, true);
 		specimen.addOrUpdateCollRecvEvents();
 		specimen.addOrUpdateExtension();
 

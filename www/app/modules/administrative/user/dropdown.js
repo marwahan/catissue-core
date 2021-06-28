@@ -20,8 +20,13 @@ angular.module('os.administrative.user.dropdown', ['os.administrative.models'])
       }
 
       ctrl.listLoaded = true;
+      var promise;
+      if (!attrs.listFn) {
+        promise = ctrl.formCtrl.getCachedValues('users', JSON.stringify(opts), function() { return User.query(opts); });
+      } else {
+        promise = scope.listFn(opts);
+      }
 
-      var promise = !attrs.listFn ? User.query(opts) : scope.listFn(opts);
       promise.then(
         function(result) {
           scope.users = result;
@@ -67,10 +72,12 @@ angular.module('os.administrative.user.dropdown', ['os.administrative.models'])
         listFn: '&'
       },
 
+      require: '?^osFormValidator',
+
       replace: true,
 
       controller: function($scope, $element, $attrs) {
-        var ctrl = this;
+        var ctrl = $scope.ctrl = this;
 
         if ($attrs.options) {
           $scope.users = ctrl.localList = JSON.parse($attrs.options);
@@ -120,7 +127,9 @@ angular.module('os.administrative.user.dropdown', ['os.administrative.models'])
         );
       },
   
-      link: function(scope, element, attrs, ctrl) {
+      link: function(scope, element, attrs, formCtrl) {
+        var ctrl = scope.ctrl;
+        ctrl.formCtrl = formCtrl;
         ctrl.attrs = attrs;
 
         if (!scope.ngModel && attrs.hasOwnProperty('defaultCurrentUser')) {
@@ -136,6 +145,10 @@ angular.module('os.administrative.user.dropdown', ['os.administrative.models'])
           }
         } else if (!scope.ngModel && attrs.hasOwnProperty('multiple')) {
           scope.ngModel = [];
+        }
+
+        if (attrs.hasOwnProperty('osMdInput')) {
+          element.addClass('os-md-input');
         }
       },
 
