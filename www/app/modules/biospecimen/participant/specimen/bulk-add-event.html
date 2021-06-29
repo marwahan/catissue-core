@@ -2,18 +2,20 @@
   <div os-page-header>
     <div class="os-page-header-content">
       <h3>
-        <span translate="specimens.bulk_events.add_edit">Create Bulk Event</span>
+        <span ng-show="!ctx.event" translate="specimens.bulk_events.add_edit">Create Bulk Event</span>
+        <span ng-show="!!ctx.event" translate="specimens.bulk_events.receive">Receive Specimens</span>
       </h3>
     </div>
   </div>
   
   <div class="container">
     <div os-wizard="eventWizard" type="classic">
-      <os-wizard-step title="{{'specimens.bulk_events.select_specimens' | translate}}" on-finish="passThrough()">
+      <os-wizard-step title="{{'specimens.bulk_events.select_specimens' | translate}}" on-finish="validateSpecimens()">
         <div ng-include src="'participant/specimen/bulkevent-select-specimens.html'"></div>
       </os-wizard-step>
       
-      <os-wizard-step title="{{'specimens.bulk_events.options' | translate}}" on-finish="passThrough()">
+      <os-wizard-step title="{{'specimens.bulk_events.options' | translate}}" on-finish="passThrough()"
+        ng-if="ctx.allowEventSelect">
         <div ng-include src="'participant/specimen/bulkevent-options.html'"></div>
       </os-wizard-step>
 
@@ -34,7 +36,7 @@
       </div>
     </div>
 
-    <os-add-specimens on-add="addSpecimens(specimens)"
+    <os-add-specimens on-add="addSpecimens(specimens)" filter-opts="ctx.spmnFilterOpts"
       placeholder="{{'specimens.bulk_events.enter_specimen_label' | translate}}">
     </os-add-specimens>
 
@@ -223,7 +225,7 @@
         <button class="btn os-btn-secondary" ng-click="ctx.showForm = false; eventWizard.previous()">
           <span translate="common.buttons.previous">Previous</span>
         </button>
-        <button class="btn btn-primary" os-form-submit="saveEvent(true)">
+        <button ng-show="!ctx.event" class="btn btn-primary" os-form-submit="saveEvent(true)">
           <span translate="specimens.bulk_events.save_n_more">Save and Add More</span>
         </button>
         <button class="btn btn-primary" os-form-submit="saveEvent()">

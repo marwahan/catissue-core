@@ -829,6 +829,10 @@
     "no_read_access": "You do not have rights to view specimens of the CP: {{cp.shortTitle}}",
     "aliquots_count_req_auto_alloc": "Aliquots count is required for auto-allocation!",
 
+    "non_primary_receive_na": "One or more specimens are not primary specimens. Non-primary specimens: {{specimens}}",
+    "closed_edit_na": "Closed specimens cannot be edited. Closed specimens: {{specimens}}",
+    "not_collected": "One or more specimens are not collected. Not collected specimens: {{specimens}}",
+
     "loading_list": "Loading specimens, please wait for a moment...",
     "empty_list": "No specimens to show!",
 
@@ -975,6 +979,7 @@
 
     "bulk_events": {
       "add_edit": "Bulk Events",
+      "receive": "Receive Specimens",
       "select_specimens": "Specimens",
       "options": "Options",
       "event_details": "Event Details",
@@ -2366,6 +2371,7 @@
     "reserve": "Reserve",
     "distribute_all": "Distribute All",
     "ship": "Ship",
+    "receive": "Receive",
     "no_specimens_for_deletion": "Please select at least one specimen for deletion",
     "no_specimens_for_distribution": "Please select at least one collected specimen to create distribution order",
     "no_specimens_for_reservation": "Please select at least one collected specimen to reserve",

@@ -1,19 +1,21 @@
 angular.module('os.biospecimen.specimen.bulkaddevent', ['os.biospecimen.models'])
   .controller('BulkAddEventCtrl', function(
-    $scope, $translate, $q, events, Form, SpecimensHolder,
+    $scope, $translate, $q, events, event, Form, SpecimensHolder,
     Specimen, SpecimenEvent, Alerts, Util, SpecimenUtil) {
 
     var ctx;
     function init() {
       var spmns = SpecimensHolder.getSpecimens() || [];
       SpecimensHolder.setSpecimens(null);
+      filterSpecimens(spmns);
 
       var formOpts = {};
       $scope.ctx = ctx = {
         events   : events,
+        event    : event,
         specimens: spmns,
-        op       : 'ADD',
-        mode     : 'SINGLE',
+        op       : event && event.name == 'SpecimenReceivedEvent' ? 'EDIT' : 'ADD',
+        mode     : event && event.name == 'SpecimenReceivedEvent' ? 'TABLE' : 'SINGLE',
         tabCtrl  : {},
         formCtrl : {},
         opts     : {
@@ -30,6 +32,8 @@ angular.module('os.biospecimen.specimen.bulkaddevent', ['os.biospecimen.models']
         formDef  : undefined,
         mFormDef : undefined,
         formDefToUse: undefined,
+        allowEventSelect: !event,
+        spmnFilterOpts: {exactMatch: true, includeExtensions: false},
         records  : []
       };
     }
@@ -194,6 +198,34 @@ angular.module('os.biospecimen.specimen.bulkaddevent', ['os.biospecimen.models']
       );
     }
 
+    function showError(error, spmns) {
+      Alerts.error(error, {specimens: spmns.map(function(s) { return !s.label ? s.id : s.label; }).join(', ')});
+    }
+
+    function filterSpecimens(spmns) {
+      var closedSpmns = spmns.filter(function(spmn) { return spmn.activityStatus != 'Active'; });
+      if (closedSpmns.length > 0) {
+        showError('specimens.closed_edit_na', closedSpmns);
+        return false;
+      }
+
+      var ncSpmns = spmns.filter(function(spmn) { return spmn.status != 'Collected'; });
+      if (ncSpmns.length > 0) {
+        showError('specimens.not_collected', ncSpmns);
+        return false;
+      }
+
+      if (event && event.name == 'SpecimenReceivedEvent') {
+        var nonPrimarySpmns = spmns.filter(function(spmn) { return spmn.lineage != 'New'; });
+        if (nonPrimarySpmns.length > 0) {
+          showError('specimens.non_primary_receive_na', nonPrimarySpmns);
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     //
     // View functions
     //
@@ -203,6 +235,10 @@ angular.module('os.biospecimen.specimen.bulkaddevent', ['os.biospecimen.models']
 
     $scope.addSpecimens = function(specimens) {
       if (!specimens) {
+        return false;
+      }
+
+      if (!filterSpecimens(specimens)) {
         return false;
       }
 
@@ -217,6 +253,15 @@ angular.module('os.biospecimen.specimen.bulkaddevent', ['os.biospecimen.models']
     $scope.removeSpecimen = function(index) {
       ctx.specimens.splice(index, 1);
       ctx.showVisit = showVisit(ctx.specimens);
+    }
+
+    $scope.validateSpecimens = function() {
+      if (event && event.name == 'SpecimenReceivedEvent') {
+        ctx.formId = event.formId;
+        $scope.initEventDetailsView();
+      }
+
+      return true;
     }
 
     $scope.initOptionsView = function() {

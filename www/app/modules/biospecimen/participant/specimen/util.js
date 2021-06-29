@@ -523,7 +523,7 @@ angular.module('os.biospecimen.specimen')
     function getStatusCss(spmn) {
       var availStatus = spmn.availabilityStatus;
       if (!availStatus) {
-        availStatus = spmn.hidden.availabilityStatus;
+        availStatus = spmn && spmn.hidden && spmn.hidden.availabilityStatus;
       }
 
       availStatus = availStatus || 'Pending';

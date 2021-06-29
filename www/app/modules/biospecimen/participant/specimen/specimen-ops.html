@@ -47,6 +47,12 @@
         <span translate="specimen_list.ship">Ship</span>
       </a>
     </li>
+    <li show-if-allowed="resourceOpts.specimenUpdateOpts">
+      <a ng-click="receiveSpecimens()">
+        <span class="fa fa-check-square-o"></span>
+        <span translate="specimen_list.receive">Receive</span>
+      </a>
+    </li>
     <li show-if-allowed="resourceOpts.allSpecimenUpdateOpts">
       <a ng-click="createAliquots()">
         <span class="fa fa-share-alt"></span>

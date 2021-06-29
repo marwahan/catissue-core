@@ -321,6 +321,11 @@ angular.module('os.biospecimen.specimen')
           );
         }
 
+        function showError(error, spmns) {
+          Alerts.error(error, {specimens: spmns.map(function(s) { return !s.label ? s.id : s.label; }).join(', ')});
+          return true;
+        }
+
         scope.editSpecimens = function() {
           var spmns = scope.specimens({anyStatus: true});
           if (!spmns || spmns.length == 0) {
@@ -420,6 +425,38 @@ angular.module('os.biospecimen.specimen')
 
         scope.shipSpecimens = function() {
           gotoView('shipment-addedit', {shipmentId: ''}, 'no_specimens_for_shipment');
+        }
+
+        scope.receiveSpecimens = function() {
+          var selectedSpmns = scope.specimens();
+          if (!selectedSpmns || selectedSpmns.length == 0) {
+            $state.go('receive-specimens', {event: 'SpecimenReceivedEvent'});
+            return;
+          }
+
+          var specimenIds = selectedSpmns.map(function(spmn) {return spmn.id});
+          Specimen.getByIds(specimenIds, false).then(
+            function(spmns) {
+              var nonPrimarySpmns = spmns.filter(function(spmn) { return spmn.lineage != 'New'; });
+              if (nonPrimarySpmns.length > 0) {
+                return showError('specimens.non_primary_receive_na', nonPrimarySpmns);
+              }
+
+              var closedSpmns = spmns.filter(function(spmn) { return spmn.activityStatus != 'Active'; });
+              if (closedSpmns.length > 0) {
+                return showError('specimens.closed_edit_na', closedSpmns);
+              }
+
+              var ncSpmns = spmns.filter(function(spmn) { return spmn.status != 'Collected'; });
+              if (ncSpmns.length > 0) {
+                return showError('specimens.not_collected', ncSpmns);
+              }
+
+              angular.forEach(spmns, function(spmn) { ExtensionsUtil.createExtensionFieldMap(spmn, true); });
+              SpecimensHolder.setSpecimens(spmns);
+              $state.go('receive-specimens', {event: 'SpecimenReceivedEvent'});
+            }
+          );
         }
 
         scope.createAliquots = function() {
