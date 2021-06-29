@@ -70,7 +70,7 @@
           <span translate="specimens.col_event.user">Collector</span>
         </th>
         <th class="col"
-          ng-show="uiOpts.treeColumns.collectionDate" && showCollector"
+          ng-show="uiOpts.treeColumns.collectionDate && showCollector"
           ng-style="{width: uiOpts.treeColumns.collectionDate.width + '%'}">
           <span translate="specimens.col_event.date">Collection Date</span>
         </th>
@@ -233,7 +233,7 @@
           </span>
         </td>
         <td class="col" style="overflow: visible;"
-          ng-show="uiOpts.treeColumns.collectionDate" && showCollector"
+          ng-show="uiOpts.treeColumns.collectionDate && showCollector"
           ng-style="{width: uiOpts.treeColumns.collectionDate.width + '%'}">
 
           <div class="row" ng-if="specimen.lineage == 'New' && specimen.existingStatus != 'Collected'">
