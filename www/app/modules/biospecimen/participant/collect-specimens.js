@@ -1097,14 +1097,11 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
               }
   
               visited.push(uiSpecimen);
-              if (uiSpecimen.lineage == 'Aliquot') {
-                if (barcodingEnabled && !spmnBarcodesAutoGen && !uiSpecimen.barcode) {
-                  return;
-                }
-  
-                if (!barcodingEnabled && (cp.manualSpecLabelEnabled || !uiSpecimen.labelFmt) && !uiSpecimen.label) {
-                  return;
-                }
+              if (uiSpecimen.lineage == 'Aliquot' &&                     // specimen is a aliquot
+                  !barcodingEnabled &&                                   // barcoding is disabled
+                  (cp.manualSpecLabelEnabled || !uiSpecimen.labelFmt) && // aliquot labels are scanned
+                  !uiSpecimen.label) {                                   // aliquot label is not scanned
+                return;                                                  // exclude the aliquot from collection
               }
   
               var specimen = getSpecimenToSave(uiSpecimen);
