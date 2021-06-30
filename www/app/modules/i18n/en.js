@@ -109,6 +109,18 @@
       "YEARS": "Years"
     },
 
+    "ext_messages": {
+      "message_id": "Message #{{id}}",
+      "app": "External App",
+      "type": "Message Type",
+      "receive_time": "Receive Time",
+      "process_time": "Process Time",
+      "retries": "No. of Retries",
+      "status": "Status",
+      "message": "Message",
+      "error": "Error"
+    },
+
     "filters": {
       "title": "Filters",
       "min": "Min. {{caption}}",

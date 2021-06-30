@@ -11,7 +11,10 @@ import org.apache.commons.logging.LogFactory;
 
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
+import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.domain.MessageLog;
+import com.krishagni.catissueplus.core.common.errors.CommonErrorCode;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.MessageLogCriteria;
 import com.krishagni.catissueplus.core.common.service.MessageHandler;
 import com.krishagni.catissueplus.core.common.service.MessageLogService;
@@ -27,6 +30,19 @@ public class MessageLogServiceImpl implements MessageLogService {
 
 	public void setDaoFactory(DaoFactory daoFactory) {
 		this.daoFactory = daoFactory;
+	}
+
+	@Override
+	@PlusTransactional
+	public MessageLog getMessageLog(Long id) {
+		AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+
+		MessageLog log = daoFactory.getMessageLogDao().getById(id);
+		if (log == null) {
+			throw OpenSpecimenException.userError(CommonErrorCode.INVALID_INPUT, "Invalid message ID " + id);
+		}
+
+		return log;
 	}
 
 	@Override
