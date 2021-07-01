@@ -498,8 +498,6 @@ public class UserServiceImpl implements UserService, ObjectAccessor, Initializin
 			if (user.isPending() || user.isClosed() || !DEFAULT_AUTH_DOMAIN.equals(user.getAuthDomain().getName())) {
 				String key = StringUtils.isNotBlank(detail.getLoginName()) ? detail.getLoginName() : detail.getEmailAddress();
 				return ResponseEvent.userError(UserErrorCode.NOT_FOUND_IN_OS_DOMAIN, key);
-			} else if (user.isLocked()) {
-				return ResponseEvent.userError(AuthErrorCode.USER_LOCKED, user.formattedName());
 			}
 
 			UserDao userDao = daoFactory.getUserDao();

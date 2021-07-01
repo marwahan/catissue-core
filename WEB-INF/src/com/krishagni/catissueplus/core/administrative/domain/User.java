@@ -393,6 +393,9 @@ public class User extends BaseEntity implements UserDetails {
 		}
 
 		setPassword(passwordEncoder.encode(newPassword));
+		if (isLocked() || isExpired()) {
+			setActivityStatus(Status.ACTIVITY_STATUS_ACTIVE.getStatus());
+		}
 
 		Password password = new Password();
 		password.setUpdationDate(new Date());
