@@ -1,6 +1,6 @@
 
 angular.module('os.administrative.models.user', ['os.common.models'])
-  .factory('User', function(osModel, $http, $translate, Form, ApiUtil) {
+  .factory('User', function(osModel, $http, $translate, Form, ApiUtil, ApiUrls) {
     var User =
       osModel(
         'users',
@@ -42,6 +42,14 @@ angular.module('os.administrative.models.user', ['os.common.models'])
       return $http.get(User.url() + this.id + '/institute').then(
         function(result) {
           return result.data;
+        }
+      );
+    }
+
+    User.prototype.impersonate = function() {
+      return $http.post(ApiUrls.getBaseUrl() + 'sessions/impersonate', {userId: this.id}).then(
+        function(resp) {
+          return resp.data.impersonateUserToken;
         }
       );
     }

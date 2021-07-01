@@ -20,4 +20,8 @@ public interface UserAuthenticationService {
 	ResponseEvent<String> removeToken(RequestEvent<String> req);
 
 	User getUser(String domainName, String loginName);
+
+	User getUser(Long userId);
+
+	ResponseEvent<Map<String, Object>> impersonate(RequestEvent<Map<String, Object>> req);
 }

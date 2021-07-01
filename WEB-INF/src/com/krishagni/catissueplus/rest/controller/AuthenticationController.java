@@ -101,4 +101,11 @@ public class AuthenticationController {
 		AuthUtil.resetTokenCookie(httpReq, httpResp);
 		return Collections.singletonMap("Status", "Success");
 	}
+
+	@RequestMapping(method=RequestMethod.POST, value="/impersonate")
+	@ResponseStatus(HttpStatus.OK)
+	@ResponseBody
+	public Map<String, Object> impersonate(@RequestBody Map<String, Object> input) {
+		return ResponseEvent.unwrap(userAuthService.impersonate(RequestEvent.wrap(input)));
+	}
 }

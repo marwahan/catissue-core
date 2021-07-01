@@ -2,7 +2,7 @@
 angular.module('os.administrative.user.detail', ['os.administrative.models'])
   .controller('UserDetailCtrl', function(
     $scope, $q, $translate, $state, user,
-    User, AuthDomain, AuthService, PvManager, Alerts, DeleteUtil) {
+    User, AuthDomain, AuthService, PvManager, Alerts, DeleteUtil, Util) {
 
     function init() {
       $scope.user = user;
@@ -54,8 +54,18 @@ angular.module('os.administrative.user.detail', ['os.administrative.models'])
     }
 
     $scope.impersonate = function() {
-      AuthService.impersonate($scope.user);
-      $state.go('home', {}, {reload: true});
+      Util.showConfirm({
+        title: 'user.impersonate_as',
+        input: {user: $scope.user},
+        confirmMsg: 'user.confirm_impersonate_as',
+        ok: function() {
+          AuthService.impersonate($scope.user).then(
+            function() {
+              $state.go('home', {}, {reload: true});
+            }
+          );
+        }
+      });
     }
 
     init();

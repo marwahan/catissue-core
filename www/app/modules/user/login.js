@@ -7,14 +7,22 @@ angular.module('openspecimen')
 
     function impersonate(user) {
       if (user) {
-        var impUserStr = user.domainName + '/' + user.loginName;
-        $http.defaults.headers.common['X-OS-IMPERSONATE-USER'] = impUserStr;
-        $cookies.put('osImpersonateUser', impUserStr);
-        ui.os.global.impersonate = true;
+        return user.impersonate().then(
+          function(token) {
+            $http.defaults.headers.common['X-OS-IMPERSONATE-USER'] = token;
+            $cookies.put('osImpersonateUser', token);
+            ui.os.global.impersonate = true;
+            return true;
+          }
+        );
       } else {
         delete $http.defaults.headers.common['X-OS-IMPERSONATE-USER'];
         $cookies.remove('osImpersonateUser');
         ui.os.global.impersonate = false;
+
+        var q = $q.defer();
+        q.resolve(false);
+        return q.promise;
       }
     }
 

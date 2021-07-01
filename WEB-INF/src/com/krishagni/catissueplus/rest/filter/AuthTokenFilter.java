@@ -2,6 +2,7 @@ package com.krishagni.catissueplus.rest.filter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.audit.domain.UserApiCallLog;
 import com.krishagni.catissueplus.core.audit.services.AuditService;
+import com.krishagni.catissueplus.core.auth.domain.AuthErrorCode;
 import com.krishagni.catissueplus.core.auth.domain.AuthToken;
 import com.krishagni.catissueplus.core.auth.domain.LoginAuditLog;
 import com.krishagni.catissueplus.core.auth.domain.UserRequestData;
@@ -40,6 +42,7 @@ import com.krishagni.catissueplus.core.auth.events.LoginDetail;
 import com.krishagni.catissueplus.core.auth.events.TokenDetail;
 import com.krishagni.catissueplus.core.auth.services.UserAuthenticationService;
 import com.krishagni.catissueplus.core.auth.services.UserRequestDataProvider;
+import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
 import com.krishagni.catissueplus.core.common.service.ConfigChangeListener;
@@ -212,7 +215,7 @@ public class AuthTokenFilter extends GenericFilterBean implements InitializingBe
 		if (user.isAdmin() && !user.isSysUser()) {
 			String impUserStr = AuthUtil.getImpersonateUser(httpReq);
 			if (StringUtils.isNotBlank(impUserStr)) {
-				impersonatedUser = getUser(impUserStr);
+				impersonatedUser = getUser(user, Utility.getRemoteAddress(httpReq), impUserStr);
 				if (impersonatedUser == null || !impersonatedUser.isActive()) {
 					String message = impersonatedUser == null ? " does not exist!" : " is not active!";
 					httpResp.sendError(HttpServletResponse.SC_BAD_REQUEST, "User " + impUserStr + message);
@@ -368,19 +371,24 @@ public class AuthTokenFilter extends GenericFilterBean implements InitializingBe
 		}
 	}
 
-	private User getUser(String userString) {
-		String[] parts = userString.split("/", 2);
+	private User getUser(User user, String userIpAddress, String userString) {
+		String result = new String(Base64.decode(userString.getBytes(StandardCharsets.UTF_8)));
+		result = Utility.decrypt(result);
+		String[] parts = result.split("/");
 
-		String domain = "openspecimen";
-		String loginName = null;
-		if (parts.length == 2) {
-			domain = parts[0];
-			loginName = parts[1];
-		} else {
-			loginName = parts[0];
+		Long userId = Long.parseLong(parts[0]);
+		Long impUserId = Long.parseLong(parts[1]);
+		Date validUntil = new Date(Long.parseLong(parts[2]));
+		String ipAddress = parts[3];
+		if (validUntil.getTime() <= Calendar.getInstance().getTimeInMillis()) {
+			throw OpenSpecimenException.userError(AuthErrorCode.IMP_TOKEN_EXP);
 		}
 
-		return authService.getUser(domain, loginName);
+		if (!user.getId().equals(userId) || !StringUtils.equals(userIpAddress, ipAddress)) {
+			throw OpenSpecimenException.userError(AuthErrorCode.IMP_TOKEN_INV);
+		}
+
+		return authService.getUser(impUserId);
 	}
 
 	private boolean isOriginAllowed(String origin) {

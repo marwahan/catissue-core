@@ -1,13 +1,16 @@
 
 package com.krishagni.catissueplus.core.auth.services.impl;
 
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.krishagni.catissueplus.core.administrative.domain.User;
 import com.krishagni.catissueplus.core.administrative.domain.UserEvent;
+import com.krishagni.catissueplus.core.administrative.domain.factory.UserErrorCode;
 import com.krishagni.catissueplus.core.audit.domain.UserApiCallLog;
 import com.krishagni.catissueplus.core.audit.services.AuditService;
 import com.krishagni.catissueplus.core.auth.AuthConfig;
@@ -28,6 +32,7 @@ import com.krishagni.catissueplus.core.auth.services.AuthenticationService;
 import com.krishagni.catissueplus.core.auth.services.UserAuthenticationService;
 import com.krishagni.catissueplus.core.biospecimen.repository.DaoFactory;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
+import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.domain.Notification;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
@@ -48,6 +53,8 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 	private static final String FAILED_LOGIN_USER_NOTIF_TMPL = "failed_login_user";
 
 	private static final String FAILED_LOGIN_USER_ADMIN_TMPL = "failed_login_admins";
+
+	private static final String IMPERSONATE_USER_TMPL = "impersonate_user";
 
 	private DaoFactory daoFactory;
 
@@ -205,6 +212,77 @@ public class UserAuthenticationServiceImpl implements UserAuthenticationService 
 	@PlusTransactional
 	public User getUser(String domainName, String loginName) {
 		return daoFactory.getUserDao().getUser(loginName, domainName);
+	}
+
+	@Override
+	@PlusTransactional
+	public User getUser(Long userId) {
+		return daoFactory.getUserDao().getById(userId);
+	}
+
+	@Override
+	@PlusTransactional
+	public ResponseEvent<Map<String, Object>> impersonate(RequestEvent<Map<String, Object>> req) {
+		try {
+			AccessCtrlMgr.getInstance().ensureUserIsAdmin();
+
+			Map<String, Object> input = req.getPayload();
+			Number userId = (Number) input.get("userId");
+			String loginName = (String) input.get("username");
+
+			User user = null;
+			Object key = null;
+			if (userId != null) {
+				user = daoFactory.getUserDao().getById(userId.longValue());
+				key = userId;
+			} else if (StringUtils.isNotBlank(loginName)) {
+				String[] parts = loginName.split("/", 2);
+				String domain = User.DEFAULT_AUTH_DOMAIN;
+				if (parts.length == 1) {
+					user = daoFactory.getUserDao().getUser(parts[0], User.DEFAULT_AUTH_DOMAIN);
+				} else {
+					user = daoFactory.getUserDao().getUser(parts[1], parts[0]);
+				}
+
+				key = loginName;
+			}
+
+			if (key == null) {
+				return ResponseEvent.userError(UserErrorCode.LOGIN_NAME_REQUIRED);
+			} else if (user == null) {
+				return ResponseEvent.userError(UserErrorCode.NOT_FOUND, key);
+			}
+
+			Date startTime = Calendar.getInstance().getTime();
+			Date endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+			String result = Base64.getEncoder().encodeToString(
+				Utility.encrypt(
+					AuthUtil.getCurrentUser().getId() + "/" +
+					user.getId() + "/" +
+					endTime.getTime() + "/" +
+					AuthUtil.getRemoteAddr()
+				).getBytes()
+			);
+
+			Map<String, Object> props = new HashMap<>();
+			props.put("$subject", new String[] { AuthUtil.getCurrentUser().formattedName() });
+			props.put("user", AuthUtil.getCurrentUser());
+			props.put("impUser", user);
+			props.put("impStartTime", Utility.getDateTimeString(startTime));
+			props.put("impEndTime", Utility.getDateTimeString(endTime));
+			props.put("loginIpAddress", AuthUtil.getRemoteAddr());
+			EmailUtil.getInstance().sendEmail(
+				IMPERSONATE_USER_TMPL,
+				new String[] { user.getEmailAddress(), AuthUtil.getCurrentUser().getEmailAddress() },
+				null,
+				props
+			);
+			return ResponseEvent.response(Collections.singletonMap("impersonateUserToken", result));
+		} catch (OpenSpecimenException ose) {
+			return ResponseEvent.error(ose);
+		} catch (Exception e) {
+			return ResponseEvent.serverError(e);
+		}
 	}
 
 	@Scheduled(cron="0 0 12 ? * *")

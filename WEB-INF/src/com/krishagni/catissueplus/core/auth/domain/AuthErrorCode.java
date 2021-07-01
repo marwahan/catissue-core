@@ -17,7 +17,11 @@ public enum AuthErrorCode implements ErrorCode {
 
 	SYSTEM_LOCKDOWN,
 
-	NA_IP_ADDRESS;
+	NA_IP_ADDRESS,
+
+	IMP_TOKEN_INV,
+
+	IMP_TOKEN_EXP;
 
 	@Override
 	public String code() {
