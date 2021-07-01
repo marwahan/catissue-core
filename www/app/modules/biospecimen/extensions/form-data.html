@@ -53,7 +53,12 @@
         <img src="{{filesUrl}}/{{field.value}}">
       </span>
       <span ng-switch-when="datePicker">
-        {{field.value | date: $root.global.dateTimeFmt}}
+        <span ng-show="field.format.indexOf('HH:mm') >= 0">
+          {{field.value | date: $root.global.dateTimeFmt}}
+        </span>
+        <span ng-show="field.format.indexOf('HH:mm') < 0">
+          {{field.value | date: $root.global.dateFmt}}
+        </span>
       </span>
       <span ng-switch-when="booleanCheckbox">
         {{field.value | osBoolValue : 'common.yes' : 'common.no' : 'common.not_specified'}}
