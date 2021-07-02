@@ -7,7 +7,16 @@ angular.module('os.administrative.form.formctxts', ['os.administrative.models'])
 
     function init() {
       $scope.view = 'show_contexts';
-      $scope.extnEntities = entities.filter(function(e) { return e.allowEdits !== false; });
+      $scope.extnEntities = entities.filter(
+        function(e) {
+          return e.allowEdits !== false && (
+            currentUser.admin ||
+            (e.name == 'User' && currentUser.instituteAdmin) ||
+            !e.allCps
+          );
+        }
+      );
+
       $scope.form = args.form;
       $scope.cpList = cpList;
       $scope.institutes = [];
