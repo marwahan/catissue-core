@@ -324,7 +324,9 @@ angular.module('os.biospecimen.participant.addedit', ['os.biospecimen.models', '
           }
 
           match.cpr = {participant: match.participant};
-          match.cps = (match.participant.registeredCps || []).map(function(reg) { return reg.cpShortTitle; });
+          match.cps = (match.participant.registeredCps || [])
+            .map(function(reg) { return reg.cpShortTitle; })
+            .sort();
         }
       );
 
@@ -344,6 +346,7 @@ angular.module('os.biospecimen.participant.addedit', ['os.biospecimen.models', '
         $scope.partCtx.matchAutoSelected = true;
 
         var match = matches[0];
+        $scope.partCtx.registeredCps = (match.cps || []).join(', ');
         if ($scope.partCtx.twoStep) {
           var participant = match.participant;
           for (var i = 0; i < (participant.registeredCps || []).length; ++i) {
