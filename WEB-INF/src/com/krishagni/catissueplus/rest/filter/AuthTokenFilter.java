@@ -127,7 +127,7 @@ public class AuthTokenFilter extends GenericFilterBean implements InitializingBe
 		HttpServletRequest httpReq = (HttpServletRequest)req;
 		HttpServletResponse httpResp = (HttpServletResponse)resp;
 
-		String origin = httpReq.getHeader("Origin");
+		String origin = Utility.getHeader(httpReq, "Origin");
 		if (!isOriginAllowed(origin)) {
 			httpResp.sendError(
 				HttpServletResponse.SC_METHOD_NOT_ALLOWED,

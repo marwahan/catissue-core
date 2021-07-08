@@ -100,7 +100,10 @@ public class QueryController {
 			String filename,
 			
 			HttpServletResponse response) {
-		
+
+		fileId = Utility.cleanPath(Utility.escapeXss(fileId));
+		filename = Utility.cleanPath(Utility.escapeXss(filename));
+
 		File file = response(querySvc.getExportDataFile(request(fileId)));
 		Utility.sendToClient(response, filename, file);
 	}

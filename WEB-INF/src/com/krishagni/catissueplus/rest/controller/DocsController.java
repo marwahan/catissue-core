@@ -31,6 +31,8 @@ public class DocsController {
 	@ResponseBody
 	void download(@RequestParam String filename, HttpServletResponse httpResp) {
 		try {
+			filename = Utility.cleanPath(filename);
+
 			Resource resource = new PathMatchingResourcePatternResolver().getResource("/docs/" + filename);
 			if (resource == null) {
 				throw OpenSpecimenException.userError(CommonErrorCode.FILE_NOT_FOUND, filename);

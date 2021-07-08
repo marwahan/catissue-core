@@ -53,6 +53,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
+import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.JavaScriptUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -600,6 +602,22 @@ public class Utility {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String escapeXss(String value) {
+		return StringUtils.replaceEach(
+			HtmlUtils.htmlEscape(value),
+			new String[] {"\n", "\\n", "\r", "\\r", "%0d", "%0D", "%0a", "%0A", "\025"},
+			new String[] {"", "", "", "", "", "", "", "", ""}
+		);
+	}
+
+	public static String getHeader(HttpServletRequest httpReq, String name) {
+		return escapeXss(httpReq.getHeader(name));
+	}
+
+	public static String cleanPath(String path) {
+		return org.springframework.util.StringUtils.cleanPath(path);
 	}
 
 	public static boolean isQuoted(String input) {

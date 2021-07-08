@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.krishagni.catissueplus.core.common.events.RequestEvent;
 import com.krishagni.catissueplus.core.common.events.ResponseEvent;
+import com.krishagni.catissueplus.core.common.util.Utility;
 import com.krishagni.catissueplus.core.importer.domain.ObjectSchema;
 import com.krishagni.catissueplus.core.importer.events.FileRecordsDetail;
 import com.krishagni.catissueplus.core.importer.events.ImportDetail;
@@ -64,6 +65,8 @@ public class BulkObjectImportController {
 		if (StringUtils.isNotBlank(formName) && StringUtils.isNotBlank(entityType)) {
 			filename = formName + "_" + entityType + ".csv";
 		}
+
+		filename = Utility.cleanPath(Utility.escapeXss(filename));
 		
 		ObjectSchemaCriteria detail = new ObjectSchemaCriteria();
 		detail.setObjectType(schemaName);

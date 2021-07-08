@@ -141,7 +141,7 @@ public class AuthUtil {
 	}
 
 	public static String getAuthTokenFromHeader(HttpServletRequest httpReq) {
-		return httpReq.getHeader(OS_AUTH_TOKEN_HDR);
+		return Utility.getHeader(httpReq, OS_AUTH_TOKEN_HDR);
 	}
 
 	public static String getImpersonateUser(HttpServletRequest httpReq) {
@@ -173,7 +173,7 @@ public class AuthUtil {
 	}
 
 	private static String getCookieValue(HttpServletRequest httpReq, String cookieName) {
-		String cookieHdr = httpReq.getHeader("Cookie");
+		String cookieHdr = Utility.getHeader(httpReq, "Cookie");
 		if (StringUtils.isBlank(cookieHdr)) {
 			return null;
 		}
