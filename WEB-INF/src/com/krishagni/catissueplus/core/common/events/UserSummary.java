@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
@@ -198,6 +199,10 @@ public class UserSummary implements Serializable {
 	}
 
 	public static UserSummary from(User user) {
+		if (user == null) {
+			return null;
+		}
+
 		UserSummary result = new UserSummary();
 		result.setId(user.getId());
 		result.setType(user.getType().name());
@@ -225,6 +230,9 @@ public class UserSummary implements Serializable {
 	}
 	
 	public static List<UserSummary> from(Collection<User> users) {
-		return Utility.nullSafeStream(users).map(UserSummary::from).collect(Collectors.toList());
+		return Utility.nullSafeStream(users)
+			.filter(Objects::nonNull)
+			.map(UserSummary::from)
+			.collect(Collectors.toList());
 	}
 }

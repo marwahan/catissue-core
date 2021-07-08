@@ -399,6 +399,15 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
               if (specimen.status != 'Collected') {
                 specimen.status = uiOpts.defCollectionStatus || 'Collected';
                 specimen.printLabel = printLabel(printSettings, specimen);
+                if (specimen.lineage == 'New') {
+                  var collEvent = specimen.collectionEvent = specimen.collectionEvent || {};
+                  collEvent.time = new Date().getTime();
+                  collEvent.user = specimen.collector;
+                  if (!collEvent.user) {
+                    var cu = AuthorizationService.currentUser();
+                    collEvent.user = {id: cu.id, firstName: cu.firstName, lastName: cu.lastName};
+                  }
+                }
               }
 
               if (specimen.children && specimen.children.some(function(s) { return isPending(s) && s.selected; })) {
@@ -962,7 +971,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
                   $scope.specimens.length = 0;
                   displayCustomFieldGroups(savedSpmnReqIds, savedSpecimens);
                   if (printManifest) {
-                    downloadManifest(savedSpecimens[0].visitId);
+                    downloadManifest($scope.visit.id);
                   }
                 }
               );

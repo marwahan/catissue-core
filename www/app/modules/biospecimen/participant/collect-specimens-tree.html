@@ -1,5 +1,5 @@
 <form name="collectionForm" os-no-label-form os-form-validator="collectionForm" novalidate>
-  <div ng-include src="'specimen_coll_visit_details.html'" ng-if="showCollVisitDetails"></div>
+  <div ng-include src="'specimen_coll_visit_details.html'"></div>
 
   <table class="os-table os-table-fixed os-table-tree bulk-edit os-border os-table-muted-hdr">
     <thead class="os-table-head">
@@ -112,7 +112,15 @@
                          'os-status-not-collected': specimen.existingStatus == 'Missed Collection' ||
                                                     specimen.existingStatus == 'Not Collected'}">
             </span>
-            <os-specimen-desc cp="cp" specimen="specimen" show-req-label="true"></os-specimen-desc>
+
+            <a ui-sref="specimen-detail.overview({
+              cpId: specimen.cpId, cprId: cpr.id,
+              eventId: specimen.eventId, visitId: specimen.visitId,
+              specimenId: specimen.id, srId: specimen.reqId})" target="_blank" rel="noopener">
+
+              <os-specimen-desc cp="cp" specimen="specimen" show-req-label="true"></os-specimen-desc>
+
+            </a>
 
             <span class="pull-right">
               <button class="btn btn-xs btn-default" ng-click="remove(specimen)">
@@ -226,7 +234,7 @@
           ng-show="uiOpts.treeColumns.collector && showCollector"
           ng-style="{width: uiOpts.treeColumns.collector.width + '%'}">
           <os-users os-md-input ng-model="specimen.collectionEvent.user"
-            ng-if="specimen.lineage == 'New' && specimen.existingStatus != 'Collected'">
+            ng-if="specimen.lineage == 'New' && specimen.existingStatus != 'Collected'" required>
           </os-users>
           <span ng-if="specimen.lineage == 'New' && specimen.existingStatus == 'Collected'">
             {{specimen.collectionEvent.user | osUserDisplayName}}
@@ -243,8 +251,8 @@
                 </os-date-picker>
               </div>
               <div class="col-xs-4 input os-md-time" style="padding-right: 0px;">
-                <timepicker class="os-time-no-wheels" os-md-input ng-model="specimen.collectionEvent.time"
-                  show-meridian="false">
+                <timepicker name="time" class="os-time-no-wheels os-md-input" ng-model="specimen.collectionEvent.time"
+                  show-meridian="false" required>
                 </timepicker>
               </div>
             </div>
@@ -338,7 +346,7 @@
       </div>
     </div>
 
-    <div class="row" ng-show="uiOpts.showCollectionEvent">
+    <div class="row" ng-show="showCollVisitDetails && uiOpts.showCollectionEvent">
       <div class="col-xs-12">
         <div class="form-group">
           <label class="col-xs-2 control-label" translate="specimens.col_event.title">Collection Details</label>
@@ -360,7 +368,7 @@
       </div>
     </div>
 
-    <div class="row" ng-show="uiOpts.showReceivedEvent">
+    <div class="row" ng-show="showCollVisitDetails && uiOpts.showReceivedEvent">
       <div class="col-xs-12">
         <div class="form-group">
           <label class="col-xs-2 control-label" translate="specimens.recv_event.title">Receive Details</label>

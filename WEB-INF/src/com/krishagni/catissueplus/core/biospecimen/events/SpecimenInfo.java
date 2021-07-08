@@ -89,6 +89,8 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 	private StorageLocationSummary storageLocation;
 	
 	private String storageType;
+
+	private UserSummary collector;
 	
 	private String collectionContainer;
 
@@ -368,6 +370,14 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 		this.storageType = storageType;
 	}
 
+	public UserSummary getCollector() {
+		return collector;
+	}
+
+	public void setCollector(UserSummary collector) {
+		this.collector = collector;
+	}
+
 	public String getCollectionContainer() {
 		return collectionContainer;
 	}
@@ -526,9 +536,11 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 
 		SpecimenCollectionReceiveDetail collRecvDetail = specimen.getCollRecvDetails();
 		if (collRecvDetail != null) {
+			result.setCollector(UserSummary.from(collRecvDetail.getCollector()));
 			result.setCollectionContainer(collRecvDetail.getCollContainer());
 			result.setCollectionDate(collRecvDetail.getCollTime());
 		} else if (specimen.isPrimary() && specimen.getSpecimenRequirement() != null) {
+			result.setCollector(UserSummary.from(specimen.getSpecimenRequirement().getCollector()));
 			result.setCollectionContainer(PermissibleValue.getValue(specimen.getSpecimenRequirement().getCollectionContainer()));
 		}
 
@@ -563,6 +575,7 @@ public class SpecimenInfo extends AttributeModifiedSupport implements Comparable
 		result.setInitialQty(anticipated.getInitialQuantity());
 		result.setConcentration(anticipated.getConcentration());
 		result.setParentId(null);
+		result.setCollector(UserSummary.from(anticipated.getCollector()));
 		result.setCollectionContainer(PermissibleValue.getValue(anticipated.getCollectionContainer()));
 		result.setAvailabilityStatus(Specimen.PENDING);
 
