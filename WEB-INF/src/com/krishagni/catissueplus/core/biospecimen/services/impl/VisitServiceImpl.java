@@ -23,6 +23,7 @@ import com.krishagni.catissueplus.core.audit.services.impl.DeleteLogUtil;
 import com.krishagni.catissueplus.core.biospecimen.ConfigParams;
 import com.krishagni.catissueplus.core.biospecimen.domain.CollectionProtocol;
 import com.krishagni.catissueplus.core.biospecimen.domain.Specimen;
+import com.krishagni.catissueplus.core.biospecimen.domain.SprSavedEvent;
 import com.krishagni.catissueplus.core.biospecimen.domain.Visit;
 import com.krishagni.catissueplus.core.biospecimen.domain.VisitPreSaveEvent;
 import com.krishagni.catissueplus.core.biospecimen.domain.VisitSavedEvent;
@@ -365,7 +366,8 @@ public class VisitServiceImpl implements VisitService, ObjectAccessor, Initializ
 				FileUtils.copyInputStreamToFile(detail.getFileIn(), sprFile);
 				visit.updateSprName(filename);
 			}
-			
+
+			EventPublisher.getInstance().publish(new SprSavedEvent(visit));
 			return new ResponseEvent<>(filename);
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -392,6 +394,7 @@ public class VisitServiceImpl implements VisitService, ObjectAccessor, Initializ
 			}
 			
 			FileUtils.writeStringToFile(file, detail.getSprText(), (String) null, false);
+			EventPublisher.getInstance().publish(new SprSavedEvent(visit));
 			return ResponseEvent.response(detail.getSprText());
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -427,7 +430,8 @@ public class VisitServiceImpl implements VisitService, ObjectAccessor, Initializ
 			if (isFileDeleted) {
 				visit.setSprName(null);
 			}
-			
+
+			EventPublisher.getInstance().publish(new SprSavedEvent(visit));
 			return ResponseEvent.response(isFileDeleted);
 		} catch (OpenSpecimenException ose) {
 			return ResponseEvent.error(ose);
@@ -459,6 +463,7 @@ public class VisitServiceImpl implements VisitService, ObjectAccessor, Initializ
 		}
 		
 		visit.setSprLocked(detail.isLocked());
+		EventPublisher.getInstance().publish(new SprSavedEvent(visit));
 		return ResponseEvent.response(detail);
 	}
 

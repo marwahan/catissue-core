@@ -2,9 +2,12 @@ package com.krishagni.rbac.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.criterion.Restrictions;
+
 import com.krishagni.catissueplus.core.common.repository.AbstractDao;
 import com.krishagni.rbac.domain.Subject;
 import com.krishagni.rbac.domain.SubjectAccess;
+import com.krishagni.rbac.domain.SubjectRole;
 import com.krishagni.rbac.repository.SubjectDao;
 
 public class SubjectDaoImpl extends AbstractDao<Subject> implements SubjectDao {
@@ -89,6 +92,16 @@ public class SubjectDaoImpl extends AbstractDao<Subject> implements SubjectDao {
 				.getNamedQuery(REMOVE_ROLES_BY_CP)
 				.setLong("cpId", cpId)
 				.executeUpdate();
+	}
+
+	@Override
+	public List<SubjectRole> getRoles(Long subjectId, String roleName) {
+		return (List<SubjectRole>) getCurrentSession().createCriteria(SubjectRole.class, "sr")
+			.createAlias("sr.subject", "subject")
+			.createAlias("sr.role", "role")
+			.add(Restrictions.eq("subject.id", subjectId))
+			.add(Restrictions.eq("role.name", roleName))
+			.list();
 	}
 
 	private static final String FQN = Subject.class.getName();

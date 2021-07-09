@@ -5,6 +5,7 @@ import java.util.List;
 import com.krishagni.catissueplus.core.common.repository.Dao;
 import com.krishagni.rbac.domain.Subject;
 import com.krishagni.rbac.domain.SubjectAccess;
+import com.krishagni.rbac.domain.SubjectRole;
 
 public interface SubjectDao extends Dao<Subject> {		
 	boolean canUserPerformOps(Long subjectId, String resource, String[] ops);
@@ -22,4 +23,6 @@ public interface SubjectDao extends Dao<Subject> {
 	List<Long> getSubjectIds(Long cpId, String resource, String[] ops);
 	
 	Integer removeRolesByCp(Long cpId);
+
+	List<SubjectRole> getRoles(Long subjectId, String roleName);
 }
