@@ -245,7 +245,7 @@ public class FormsController {
 		Long recordId,
 			
 		@RequestParam(value = "includeUdn", required = false, defaultValue = "false")
-		boolean includeUdn,
+		String includeUdn,
 
 		@RequestParam(value="includeMetadata", required = false, defaultValue = "false")
 		boolean includeMetadata) {
@@ -259,7 +259,7 @@ public class FormsController {
 		if (includeMetadata) {
 			return resp.getPayload().getFormData().getFieldValueMap();
 		} else {
-			return resp.getPayload().getFormData().getFieldNameValueMap(includeUdn);
+			return resp.getPayload().getFormData().getFieldNameValueMap(StringUtils.equals(includeUdn, "true"));
 		}
 	}
 
