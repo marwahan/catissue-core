@@ -108,4 +108,12 @@
       <column name="SET_QTY_TO_ZERO" type="${boolean.type}"/>
     </addColumn>
   </changeSet>
+
+  <changeSet author="vpawar" id="Increase the width of the imported forms digest column to accommodate SHA512">
+    <modifyDataType tableName="OS_IMPORT_FORMS_LOG" columnName="MD5_DIGEST" newDataType="${text.type}(255)"/>
+  </changeSet>
+
+  <changeSet author="vpawar" id="Increase the width of the imported queries digest column to accommodate SHA512">
+    <modifyDataType tableName="CATISSUE_IMPORT_QUERIES_LOG" columnName="MD5_DIGEST" newDataType="${text.type}(255)"/>
+  </changeSet>
 </databaseChangeLog>
