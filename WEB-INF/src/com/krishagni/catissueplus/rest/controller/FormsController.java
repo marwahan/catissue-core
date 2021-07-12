@@ -575,6 +575,17 @@ public class FormsController {
 			"appData",
 			(k) -> new HashMap<String, Object>()
 		);
+
+		Object useUdnInput = appData.get("useUdn");
+		boolean useUdn = false;
+		if (useUdnInput instanceof String) {
+			useUdn =  Utility.escapeXss((String) useUdnInput).equals("true");
+		} else if (useUdnInput instanceof Boolean) {
+			useUdn = ((Boolean) useUdnInput).booleanValue();
+		} else if (useUdnInput instanceof Number) {
+			useUdn = ((Number) useUdnInput).intValue() == 1;
+		}
+
 		appData.putAll(UserRequestData.getInstance().getData());
 		boolean includeMetadata = Boolean.TRUE.equals(appData.get("includeMetadata"));
 
@@ -594,9 +605,7 @@ public class FormsController {
 		if (includeMetadata) {
 			return resp.getPayload().getFormData().getFieldValueMap();
 		} else {
-			// return resp.getPayload().getFormData().getFieldNameValueMap(formData.isUsingUdn());
-			// TODO: experimental
-			return null;
+			return resp.getPayload().getFormData().getFieldNameValueMap(useUdn);
 		}
 	}
 
