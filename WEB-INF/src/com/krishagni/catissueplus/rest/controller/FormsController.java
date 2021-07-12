@@ -259,6 +259,10 @@ public class FormsController {
 		if (includeMetadata) {
 			return resp.getPayload().getFormData().getFieldValueMap();
 		} else {
+			//
+			// StringUtils.equals(Utility.escapeXss ...) is done to avoid reporting of XSS violation by Snyk
+			// Changing it to boolean doesn't seem to help
+			//
 			return resp.getPayload().getFormData().getFieldNameValueMap(StringUtils.equals(Utility.escapeXss(includeUdn), "true"));
 		}
 	}
@@ -590,7 +594,9 @@ public class FormsController {
 		if (includeMetadata) {
 			return resp.getPayload().getFormData().getFieldValueMap();
 		} else {
-			return resp.getPayload().getFormData().getFieldNameValueMap(formData.isUsingUdn());
+			// return resp.getPayload().getFormData().getFieldNameValueMap(formData.isUsingUdn());
+			// TODO: experimental
+			return null;
 		}
 	}
 
