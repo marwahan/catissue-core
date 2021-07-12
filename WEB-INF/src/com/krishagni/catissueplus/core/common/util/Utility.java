@@ -114,11 +114,15 @@ public class Utility {
 	}
 
 	public static String getInputStreamDigest(InputStream in) throws IOException {
-		return DigestUtils.md5Hex(getInputStreamBytes(in));
+		return DigestUtils.sha512Hex(getInputStreamBytes(in));
 	}
 
 	public static String getDigest(String input) {
-		return DigestUtils.md5Hex(input);
+		return DigestUtils.sha512Hex(input);
+	}
+
+	public static String getDigest(byte[] input) {
+		return DigestUtils.sha512Hex(input);
 	}
 
 	public static String getResourceDigest(String resource)

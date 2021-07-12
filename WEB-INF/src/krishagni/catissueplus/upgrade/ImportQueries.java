@@ -19,6 +19,7 @@ import org.springframework.util.DigestUtils;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.krishagni.catissueplus.core.common.util.Utility;
 import com.krishagni.catissueplus.core.de.domain.SavedQuery;
 
 import edu.common.dynamicextensions.ndao.JdbcDao;
@@ -87,7 +88,7 @@ public class ImportQueries {
 			
 			Object[] row = getQueryIdAndMd5Digest(filename);			
 			byte[] content = getFileContent(filename); 
-			String digest = getMd5Digest(content);
+			String digest = Utility.getDigest(content);
 			
 			if (row == null) {
 				insertQuery(folderId, userId, filename, content, digest);
@@ -202,11 +203,7 @@ public class ImportQueries {
 		}
 	}
 	
-	private static String getMd5Digest(byte[] content) {
-		return DigestUtils.md5DigestAsHex(content);
-	}
-	
-	private static SavedQuery getSavedQuery(byte[] content) 
+	private static SavedQuery getSavedQuery(byte[] content)
 	throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setVisibilityChecker(
