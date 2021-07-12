@@ -578,13 +578,13 @@ public class FormsController {
 
 		Object useUdnInput = appData.get("useUdn");
 		boolean useUdn = false;
-		if (useUdnInput instanceof String) {
-			useUdn =  Utility.escapeXss((String) useUdnInput).equals("true");
-		} else if (useUdnInput instanceof Boolean) {
-			useUdn = ((Boolean) useUdnInput).booleanValue();
-		} else if (useUdnInput instanceof Number) {
-			useUdn = ((Number) useUdnInput).intValue() == 1;
-		}
+//		if (useUdnInput instanceof String) {
+//			useUdn =  Utility.escapeXss((String) useUdnInput).equals("true");
+//		} else if (useUdnInput instanceof Boolean) {
+//			useUdn = ((Boolean) useUdnInput).booleanValue();
+//		} else if (useUdnInput instanceof Number) {
+//			useUdn = ((Number) useUdnInput).intValue() == 1;
+//		}
 
 		appData.putAll(UserRequestData.getInstance().getData());
 		boolean includeMetadata = Boolean.TRUE.equals(appData.get("includeMetadata"));
