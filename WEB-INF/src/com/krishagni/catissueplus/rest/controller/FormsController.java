@@ -281,7 +281,7 @@ public class FormsController {
 		List<Long> objectIds,
 
 		@RequestParam(value="includeUdn", required=false, defaultValue="false")
-		boolean includeUdn) {
+		String includeUdn) {
 
 		FormRecordCriteria crit = new FormRecordCriteria();
 		crit.setFormId(formId);
@@ -290,7 +290,9 @@ public class FormsController {
 
 		ResponseEvent<List<FormDataDetail>> resp = formSvc.getLatestRecords(getRequest(crit));
 		resp.throwErrorIfUnsuccessful();
-		return resp.getPayload().stream().map(r -> r.getFormData().getFieldNameValueMap(includeUdn)).collect(Collectors.toList());
+
+		boolean useUdn = Utility.escapeXss(includeUdn).toLowerCase().equals("true");
+		return resp.getPayload().stream().map(r -> r.getFormData().getFieldNameValueMap(useUdn)).collect(Collectors.toList());
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value="{id}/data")
