@@ -146,8 +146,8 @@ dependencies {
   compile group: 'org.springframework', name: 'spring-orm', version: '4.3.30.RELEASE'
   compile group: 'org.springframework', name: 'spring-messaging', version: '4.3.30.RELEASE'
   compile group: 'org.springframework', name: 'spring-jms', version: '4.3.30.RELEASE'
-  compile group: 'org.springframework.integration', name: 'spring-integration-core', version: '4.3.30.RELEASE'
-  compile group: 'org.springframework.integration', name: 'spring-integration-mail', version: '4.3.30.RELEASE'
+  compile group: 'org.springframework.integration', name: 'spring-integration-core', version: '4.3.24.RELEASE'
+  compile group: 'org.springframework.integration', name: 'spring-integration-mail', version: '4.3.24.RELEASE'
   compile group: 'org.springframework.ldap', name: 'spring-ldap-core', version:'2.3.2.RELEASE'
 
   compile group: 'org.springframework.security', name: 'spring-security-config', version: '4.2.8.RELEASE'
