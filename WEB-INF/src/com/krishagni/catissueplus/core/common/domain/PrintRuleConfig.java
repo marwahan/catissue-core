@@ -96,7 +96,7 @@ public class PrintRuleConfig extends BaseEntity {
 	public void setRuleDefJson(String ruleDefJson) {
 		Map<String, String> rule;
 		try {
-			rule = getReadMapper().readValue(ruleDefJson, new TypeReference<HashMap<String,Object>>() {});
+			rule = getReadMapper().readValue(ruleDefJson, new TypeReference<HashMap<String,String>>() {});
 		} catch (Exception e) {
 			throw new RuntimeException("Error marshalling JSON to print rule", e);
 		}
