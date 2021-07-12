@@ -259,7 +259,7 @@ public class FormsController {
 		if (includeMetadata) {
 			return resp.getPayload().getFormData().getFieldValueMap();
 		} else {
-			return resp.getPayload().getFormData().getFieldNameValueMap(StringUtils.equals(includeUdn, "true"));
+			return resp.getPayload().getFormData().getFieldNameValueMap(StringUtils.equals(Utility.escapeXss(includeUdn), "true"));
 		}
 	}
 
