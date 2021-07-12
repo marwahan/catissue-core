@@ -72,7 +72,12 @@ public class ParticipantController {
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	public List<MatchedParticipant> getMatchedParticipants(@RequestBody ParticipantDetail criteria) {
-		List<MatchedParticipantsList> result = getMatchedParticipants(Collections.singletonList(criteria));
+		if (criteria == null) {
+			return null;
+		}
+
+		criteria.setReqRegInfo(true);
+		List<MatchedParticipantsList> result = response(participantSvc.getMatchingParticipants(request(Collections.singletonList(criteria))));
 		return result.get(0).getMatches();
 	}
 
