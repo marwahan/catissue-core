@@ -53,6 +53,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.owasp.encoder.Encode;
+import org.owasp.esapi.Encoder;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.web.util.HtmlUtils;
 
@@ -605,11 +607,16 @@ public class Utility {
 	}
 
 	public static String escapeXss(String value) {
-		return StringUtils.replaceEach(
-			HtmlUtils.htmlEscape(value),
-			new String[] {"\n", "\\n", "\r", "\\r", "%0d", "%0D", "%0a", "%0A", "\025"},
-			new String[] {"", "", "", "", "", "", "", "", ""}
-		);
+		if (StringUtils.isBlank(value)) {
+			return value;
+		}
+
+		return Encode.forJava(value);
+//		return StringUtils.replaceEach(
+//			HtmlUtils.htmlEscape(value),
+//			new String[] {"\n", "\\n", "\r", "\\r", "%0d", "%0D", "%0a", "%0A", "\025"},
+//			new String[] {"", "", "", "", "", "", "", "", ""}
+//		);
 	}
 
 	public static String getHeader(HttpServletRequest httpReq, String name) {
