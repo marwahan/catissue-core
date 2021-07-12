@@ -132,27 +132,29 @@ dependencies {
   compile group: 'log4j', name: 'apache-log4j-extras', version: '1.2.17'
   compile group: 'quartz', name: 'quartz', version:'1.5.2'
 
-  compile group: 'org.springframework', name: 'spring-aop', version:springVersion
-  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-  compile group: 'org.springframework', name: 'spring-core', version:springVersion
-  compile group: 'org.springframework', name: 'spring-expression', version:springVersion
-  compile group: 'org.springframework', name: 'spring-instrument', version:springVersion
-  compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
-  compile group: 'org.springframework', name: 'spring-tx', version:springVersion
-  compile group: 'org.springframework', name: 'spring-web', version:springVersion
-  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
-  compile group: 'org.springframework', name: 'spring-orm', version:springVersion
-  compile group: 'org.springframework', name: 'spring-messaging', version:springVersion
-  compile group: 'org.springframework', name: 'spring-jms', version:springVersion
-  compile group: 'org.springframework.integration', name: 'spring-integration-core', version:springVersion
-  compile group: 'org.springframework.integration', name: 'spring-integration-mail', version:springVersion
+  compile group: 'org.springframework', name: 'spring-aop', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-beans', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-context', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-context-support', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-core', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-expression', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-instrument', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-jdbc', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-tx', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-web', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-webmvc', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-orm', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-messaging', version:4.3.19.RELEASE
+  compile group: 'org.springframework', name: 'spring-jms', version:4.3.19.RELEASE
+  compile group: 'org.springframework.integration', name: 'spring-integration-core', version:4.3.19.RELEASE
+  compile group: 'org.springframework.integration', name: 'spring-integration-mail', version:4.3.19.RELEASE
   compile group: 'org.springframework.ldap', name: 'spring-ldap-core', version:'2.3.2.RELEASE'
-  compile group: 'org.springframework.security', name: 'spring-security-config', version:springSecVersion
-  compile group: 'org.springframework.security', name: 'spring-security-core', version:springSecVersion
-  compile group: 'org.springframework.security', name: 'spring-security-ldap', version:springSecVersion
-  compile group: 'org.springframework.security', name: 'spring-security-web', version:springSecVersion
+
+  compile group: 'org.springframework.security', name: 'spring-security-config', version:4.2.8.RELEASE
+  compile group: 'org.springframework.security', name: 'spring-security-core', version:4.2.8.RELEASE
+  compile group: 'org.springframework.security', name: 'spring-security-ldap', version:4.2.8.RELEASE
+  compile group: 'org.springframework.security', name: 'spring-security-web', version:4.2.8.RELEASE
+
   // compile group: 'velocity', name: 'velocity-dep', version:'1.4'
   compile group: 'com.thoughtworks.xstream', name: 'xstream', version:'1.4.17'
   compile group: 'com.itextpdf', name: 'itextpdf', version:'5.5.6'
