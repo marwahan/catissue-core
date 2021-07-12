@@ -611,12 +611,8 @@ public class Utility {
 			return value;
 		}
 
-		return Encode.forJava(value);
-//		return StringUtils.replaceEach(
-//			HtmlUtils.htmlEscape(value),
-//			new String[] {"\n", "\\n", "\r", "\\r", "%0d", "%0D", "%0a", "%0A", "\025"},
-//			new String[] {"", "", "", "", "", "", "", "", ""}
-//		);
+
+		return value.replaceAll("\\s{2,}", "");
 	}
 
 	public static String getHeader(HttpServletRequest httpReq, String name) {
