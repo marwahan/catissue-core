@@ -42,9 +42,11 @@ public abstract class AbstractLabelPrinter {
 			throw OpenSpecimenException.userError(CommonErrorCode.FILE_NOT_FOUND, result.getName());
 		}
 
-		filename = Utility.escapeXss(filename);
+//		filename = Utility.escapeXss(filename);
 		if (StringUtils.isBlank(filename)) {
 			filename = result.getName();
+		} else {
+			filename = filename.replaceAll("\\s{2,}", "").trim();
 		}
 
 		httpResp.setContentType("application/csv");
