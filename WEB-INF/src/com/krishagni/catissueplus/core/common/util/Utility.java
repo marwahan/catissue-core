@@ -70,9 +70,9 @@ import com.krishagni.catissueplus.core.exporter.services.impl.ExporterContextHol
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Utility {
-	private static final String key = "0pEN@eSEncRyPtKy";
+	private static SecretKey secretKey = null;
 
-	private static final SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
+	private static String algorithm = null;
 
 	private static FileTypeMap fileTypesMap = null;
 
@@ -589,8 +589,8 @@ public class Utility {
 
 	public static String encrypt(String value) {
 		try {
-			Cipher cipher = Cipher.getInstance("AES");
-			cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+			Cipher cipher = Cipher.getInstance(getAlgorithm());
+			cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
 			byte[] encryptedValue = cipher.doFinal(value.getBytes("UTF-8"));
 			return Base64.getEncoder().encodeToString(encryptedValue);
 		} catch (Exception e) {
@@ -600,8 +600,8 @@ public class Utility {
 
 	public static String decrypt(String value) {
 		try {
-			Cipher cipher = Cipher.getInstance("AES");
-			cipher.init(Cipher.DECRYPT_MODE, secretKey);
+			Cipher cipher = Cipher.getInstance(getAlgorithm());
+			cipher.init(Cipher.DECRYPT_MODE, getSecretKey());
 			byte[] decodedValue = Base64.getDecoder().decode(value.getBytes());
 			return new String(cipher.doFinal(decodedValue));
 		} catch (Exception e) {
@@ -1016,5 +1016,44 @@ public class Utility {
 		}
 
 		return Math.toIntExact(unit.between(startDt, endDt));
+	}
+
+	private static SecretKey getSecretKey() {
+		if (secretKey != null) {
+			return secretKey;
+		}
+
+		synchronized (Utility.class) {
+			if (secretKey != null) {
+				return secretKey;
+			}
+
+			File file = new File(ConfigUtil.getInstance().getDataDir(), "secret.key");
+			InputStream fin = null;
+			try {
+				if (!file.exists()) {
+					fin = getResourceInputStream("/com/krishagni/catissueplus/core/secret.key");
+				} else {
+					fin = new FileInputStream(file);
+				}
+
+				List<String> secretSpecs = IOUtils.readLines(fin);
+				secretKey = new SecretKeySpec(secretSpecs.get(0).getBytes(), secretSpecs.get(1));
+				algorithm = secretSpecs.get(1);
+			} catch (Exception e) {
+				throw OpenSpecimenException.serverError(e);
+			}
+		}
+
+		return secretKey;
+	}
+
+	private static String getAlgorithm() {
+		SecretKey key = getSecretKey();
+		if (key != null) {
+			return algorithm;
+		}
+
+		return null;
 	}
 }
