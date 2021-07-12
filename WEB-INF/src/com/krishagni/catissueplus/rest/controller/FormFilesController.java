@@ -87,8 +87,8 @@ public class FormFilesController {
 
 		HttpServletResponse response) {
 
-		fileId = Utility.cleanPath(fileId);
-		filename = Utility.cleanPath(filename);
+		fileId    = Utility.cleanPath(fileId);
+		filename  = Utility.cleanPath(filename);
 		File file = new File(DeConfiguration.getInstance().fileUploadDir() + File.separator + fileId);
 		if (!file.exists()) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);

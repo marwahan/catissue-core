@@ -611,7 +611,7 @@ public class Utility {
 			return null;
 		}
 
-		return value.replaceAll("\\s{2,}", "");
+		return value.replaceAll("\\s{2,}", "_");
 	}
 
 	public static String getHeader(HttpServletRequest httpReq, String name) {
@@ -619,7 +619,7 @@ public class Utility {
 	}
 
 	public static String cleanPath(String path) {
-		return FilenameUtils.getName(path);
+		return escapeXss(FilenameUtils.getName(path));
 	}
 
 	public static boolean isQuoted(String input) {
