@@ -162,6 +162,8 @@ dependencies {
   compile group: 'com.github.ua-parser', name: 'uap-java', version: '1.5.2'
   compile group: 'org.yaml', name: 'snakeyaml', version: '1.28'
 
+  compile group: 'org.owasp.encoder', name: 'encoder', version: '1.2.3'
+
   // HTML to PDF lib
   compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.23'
   compile group: 'org.apache.pdfbox', name: 'xmpbox', version: '2.0.23'
