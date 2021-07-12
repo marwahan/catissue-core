@@ -154,7 +154,7 @@ dependencies {
   compile group: 'org.springframework.security', name: 'spring-security-ldap', version:springSecVersion
   compile group: 'org.springframework.security', name: 'spring-security-web', version:springSecVersion
   // compile group: 'velocity', name: 'velocity-dep', version:'1.4'
-  compile group: 'com.thoughtworks.xstream', name: 'xstream', version:'1.4.10'
+  compile group: 'com.thoughtworks.xstream', name: 'xstream', version:'1.4.17'
   compile group: 'com.itextpdf', name: 'itextpdf', version:'5.5.6'
   compile group: 'dom4j', name: 'dom4j', version: '1.6.1'
   compile group: 'com.jcraft', name: 'jsch', version: '0.1.54'
