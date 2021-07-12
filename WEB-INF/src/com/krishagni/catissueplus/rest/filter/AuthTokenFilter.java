@@ -396,7 +396,7 @@ public class AuthTokenFilter extends GenericFilterBean implements InitializingBe
 			return true;
 		}
 
-		return getAllowedOrigins().isEmpty() || getAllowedOrigins().contains("*") || getAllowedOrigins().contains(origin.trim());
+		return getAllowedOrigins().contains("*") || getAllowedOrigins().contains(origin.trim());
 	}
 
 	private Set<String> getAllowedOrigins() {
