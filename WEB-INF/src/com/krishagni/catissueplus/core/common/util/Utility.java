@@ -607,10 +607,9 @@ public class Utility {
 	}
 
 	public static String escapeXss(String value) {
-		if (StringUtils.isBlank(value)) {
-			return value;
+		if (value == null) {
+			return null;
 		}
-
 
 		return value.replaceAll("\\s{2,}", "");
 	}
