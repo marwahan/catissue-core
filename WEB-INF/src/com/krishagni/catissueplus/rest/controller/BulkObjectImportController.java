@@ -66,7 +66,7 @@ public class BulkObjectImportController {
 			filename = formName + "_" + entityType + ".csv";
 		}
 
-		filename = Utility.cleanPath(Utility.escapeXss(filename));
+		filename = Utility.cleanPath(Utility.stripWs(filename));
 		
 		ObjectSchemaCriteria detail = new ObjectSchemaCriteria();
 		detail.setObjectType(schemaName);

@@ -53,10 +53,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.owasp.encoder.Encode;
-import org.owasp.esapi.Encoder;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.JavaScriptUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -606,20 +605,24 @@ public class Utility {
 		}
 	}
 
-	public static String escapeXss(String value) {
+	public static String stripWs(String value) {
 		if (value == null) {
 			return null;
 		}
 
-		return value.replaceAll("\\s{2,}", "_");
+		return value.replaceAll("\\s{2,}", "_").trim();
 	}
 
 	public static String getHeader(HttpServletRequest httpReq, String name) {
-		return escapeXss(httpReq.getHeader(name));
+		return stripWs(httpReq.getHeader(name));
 	}
 
 	public static String cleanPath(String path) {
-		return escapeXss(FilenameUtils.getName(path));
+		return stripWs(FilenameUtils.getName(path));
+	}
+
+	public static String escapeXss(String input) {
+		return JavaScriptUtils.javaScriptEscape(HtmlUtils.htmlEscape(stripWs(input)));
 	}
 
 	public static boolean isQuoted(String input) {

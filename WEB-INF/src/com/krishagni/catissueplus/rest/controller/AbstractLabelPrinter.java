@@ -42,7 +42,7 @@ public abstract class AbstractLabelPrinter {
 			throw OpenSpecimenException.userError(CommonErrorCode.FILE_NOT_FOUND, result.getName());
 		}
 
-		filename = Utility.escapeXss(filename);
+		filename = Utility.stripWs(filename);
 		if (StringUtils.isBlank(filename)) {
 			filename = result.getName();
 		}

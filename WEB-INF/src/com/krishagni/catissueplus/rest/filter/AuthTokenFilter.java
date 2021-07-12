@@ -131,7 +131,7 @@ public class AuthTokenFilter extends GenericFilterBean implements InitializingBe
 		if (!isOriginAllowed(origin)) {
 			httpResp.sendError(
 				HttpServletResponse.SC_METHOD_NOT_ALLOWED,
-				"Requests from the origin server "  + origin + " not allowed");
+				"Requests from the origin server "  + Utility.escapeXss(origin) + " not allowed");
 			return;
 		}
 
