@@ -178,7 +178,7 @@ dependencies {
 
 
   //SAML dependencies lib
-  compile group: 'org.springframework.security.extensions', name: 'spring-security-saml2-core', version:'1.0.4.RELEASE'
+  compile group: 'org.springframework.security.extensions', name: 'spring-security-saml2-core', version:'1.0.10.RELEASE'
   compile group: 'org.opensaml', name: 'opensaml', version: '2.6.4'
   compile group: 'org.opensaml', name: 'openws', version: '1.5.4'
   compile group: 'org.opensaml', name: 'xmltooling', version: '1.4.4'
