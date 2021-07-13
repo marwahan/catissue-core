@@ -32,6 +32,8 @@
             <Menu label="Export" :options="exportOpts" v-show-if-allowed="userResources.importOpts"/>
 
             <Menu label="More" :options="moreOpts" />
+
+            <Button left-icon="question-circle" label="Help" @click="help" />
           </span>
 
           <span v-if="ctx.selectedUsers.length > 0">
@@ -271,6 +273,11 @@ export default {
       if (this.ctx.group) {
         opts.group = this.ctx.group.name;
       }
+
+      if (!this.ui.currentUser.admin) {
+        opts.institute = this.ui.currentUser.instituteName;
+      }
+
       userSvc.getUsers(opts).then(resp => {
         this.ctx.loading = false;
         this.ctx.users = resp;
@@ -406,38 +413,42 @@ export default {
       routerSvc.ngGoto('user-export-forms');
     },
 
-    ngGoto: routerSvc.ngGoto
+    ngGoto: routerSvc.ngGoto,
+
+    help: function() {
+      window.open('http://help.openspecimen.org/user', '_blank').focus();
+    }
   },
 
   computed: {
     importOpts: function() {
       return [
-        { caption: 'Users', onSelect: () => this.ngGoto('user-import', {objectType: 'user'}) },
-        { caption: 'User Roles', onSelect: () => this.ngGoto('user-import', {objectType: 'userRoles'}) },
-        { caption: 'Forms', onSelect: () => this.ngGoto('user-import', {objectType: 'extensions'}) },
-        { caption: 'View Past Imports', onSelect: () => this.ngGoto('user-import-jobs') }
+        { icon: 'user', caption: 'Users', onSelect: () => this.ngGoto('user-import', {objectType: 'user'}) },
+        { icon: 'lock', caption: 'User Roles', onSelect: () => this.ngGoto('user-import', {objectType: 'userRoles'}) },
+        { icon: 'copy', caption: 'Forms', onSelect: () => this.ngGoto('user-import', {objectType: 'extensions'}) },
+        { icon: 'table', caption: 'View Past Imports', onSelect: () => this.ngGoto('user-import-jobs') }
       ]
     },
 
     exportOpts: function() {
       return [
-        { caption: 'Users', onSelect: () => this.exportRecords('user') },
-        { caption: 'User Roles', onSelect: () => this.exportRecords('userRoles') },
-        { caption: 'User Forms', onSelect: () => this.exportForms() }
+        { icon: 'user', caption: 'Users', onSelect: () => this.exportRecords('user') },
+        { icon: 'lock', caption: 'User Roles', onSelect: () => this.exportRecords('userRoles') },
+        { icon: 'copy', caption: 'User Forms', onSelect: () => this.exportForms() }
       ]
     },
 
     moreOpts: function() {
       let opts = [
-        { caption: 'New Announcement', onSelect: () => this.$refs.announcementDialog.open() }
+        { icon: 'bullhorn', caption: 'New Announcement', onSelect: () => this.$refs.announcementDialog.open() }
       ];
 
       if (this.ui.os.appProps.plugins.indexOf('os-extras') && authSvc.isAllowed('institute-admin')) {
         //
         // temporary. will go away when first class support for plugin views is implemented
         //
-        opts.push({ caption: 'Export Login Activity', onSelect: () => this.ngGoto('export-login-audit') });
-        opts.push({ caption: 'Active Users', onSelect: () => this.ngGoto('active-users-report') });
+        opts.push({ icon: 'download', caption: 'Export Login Activity', onSelect: () => this.ngGoto('export-login-audit') });
+        opts.push({ icon: 'tachometer-alt', caption: 'Active Users', onSelect: () => this.ngGoto('active-users-report') });
       }
 
       return opts;

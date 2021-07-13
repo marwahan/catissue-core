@@ -53,8 +53,16 @@ window.addEventListener('message', function(event) {
 
     --count;
   } else if (event.data.op == 'getAuthToken') {
-    ui.token = event.data.resp;
+    let resp = event.data.resp;
+    ui.token = resp.token;
+
     http.headers['X-OS-API-TOKEN'] = ui.token; // localStorage.getItem('osAuthToken');
+    if (resp.impUserToken) {
+      http.headers['X-OS-IMPERSONATE-USER'] = resp.impUserToken;
+    } else {
+      delete http.headers['X-OS-IMPERSONATE-USER'];
+    }
+
     --count;
   } else if (event.data.op == 'getUserDetails') {
     Object.assign(ui, event.data.resp);

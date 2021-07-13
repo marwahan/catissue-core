@@ -229,6 +229,13 @@ export default {
     },
 
     rowClick: function(row) {
+      if (row.originalEvent &&
+          row.originalEvent.target &&
+          row.originalEvent.target.className &&
+          row.originalEvent.target.className.indexOf('os-selection-cb') != -1) {
+        return;
+      }
+
       this.$emit('rowClicked', row.data.rowObject);
     }
   },

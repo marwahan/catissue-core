@@ -506,7 +506,15 @@ osApp.config(function(
       if (data.op == 'getGlobalProps') {
         window.frames['vueapp'].postMessage({op: 'getGlobalProps', resp: ui}, '*');
       } else if (data.op == 'getAuthToken') {
-        window.frames['vueapp'].postMessage({op: 'getAuthToken', resp: $window.localStorage['osAuthToken']}, '*');
+        window.frames['vueapp'].postMessage(
+          {
+            op: 'getAuthToken',
+            resp: {
+              token: $window.localStorage['osAuthToken'],
+              impUserToken: $cookies.get('osImpersonateUser')
+            }
+          }, '*'
+        );
       } else if (data.op == 'getUserDetails') {
         var resp = {
           currentUser: JSON.parse(JSON.stringify(AuthorizationService.currentUser())),
