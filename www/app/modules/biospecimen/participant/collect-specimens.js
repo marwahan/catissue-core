@@ -1096,17 +1096,18 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           angular.forEach(uiSpecimens, 
             function(uiSpecimen) {
               if (visited.indexOf(uiSpecimen) >= 0 || // already visited
-                  !uiSpecimen.selected || // not selected
+                  // !uiSpecimen.selected || // not selected
                   (uiSpecimen.existingStatus == 'Collected' && 
                   !uiSpecimen.closeAfterChildrenCreation) ||
                   ((!uiSpecimen.existingStatus || uiSpecimen.existingStatus == 'Pending') &&
-                   (uiSpecimen.status == 'Pending'))) {
+                   (!uiSpecimen.status || uiSpecimen.status == 'Pending'))) {
                 // collected and not close after children creation
                 return;
               }
   
               visited.push(uiSpecimen);
               if (uiSpecimen.lineage == 'Aliquot' &&                     // specimen is a aliquot
+                  uiSpecimen.status == 'Collected' &&                    // specimen is collected
                   !barcodingEnabled &&                                   // barcoding is disabled
                   (cp.manualSpecLabelEnabled || !uiSpecimen.labelFmt) && // aliquot labels are scanned
                   !uiSpecimen.label) {                                   // aliquot label is not scanned
