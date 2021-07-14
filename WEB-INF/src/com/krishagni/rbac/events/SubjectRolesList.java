@@ -7,7 +7,7 @@ import java.util.List;
 import com.krishagni.rbac.domain.SubjectRole;
 
 public class SubjectRolesList {	
-	private final static String ALL_CURRENT_AND_FUTURE = "All Current and Future";
+	public final static String ALL_CURRENT_AND_FUTURE = "All Current and Future";
 
 	private Long subjectId;
 	

@@ -624,13 +624,15 @@ public class RbacServiceImpl implements RbacService {
 			
 			Subject subject = daoFactory.getSubjectDao().getById(user.getId());
 			subject.removeAllSubjectRoles();
-			
-			for (SubjectRolesList.Role srd : rolesList.getRoles()) {
-				SubjectRole sr = createSubjectRole(srd);
-				AccessCtrlMgr.getInstance().ensureCreateUpdateUserRolesRights(user, sr.getSite());
-				subject.addRole(sr);
+
+			if (CollectionUtils.isNotEmpty(rolesList.getRoles())) {
+				for (SubjectRolesList.Role srd : rolesList.getRoles()) {
+					SubjectRole sr = createSubjectRole(srd);
+					AccessCtrlMgr.getInstance().ensureCreateUpdateUserRolesRights(user, sr.getSite());
+					subject.addRole(sr);
+				}
 			}
-			
+
 			daoFactory.getSubjectDao().saveOrUpdate(subject);
 			return ResponseEvent.response(
 					SubjectRolesList.from(
@@ -848,6 +850,10 @@ public class RbacServiceImpl implements RbacService {
 		
 		
 		String cpShortTitle = srd.getCpShortTitle();
+		if (SubjectRolesList.ALL_CURRENT_AND_FUTURE.equalsIgnoreCase(cpShortTitle)) {
+			cpShortTitle = null;
+		}
+
 		if (StringUtils.isNotBlank(cpShortTitle)) {
 			CollectionProtocol cp = daoFactory.getCollectionProtocolDao().getCpByShortTitle(cpShortTitle);
 			if (cp == null) {
@@ -857,6 +863,10 @@ public class RbacServiceImpl implements RbacService {
 		}
 		
 		String siteName = srd.getSiteName();
+		if (SubjectRolesList.ALL_CURRENT_AND_FUTURE.equalsIgnoreCase(siteName)) {
+			siteName = null;
+		}
+
 		if (StringUtils.isNotBlank(siteName)) {
 			Site site = daoFactory.getSiteDao().getSiteByName(siteName);
 			if (site == null) {
