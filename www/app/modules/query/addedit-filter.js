@@ -19,6 +19,16 @@ angular.module('os.query.addeditfilter', ['os.query.models'])
             return !filter.value || filter.value.length == 0;
           }
         } else if (filter.value) {
+          if (op == 'between') {
+            if (filter.value instanceof Array && filter.value.length == 2 &&
+                 (filter.value[0] != undefined && filter.value[0] != null && filter.value[0] != '') &&
+                 (filter.value[1] != undefined && filter.value[1] != null && filter.value[1] != '')) {
+              return false;
+            } else {
+              return true;
+            }
+          }
+
           return false;
         } else {
           return true;
