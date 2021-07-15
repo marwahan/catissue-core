@@ -143,7 +143,7 @@ angular.module('openspecimen')
           } else if (!!defaultDomain && domains.some(function(d) { return d.name == defaultDomain; })) {
             $scope.loginData.domainName = defaultDomain;
             if ($scope.samlDomain && $scope.samlDomain.name == defaultDomain) {
-              gotoIdp();
+              // gotoIdp();
             }
           }
         }
@@ -194,15 +194,23 @@ angular.module('openspecimen')
     }
 
     $scope.login = function() {
+      var samlDomain = $scope.samlDomain;
+      var loginData  = $scope.loginData;
+
+      if (samlDomain && samlDomain.name && samlDomain.name == loginData.domainName) {
+        gotoIdp();
+        return;
+      }
+
       $scope.errors = [];
-      AuthService.authenticate($scope.loginData).then(
+      AuthService.authenticate(loginData).then(
         onLogin,
         function(resp) {
           var errors = $scope.errors = (resp.data || []);
           for (var i = 0; i < errors.length; ++i) {
             var code = errors[i].code;
             if (code == 'USER_OTP_REQUIRED') {
-              $scope.loginData.$$otpReq = true;
+              loginData.$$otpReq = true;
               errors[i].code = null;
               errors[i].message = $translate.instant('user.otp_required');
               break;
