@@ -55,7 +55,35 @@ public class StagedParticipantServiceImpl implements StagedParticipantService {
 		try {
 			StagedParticipantDetail input = req.getPayload();
 			updateParticipantIfExists(input);
-			StagedParticipant savedParticipant = saveOrUpdateParticipant(getMatchingParticipant(input), input);
+
+			StagedParticipant newEmpiParticipant = null;
+			if (StringUtils.isNotBlank(input.getNewEmpi())) {
+				newEmpiParticipant = getMatchingParticipant(input.getNewEmpi());
+			}
+
+			StagedParticipant existing = null;
+			if (StringUtils.isNotBlank(input.getEmpi())) {
+				StagedParticipant oldEmpiParticipant = getMatchingParticipant(input);
+				if (oldEmpiParticipant != null) {
+					if (newEmpiParticipant != null) {
+						clearCollection(oldEmpiParticipant.getPmiList());
+						clearCollection(oldEmpiParticipant.getVisits());
+						clearCollection(oldEmpiParticipant.getRaces());
+						clearCollection(oldEmpiParticipant.getEthnicities());
+						clearCollection(oldEmpiParticipant.getConsents());
+						daoFactory.getStagedParticipantDao().delete(oldEmpiParticipant);
+						existing = newEmpiParticipant;
+					} else {
+						existing = oldEmpiParticipant;
+					}
+				} else {
+					if (newEmpiParticipant != null) {
+						existing = newEmpiParticipant;
+					}
+				}
+			}
+
+			StagedParticipant savedParticipant = saveOrUpdateParticipant(existing, input);
 			savedParticipant.setConsents(input.getConsents());
 
 			EventPublisher.getInstance().publish(new StagedParticipantSavedEvent(savedParticipant));
@@ -141,15 +169,21 @@ public class StagedParticipantServiceImpl implements StagedParticipantService {
 		ResponseEvent<ParticipantDetail> resp = participantSvc.patchParticipant(new RequestEvent<>(detail));
 		if (resp.isSuccessful()) {
 			logger.info("Matching participant (eMPI: '" + detail.getEmpi() + "') found and updated!");
+		} else {
+			logger.info("Matching participant update failed: " + resp.getError().getMessage());
 		}
 	}
 
 	private StagedParticipant getMatchingParticipant(StagedParticipantDetail detail) {
-		if (StringUtils.isBlank(detail.getEmpi())) {
+		return getMatchingParticipant(detail.getEmpi());
+	}
+
+	private StagedParticipant getMatchingParticipant(String empi) {
+		if (StringUtils.isBlank(empi)) {
 			return null;
 		}
 
-		return daoFactory.getStagedParticipantDao().getByEmpi(detail.getEmpi());
+		return daoFactory.getStagedParticipantDao().getByEmpi(empi);
 	}
 
 	private StagedParticipant saveOrUpdateParticipant(StagedParticipant existing, StagedParticipantDetail input) {
@@ -224,7 +258,7 @@ public class StagedParticipantServiceImpl implements StagedParticipantService {
 		).collect(Collectors.toSet());
 	}
 
-	public PermissibleValue getPv(String attr, String value, ErrorCode invErrorCode) {
+	private PermissibleValue getPv(String attr, String value, ErrorCode invErrorCode) {
 		if (StringUtils.isBlank(value)) {
 			return null;
 		}
@@ -237,7 +271,7 @@ public class StagedParticipantServiceImpl implements StagedParticipantService {
 		return pv;
 	}
 
-	public Set<PermissibleValue> getPvs(String attr, Collection<String> values, ErrorCode invErrorCode) {
+	private Set<PermissibleValue> getPvs(String attr, Collection<String> values, ErrorCode invErrorCode) {
 		if (CollectionUtils.isEmpty(values)) {
 			return new HashSet<>();
 		}
@@ -248,5 +282,11 @@ public class StagedParticipantServiceImpl implements StagedParticipantService {
 		}
 
 		return new HashSet<>(pvs);
+	}
+
+	private <T> void clearCollection(Collection<T> coll) {
+		if (coll != null) {
+			coll.clear();
+		}
 	}
 }

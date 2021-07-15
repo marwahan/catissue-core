@@ -116,4 +116,9 @@
   <changeSet author="vpawar" id="Increase the width of the imported queries digest column to accommodate SHA512">
     <modifyDataType tableName="CATISSUE_IMPORT_QUERIES_LOG" columnName="MD5_DIGEST" newDataType="${text.type}(255)"/>
   </changeSet>
+
+  <changeSet author="vpawar" id="Add unique constraint on staged participant eMPI">
+    <addUniqueConstraint tableName="OS_STAGED_PARTICIPANTS"
+      columnNames="EMPI_ID" constraintName="OS_STAGED_PART_EMPI_UQ"/>
+  </changeSet>
 </databaseChangeLog>
