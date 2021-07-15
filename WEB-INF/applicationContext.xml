@@ -396,6 +396,7 @@
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.CpPpidUniqueIdLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.SpecimenCpUniqueIdToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.ParentSpecimenCounterLabelToken"/>
+        <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.PrimarySpecimenCounterLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.SpecimenCustomFieldLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.VisitUidLabelToken"/>
         <bean class="com.krishagni.catissueplus.core.biospecimen.label.specimen.RegistrationGreekLetterSequence"/>
