@@ -51,6 +51,7 @@ import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.PlusTransactional;
 import com.krishagni.catissueplus.core.common.access.AccessCtrlMgr;
 import com.krishagni.catissueplus.core.common.access.SiteCpPair;
+import com.krishagni.catissueplus.core.common.domain.PdeAuditLog;
 import com.krishagni.catissueplus.core.common.errors.CommonErrorCode;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
 import com.krishagni.catissueplus.core.common.events.BulkDeleteEntityOp;
@@ -285,7 +286,7 @@ public class FormServiceImpl implements FormService, InitializingBean {
 			String pvsDirPath = new File(inputDir, "pvs").getAbsolutePath();
 
 			Container parsedForm = new ContainerParser(formXmlPath, pvsDirPath).parse();
-			Long formId = Container.createContainer(getUserContext(), parsedForm, true);
+			Long formId = Container.createContainer(getUserContext(false), parsedForm, true);
 
 			FormSummary result = new FormSummary();
 			result.setFormId(formId);
@@ -304,7 +305,7 @@ public class FormServiceImpl implements FormService, InitializingBean {
 	public ResponseEvent<Long> saveForm(RequestEvent<Map<String, Object>> req) {
 		AccessCtrlMgr.getInstance().ensureFormUpdateRights();
 		Container input = new ContainerPropsParser(req.getPayload()).parse();
-		return ResponseEvent.response(Container.createContainer(getUserContext(), input, true));
+		return ResponseEvent.response(Container.createContainer(getUserContext(false), input, true));
 	}
     
 	@Override
@@ -320,7 +321,7 @@ public class FormServiceImpl implements FormService, InitializingBean {
 				throw OpenSpecimenException.userError(FormErrorCode.NOT_FOUND, formIds, formIds.size());
 			}
 
-			formIds.forEach(formId -> Container.softDeleteContainer(getUserContext(), formId));
+			formIds.forEach(formId -> Container.softDeleteContainer(getUserContext(false), formId));
 			formDao.deleteFormContexts(formIds);
 
 			return ResponseEvent.response(true);
@@ -1264,12 +1265,14 @@ public class FormServiceImpl implements FormService, InitializingBean {
 			}
 		}
 
-		recordId = formDataMgr.saveOrUpdateFormData(getUserContext(), formData);
+		boolean pde = getBoolean(appData.getOrDefault("pde", false));
+		UserContext userCtxt = getUserContext(pde);
+		recordId = formDataMgr.saveOrUpdateFormData(userCtxt, formData);
 
 		recordEntry.setFormCtxtId(formContext.getIdentifier());
 		recordEntry.setObjectId(objectId);
 		recordEntry.setRecordId(recordId);
-		recordEntry.setUpdatedBy(AuthUtil.getCurrentUser().getId());
+		recordEntry.setUpdatedBy(userCtxt.getUserId());
 		recordEntry.setUpdatedTime(Calendar.getInstance().getTime());
 		formDao.saveOrUpdateRecordEntry(recordEntry);
 		formData.setRecordId(recordId);
@@ -1280,7 +1283,23 @@ public class FormServiceImpl implements FormService, InitializingBean {
 			EventPublisher.getInstance().publish(new FormDataSavedEvent(entityType, object, formData));
 		}
 
+		if (pde) {
+			savePdeAuditLog(recordEntry.getIdentifier(), isInsert);
+		}
+
 		return formData;
+	}
+
+	private boolean getBoolean(Object input) {
+		if (input instanceof String) {
+			return Boolean.parseBoolean(input.toString());
+		} else if (input instanceof Number) {
+			return ((Number) input).intValue() == 1;
+		} else if (input instanceof Boolean) {
+			return (Boolean) input;
+		} else {
+			return false;
+		}
 	}
 
 	private boolean isCollectionOrReceivedEvent(Container form) {
@@ -1309,16 +1328,32 @@ public class FormServiceImpl implements FormService, InitializingBean {
 		return fields != null ? fields : Collections.emptyList();
 	}
 
-	private UserContext getUserContext() {
+	private void savePdeAuditLog(Long frId, boolean insert) {
+		PdeAuditLog log = new PdeAuditLog();
+		log.setEntityType(FormRecordEntryBean.class.getName());
+		log.setEntityId(frId);
+		log.setOp(insert ? PdeAuditLog.Op.INSERT : PdeAuditLog.Op.UPDATE);
+		log.setTime(Calendar.getInstance().getTime());
+		log.setUser(AuthUtil.getCurrentUser());
+		daoFactory.getPdeAuditLogDao().saveOrUpdate(log);
+	}
+
+	private UserContext getUserContext(boolean pde) {
+		User user = AuthUtil.getCurrentUser();
+		if (pde) {
+			user = daoFactory.getUserDao().getSystemUser();
+		}
+
+		final User ctxtUser = user;
 		return new UserContext() {
 			@Override
 			public Long getUserId() {
-				return AuthUtil.getCurrentUser() != null ? AuthUtil.getCurrentUser().getId() : null;
+				return ctxtUser != null ? ctxtUser.getId() : null;
 			}
 
 			@Override
 			public String getUserName() {
-				return AuthUtil.getCurrentUser() != null ? AuthUtil.getCurrentUser().getLoginName() : null;
+				return ctxtUser != null ? ctxtUser.getLoginName() : null;
 			}
 
 			@Override

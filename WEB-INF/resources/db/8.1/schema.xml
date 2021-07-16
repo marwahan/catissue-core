@@ -121,4 +121,32 @@
     <addUniqueConstraint tableName="OS_STAGED_PARTICIPANTS"
       columnNames="EMPI_ID" constraintName="OS_STAGED_PART_EMPI_UQ"/>
   </changeSet>
+
+  <changeSet author="vpawar" id="Patient data entry audit logs">
+    <createTable tableName="OS_PDE_AUDIT_LOGS">
+      <column name="IDENTIFIER" type="${int.type}" autoIncrement="${autoIncrement}">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+      <column name="ENTITY_TYPE" type="${text.type}(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="ENTITY_ID" type="${int.type}">
+        <constraints nullable="false" />
+      </column>
+      <column name="OPERATION" type="${text.type}(16)">
+        <constraints nullable="false" />
+      </column>
+      <column name="OP_TIME" type="${timestamp.type}">
+        <constraints nullable="false" />
+      </column>
+      <column name="USER_ID" type="${int.type}">
+        <constraints nullable="false" foreignKeyName="FK_PDE_AUDIT_LOG_USER"
+          referencedTableName="CATISSUE_USER" referencedColumnNames="IDENTIFIER" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="vpawar" id="PDE audit log identifier generator" dbms="oracle">
+    <createSequence sequenceName="OS_PDE_AUDIT_LOGS_SEQ" startValue="1" incrementBy="1" ordered="true" />
+  </changeSet>
 </databaseChangeLog>
