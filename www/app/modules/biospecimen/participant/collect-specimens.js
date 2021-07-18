@@ -612,7 +612,35 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           if (!aliquot.expanded) {
             aliquot.aliquotLabels = getAliquotGrpInputs(aliquot, 'label');
             aliquot.aliquotBarcodes = getAliquotGrpInputs(aliquot, 'barcode');
+            selectUnselectAliquots(aliquot, false);
+          } else {
+            selectUnselectAliquots(aliquot, true);
           }
+        }
+
+        function selectUnselectAliquots(aliquot, select) {
+          angular.forEach(aliquot.aliquotGrp, function(spmn) {
+            var prop = 'label';
+
+            if ($scope.barcodingEnabled) {
+              prop = 'barcode';
+
+              if ($scope.spmnBarcodesAutoGen) {
+                return;
+              }
+
+            } else if (!cp.manualSpecLabelEnabled && !!spmn.labelFmt) {
+              return;
+            }
+
+            if (spmn[prop]) {
+              spmn.selected = true;
+              spmn.removed = false;
+            } else if (prop == 'label') {
+              spmn.selected = select;
+              spmn.removed = !select;
+            }
+          });
         }
 
         function initAliquotGrpPrintLabel(aliquot) {
@@ -1096,7 +1124,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
           angular.forEach(uiSpecimens, 
             function(uiSpecimen) {
               if (visited.indexOf(uiSpecimen) >= 0 || // already visited
-                  // !uiSpecimen.selected || // not selected
+                  !uiSpecimen.selected || // not selected
                   (uiSpecimen.existingStatus == 'Collected' && 
                   !uiSpecimen.closeAfterChildrenCreation) ||
                   ((!uiSpecimen.existingStatus || uiSpecimen.existingStatus == 'Pending') &&
@@ -1255,7 +1283,7 @@ angular.module('os.biospecimen.participant.collect-specimens', ['os.biospecimen.
               spmn[prop] = inputs[$index];
               spmn.selected = true;
               spmn.removed = false;
-            } else {
+            } else if (prop == 'label') {
               spmn[prop] = null;
               spmn.selected = false;
               spmn.removed = true;
