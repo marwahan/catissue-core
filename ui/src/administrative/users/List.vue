@@ -183,9 +183,9 @@ export default {
       ],
 
       filters: [
-        { name: 'name', type: 'text', caption: 'Name' },
-        { name: 'loginName', type: 'text', caption: 'Login Name' },
-        { name: 'institute', type: 'dropdown', caption: 'Institute',
+        { name: 'name', type: 'text', label: 'Name', mdType: true },
+        { name: 'loginName', type: 'text', label: 'Login Name', mdType: true },
+        { name: 'institute', type: 'dropdown', label: 'Institute', mdType: true,
           listSource: {
             displayProp: 'name',
             selectProp: 'name',
@@ -196,19 +196,19 @@ export default {
             }
           }
         },
-        { name: 'group', type: 'dropdown', caption: 'User Group',
+        { name: 'group', type: 'dropdown', label: 'User Group', mdType: true,
           listSource: {
             displayProp: 'name',
             selectProp: 'name',
             loadFn: (opts) => userGrpSvc.getUserGroups(opts)
           }
         },
-        { name: 'activityStatus', type: 'dropdown', caption: 'Activity Status',
+        { name: 'activityStatus', type: 'dropdown', label: 'Activity Status', mdType: true,
           listSource: {
             options: ['Active', 'Archived', 'Expired', 'Locked', 'Pending']
           }
         },
-        { name: 'type', type: 'dropdown', caption: 'Type',
+        { name: 'type', type: 'dropdown', label: 'Type', mdType: true,
           listSource: {
             selectProp: 'name',
             displayProp: 'caption',

@@ -42,11 +42,10 @@
           <form-group dense v-for="filter of filters" :key="filter.name">
             <cell :width="12">
               <span v-if="filter.type == 'text'">
-                <input-text md-type="true" :placeholder="filter.caption" v-model="filterValues[filter.name]"/>
+                <input-text :field="filter" v-model="filterValues[filter.name]"/>
               </span>
               <span v-if="filter.type == 'dropdown'">
-                <dropdown md-type="true" :placeholder="filter.caption" v-model="filterValues[filter.name]"
-                  :list-source="filter.listSource">
+                <dropdown :field="filter" v-model="filterValues[filter.name]">
                 </dropdown>
               </span>
             </cell>
@@ -64,12 +63,12 @@
             </cell>
 
             <cell :width="12">
-              <os-radio-button v-show="pageSizeOpts.pageSize" name="pageSize" class="inline"
-                :options="pageSizeOpts.sizes" v-model="pageSizeOpts.pageSize"
+              <os-radio-button v-show="pageSizeOpts.pageSize"
+                :field="pageSizeOpts" v-model="pageSizeOpts.pageSize"
                 @change="changePageSize" />
 
               <div class="input-group" v-show="!pageSizeOpts.pageSize">
-                <input-text md-type="true" v-model="pageSizeOpts.customPageSize" placeholder="Custom value" />
+                <input-text :field="pageSizeOpts" v-model="pageSizeOpts.customPageSize" />
                 <Button label="Go" @click="updatePageSize"/>
                 <Button left-icon="times" @click="clearPageSize"/>
               </div>
@@ -141,15 +140,19 @@ export default {
       selectedRows: [],
 
       pageSizeOpts: {
+        mdType: true,
+
+        label: 'Custom Value',
+
         currentPageSize: 100,
 
         pageSize: 100,
 
-        sizes: [
-          {caption: '100', value: 100},
-          {caption: '200', value: 200},
-          {caption: '500', value: 500},
-          {caption: 'Custom', value: ''},
+        options: [
+          {label: '100', value: 100},
+          {label: '200', value: 200},
+          {label: '500', value: 500},
+          {label: 'Custom', value: ''},
         ]
       }
     }

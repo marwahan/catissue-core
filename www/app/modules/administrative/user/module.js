@@ -46,10 +46,14 @@ angular.module('os.administrative.user',
         parent: 'user-root'
       })
       .state('user-addedit', {
-        url: '/user-addedit/:userId',
+        url: '/user-addedit/:userId?old',
         templateUrl: 'modules/administrative/user/addedit.html',
         resolve: {
           user: function($stateParams, User) {
+            if (!$stateParams.old || $stateParams.old == 'false') {
+              return null;
+            }
+
             if ($stateParams.userId) {
               return User.getById($stateParams.userId);
             }

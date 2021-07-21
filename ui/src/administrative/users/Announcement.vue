@@ -9,14 +9,14 @@
       <os-form-group dense>
         <os-cell :width="12">
           <os-label>Subject</os-label>
-          <os-input-text v-model="announcement.subject" />
+          <os-input-text :field="fields.subject" v-model="announcement.subject" />
         </os-cell>
       </os-form-group>
 
       <os-form-group dense>
         <os-cell :width="12">
           <os-label>Message</os-label>
-          <os-textarea rows="5" v-model="announcement.message" />
+          <os-textarea :field="fields.message" v-model="announcement.message" />
         </os-cell>
       </os-form-group>
     </template>
@@ -54,7 +54,22 @@ export default {
 
   data() {
     return {
-      announcement: {}
+      announcement: {},
+
+      fields: {
+        subject: {
+          type: 'stringTextField',
+          label: 'Subject',
+          name: 'subject'
+        },
+
+        message: {
+          type: 'textArea',
+          label: 'Message',
+          name: 'message',
+          rows: 5
+        }
+      }
     }
   },
 

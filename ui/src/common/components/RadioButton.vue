@@ -1,10 +1,10 @@
 
 <template>
-  <div class="os-radio-buttons">
-    <span class="p-field-radiobutton" v-for="(option, idx) of options" :key="idx">
+  <div class="os-radio-buttons inline">
+    <span class="p-field-radiobutton" v-for="(option, idx) of field.options" :key="idx">
       <label>
-        <RadioButton :name="name" :value="option.value" v-model="inputValue" />
-        <span>{{option.caption}}</span>
+        <RadioButton :name="field.name" :value="option.value" v-model="inputValue" />
+        <span>{{option.label}}</span>
       </label>
     </span>
   </div>
@@ -14,8 +14,16 @@
 
 import RadioButton from 'primevue/radiobutton';
 
+//
+// field = {
+//   name: 'gender',
+//   options: [
+//     { label: 'Male', value: 'Male' },
+//   ]
+// }
+//
 export default {
-  props: ['name', 'options', 'modelValue'],
+  props: ['field', 'modelValue'],
 
   emits: ['change', 'update:modelValue'],
 

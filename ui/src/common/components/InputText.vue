@@ -1,12 +1,12 @@
 
 <template>
   <div class="os-input-text">
-    <div class="p-float-label" v-if="$attrs['md-type']">
+    <div class="p-float-label" v-if="field.mdType">
       <p-input-text type="text" v-model="inputValue" />
-      <label>{{$attrs.placeholder}}</label>
+      <label>{{field.label}}</label>
     </div>
     <div v-else>
-      <p-input-text type="text" v-model="inputValue" :placeholder="$attrs.placeholder"/>
+      <p-input-text type="text" v-model="inputValue" :placeholder="field.placeholder"/>
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@
 import InputText from 'primevue/inputtext';
 
 export default {
-  props: ['modelValue'],
+  props: ['field', 'modelValue'],
 
   components: {
     'p-input-text': InputText

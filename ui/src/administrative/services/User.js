@@ -13,6 +13,10 @@ class User {
     return http.get('users/count', filterOpts || {});
   }
 
+  async getUserById(userId) {
+    return http.get('users/' + userId);
+  }
+
   async bulkUpdate({detail, ids}) {
     if (!ids || ids.length == 0) {
       return [];

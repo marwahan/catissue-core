@@ -1,7 +1,7 @@
 
 <template>
   <div class="os-dropdown">
-    <div class="p-float-label" v-if="$attrs['md-type']">
+    <div class="p-float-label" v-if="field.mdType">
       <Dropdown
         v-model="selected"
         :options="ctx.options"
@@ -12,10 +12,19 @@
         @focus="searchOptions"
         @filter="searchOptions($event)">
       </Dropdown>
-      <label>{{$attrs.placeholder}}</label>
+      <label>{{field.label}}</label>
     </div>
     <div v-else>
-      <span>Under construction</span>
+      <Dropdown
+        v-model="selected"
+        :options="ctx.options"
+        :option-label="displayProp"
+        :option-value="selectProp"
+        :filter="true"
+        :show-clear="showClear"
+        @focus="searchOptions"
+        @filter="searchOptions($event)">
+      </Dropdown>
     </div>
   </div>
 </template>
@@ -25,7 +34,7 @@ import { reactive } from 'vue';
 import Dropdown from 'primevue/dropdown';
 
 export default {
-  props: ['modelValue', 'listSource'],
+  props: ['modelValue', 'field'],
 
   emits: ['update:modelValue'],
 
@@ -55,11 +64,11 @@ export default {
         if (this.ctx.defOptions) {
           this.ctx.options = this.ctx.defOptions;
         } else {
-          if (this.listSource.options) {
-            this.ctx.defOptions = this.ctx.options = this.listSource.options;
-          } else if (typeof this.listSource.loadFn == 'function') {
+          if (this.field.listSource.options) {
+            this.ctx.defOptions = this.ctx.options = this.field.listSource.options;
+          } else if (typeof this.field.listSource.loadFn == 'function') {
             let self = this;
-            this.listSource.loadFn({maxResults: 100}).then(
+            this.field.listSource.loadFn({maxResults: 100}).then(
               function(options) {
                 self.ctx.defOptions = self.ctx.options = options;
               }
@@ -71,11 +80,11 @@ export default {
         if (this.ctx.defOptions && this.ctx.defOptions.length < 100) {
           this.ctx.options = this.filterOptions(this.ctx.defOptions, query);
         } else {
-          if (this.listSource.options) {
-            this.ctx.options = this.filterOptions(this.listSource.options, query);
-          } else if (typeof this.listSource.loadFn == 'function') {
+          if (this.field.listSource.options) {
+            this.ctx.options = this.filterOptions(this.field.listSource.options, query);
+          } else if (typeof this.field.listSource.loadFn == 'function') {
             let self = this;
-            this.listSource.loadFn({query: query, maxResults: 100}).then(
+            this.field.listSource.loadFn({query: query, maxResults: 100}).then(
               function(options) {
                 self.ctx.options = options;
               }
@@ -90,8 +99,8 @@ export default {
       return (inputOptions || []).filter(
         function(option) {
           if (typeof option == 'object') {
-            return (option[self.listSource.displayProp] || '').toString().toLowerCase().indexOf(query) > -1 ||
-              (option[self.listSource.selectProp] || '').toString().toLowerCase().indexOf(query) > -1;
+            return (option[self.field.listSource.displayProp] || '').toString().toLowerCase().indexOf(query) > -1 ||
+              (option[self.field.listSource.selectProp] || '').toString().toLowerCase().indexOf(query) > -1;
           } else {
             return (option || '').toString().toLowerCase().indexOf(query) > -1;
           }
@@ -112,11 +121,11 @@ export default {
     },
 
     displayProp: function() {
-      return this.listSource.displayProp;
+      return this.field.listSource.displayProp;
     },
 
     selectProp: function() {
-      return this.listSource.selectProp;
+      return this.field.listSource.selectProp;
     },
 
     showClear: function() {
