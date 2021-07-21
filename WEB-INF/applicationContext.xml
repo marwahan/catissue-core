@@ -20,6 +20,8 @@
 
   <bean id="appProps" class="com.krishagni.catissueplus.core.init.AppProperties" factory-method="getInstance"/>
 
+  <bean id="appCtxProvider" class="com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider"/>
+
   <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
     <property name="jndiName" value="${datasource.jndi}"/>
   </bean>
@@ -820,8 +822,6 @@
     <property name="defaultEncoding" value="UTF-8"/>
   </bean>
 
-  <bean id="appCtxProvider" class="com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider"/>
-  
   <security:authentication-manager alias="authManager">
     <security:authentication-provider user-service-ref="userSvc" >
       <security:password-encoder ref="passwordEncoder"></security:password-encoder>

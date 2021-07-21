@@ -53,7 +53,7 @@ public class ConfigEmailPasswordUpdater implements CustomTaskChange {
 			
 			if (password != null) {
 				updateEmailPasswdStmt = dbConnection.prepareStatement(UPDATE_PASSWORD_SQL);
-				updateEmailPasswdStmt.setString(1, Utility.encrypt(password));
+				updateEmailPasswdStmt.setString(1, Utility.encrypt(dbConnection.getUnderlyingConnection(), password));
 				updateEmailPasswdStmt.setLong(2, id);
 				updateEmailPasswdStmt.executeUpdate();
 			}

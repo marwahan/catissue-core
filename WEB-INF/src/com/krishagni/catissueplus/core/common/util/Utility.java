@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -26,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Function;
@@ -61,10 +65,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseEntity;
 import com.krishagni.catissueplus.core.biospecimen.domain.BaseExtensionEntity;
+import com.krishagni.catissueplus.core.common.OpenSpecimenAppCtxProvider;
 import com.krishagni.catissueplus.core.common.Pair;
 import com.krishagni.catissueplus.core.common.PdfUtil;
 import com.krishagni.catissueplus.core.common.domain.IntervalUnit;
 import com.krishagni.catissueplus.core.common.errors.OpenSpecimenException;
+import com.krishagni.catissueplus.core.common.service.ConfigurationService;
 import com.krishagni.catissueplus.core.exporter.services.impl.ExporterContextHolder;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -588,13 +594,17 @@ public class Utility {
 	}
 
 	public static String encrypt(String value) {
+		return encrypt(null, value);
+	}
+
+	public static String encrypt(Connection conn, String value) {
 		try {
-			Cipher cipher = Cipher.getInstance(getAlgorithm());
-			cipher.init(Cipher.ENCRYPT_MODE, getSecretKey());
+			Cipher cipher = Cipher.getInstance(getAlgorithm(conn));
+			cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(conn));
 			byte[] encryptedValue = cipher.doFinal(value.getBytes("UTF-8"));
 			return Base64.getEncoder().encodeToString(encryptedValue);
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Error encrypting the value: " + e.getMessage(), e);
 		}
 	}
 
@@ -605,7 +615,7 @@ public class Utility {
 			byte[] decodedValue = Base64.getDecoder().decode(value.getBytes());
 			return new String(cipher.doFinal(decodedValue));
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Error decrypting the value: " + e.getMessage(), e);
 		}
 	}
 
@@ -1019,6 +1029,10 @@ public class Utility {
 	}
 
 	private static SecretKey getSecretKey() {
+		return getSecretKey(null);
+	}
+
+	private static SecretKey getSecretKey(Connection conn) {
 		if (secretKey != null) {
 			return secretKey;
 		}
@@ -1028,7 +1042,7 @@ public class Utility {
 				return secretKey;
 			}
 
-			File file = new File(ConfigUtil.getInstance().getDataDir(), "secret.key");
+			File file = new File(getDataDir(conn), "secret.key");
 			InputStream fin = null;
 			try {
 				if (!file.exists()) {
@@ -1049,11 +1063,60 @@ public class Utility {
 	}
 
 	private static String getAlgorithm() {
-		SecretKey key = getSecretKey();
+		return getAlgorithm(null);
+	}
+
+	private static String getAlgorithm(Connection conn) {
+		SecretKey key = getSecretKey(conn);
 		if (key != null) {
 			return algorithm;
 		}
 
 		return null;
 	}
+
+	private static String getDataDir(Connection conn) {
+		if (conn != null) {
+			try (
+				PreparedStatement p = conn.prepareStatement(GET_DATA_DIR);
+				ResultSet rs = p.executeQuery();
+			) {
+				String dataDir = null;
+				if (rs.next()) {
+					dataDir = rs.getString(1);
+				}
+
+				if (StringUtils.isBlank(dataDir)) {
+					Properties appProps = OpenSpecimenAppCtxProvider.getBean(APP_PROPS);
+					dataDir = appProps.getProperty("app.data_dir");
+					if (StringUtils.isBlank(dataDir)) {
+						dataDir = ".";
+					}
+				}
+
+				return dataDir;
+			} catch (Exception e) {
+				throw new RuntimeException("Error obtaining data directory: " + e.getMessage(), e);
+			}
+		} else {
+			ConfigurationService cfgSvc = OpenSpecimenAppCtxProvider.getBean(CFG_SVC_BEAN);
+			return cfgSvc.getDataDir();
+		}
+	}
+
+	private static final String GET_DATA_DIR =
+		"select " +
+			"s.value " +
+		"from " +
+			"os_cfg_settings s " +
+			"inner join os_cfg_props p on p.identifier = s.property_id " +
+			"inner join os_modules m on m.identifier = p.module_id " +
+		"where " +
+			"m.name = 'common' and " +
+			"p.name = 'data_dir' and " +
+			"s.activity_status = 'Active'";
+
+	private static final String APP_PROPS    = "appProps";
+
+	private static final String CFG_SVC_BEAN = "cfgSvc";
 }
