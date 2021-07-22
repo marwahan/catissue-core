@@ -15,7 +15,16 @@
       <label>{{$attrs.placeholder}}</label>
     </div>
     <div v-else>
-      <span>Under construction</span>
+      <Dropdown
+        v-model="selected"
+        :options="ctx.options"
+        :option-label="displayProp"
+        :option-value="selectProp"
+        :filter="true"
+        :show-clear="showClear"
+        @focus="searchOptions"
+        @filter="searchOptions($event)">
+      </Dropdown>
     </div>
   </div>
 </template>
@@ -23,6 +32,8 @@
 <script>
 import { reactive } from 'vue';
 import Dropdown from 'primevue/dropdown';
+
+import http from '@/common/services/HttpClient.js';
 
 export default {
   props: ['modelValue', 'listSource'],
@@ -64,6 +75,13 @@ export default {
                 self.ctx.defOptions = self.ctx.options = options;
               }
             );
+          } else if (typeof this.listSource.apiUrl == 'string') {
+            let self = this;
+            http.get(this.listSource.apiUrl, {maxResults: 100}).then(
+              function(options) {
+                self.ctx.defOptions = self.ctx.options = options;
+              }
+            );
           }
         }
       } else {
@@ -76,6 +94,15 @@ export default {
           } else if (typeof this.listSource.loadFn == 'function') {
             let self = this;
             this.listSource.loadFn({query: query, maxResults: 100}).then(
+              function(options) {
+                self.ctx.options = options;
+              }
+            );
+          } else if (typeof this.listSource.apiUrl == 'string') {
+            let self = this;
+            let params = {maxResults: 100};
+            params[this.listSource.searchProp || 'query'] = query;
+            http.get(this.listSource.apiUrl, params).then(
               function(options) {
                 self.ctx.options = options;
               }
@@ -130,6 +157,12 @@ export default {
         this.searchOptions({value: newVal});
       }
     }
+  },
+
+  mounted() {
+    if (this.modelValue) {
+      this.searchOptions({value: this.modelValue});
+    }
   }
 }
 </script>
@@ -148,6 +181,10 @@ export default {
     border-bottom: 2px solid #ced4da;
     border-radius: 0px;
     box-shadow: none;
+  }
+
+  .os-dropdown :deep(.p-dropdown) {
+    width: 100%;
   }
 
   .os-dropdown .p-float-label :deep(.p-dropdown .p-inputtext) {

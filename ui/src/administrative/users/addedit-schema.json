@@ -1,0 +1,192 @@
+{
+  "rows": [
+     {
+       "fields": [
+         {
+           "type": "radio",
+           "label": "Type",
+           "name": "type",
+           "class": "inline",
+           "options": [
+             { "caption": "Super Administrator", "value": "SUPER" },
+             { "caption": "Institute Administrator", "value": "INSTITUTE" },
+             { "caption": "Contact", "value": "CONTACT" },
+             { "caption": "Regular", "value": "NONE" }
+           ]
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "text",
+           "label": "First Name",
+           "name": "firstName"
+         },
+         {
+           "type": "text",
+           "label": "Last Name",
+           "name": "lastName"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "text",
+           "label": "Email Address",
+           "name": "emailAddress"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "text",
+           "label": "Phone Number",
+           "name": "phoneNumber"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "dropdown",
+           "label": "Domain Name",
+           "name": "domainName",
+           "listSource": {
+             "apiUrl": "auth-domains",
+             "selectProp": "name",
+             "displayProp": "name"
+           }
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "text",
+           "label": "Login Name",
+           "name": "loginName"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "dropdown",
+           "label": "Institute",
+           "name": "instituteName",
+           "listSource": {
+             "apiUrl": "institutes",
+             "selectProp": "name",
+             "displayProp": "name"
+           }
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "dropdown",
+           "label": "Primary Site",
+           "name": "primarySite",
+           "listSource": {
+             "apiUrl": "sites",
+             "selectProp": "name",
+             "displayProp": "name",
+             "searchProp": "name"
+           }
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "dropdown",
+           "label": "Time Zone",
+           "name": "timeZone",
+           "listSource": {
+             "apiUrl": "time-zones",
+             "displayProp": "name",
+             "selectProp": "id"
+           }
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "radio",
+           "label": "Manage Forms?",
+           "name": "manageForms",
+           "options": [
+             { "caption": "Yes", "value": true },
+             { "caption": "No", "value": false }
+           ],
+           "class": "inline"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "radio",
+           "label": "Disable Notifications?",
+           "name": "dnd",
+           "options": [
+             { "caption": "Yes", "value": true },
+             { "caption": "No", "value": false }
+           ],
+           "class": "inline"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "radio",
+           "label": "API User?",
+           "name": "apiUser",
+           "options": [
+             { "caption": "Yes", "value": true },
+             { "caption": "No", "value": false }
+           ],
+           "class": "inline"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "text",
+           "label": "IP Address",
+           "name": "ipRange"
+         }
+       ]
+     },
+
+     {
+       "fields": [
+         {
+           "type": "textarea",
+           "label": "Address",
+           "name": "address",
+           "rows": 2
+         }
+       ]
+     }
+  ]
+}

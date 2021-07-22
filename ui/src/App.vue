@@ -36,6 +36,8 @@ body {
   color: #333333;
   background-color: #fff;
   height: 100%;
+  position: fixed;
+  width: 100%;
 }
 
 body .p-component,

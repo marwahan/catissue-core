@@ -3,6 +3,10 @@ import http from '@/common/services/HttpClient.js';
 
 class User {
 
+  async getUserById(userId) {
+    return http.get('users/' + userId);
+  }
+
   async getUsers(filterOpts, pageOpts) {
     let params = Object.assign({}, filterOpts || {});
     params = Object.assign(params, pageOpts || {});
@@ -11,6 +15,14 @@ class User {
 
   async getUsersCount(filterOpts) {
     return http.get('users/count', filterOpts || {});
+  }
+
+  async saveOrUpdate(user) {
+    if (!user.id) {
+      return http.post('users', user);
+    } else {
+      return http.put('users/' + user.id, user);
+    }
   }
 
   async bulkUpdate({detail, ids}) {

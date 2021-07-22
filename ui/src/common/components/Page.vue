@@ -11,7 +11,9 @@
   }
 
   .os-page :deep(.os-page-body) {
-    height: calc(100% - 50px);
+    height: calc(100% - 55px);
     overflow-y: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
   }
 </style>
